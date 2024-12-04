@@ -86,7 +86,7 @@ if (is_admin()) {
 
 
   $zippyUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/FCS-WP/zippy_booking_car/',
+    'https://github.com/FCS-WP/zippy-booking-car/',
     __FILE__,
     'zippy-booking-car'
   );
