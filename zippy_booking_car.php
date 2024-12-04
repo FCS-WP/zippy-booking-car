@@ -74,8 +74,11 @@ require ZIPPY_BOOKING_DIR_PATH . 'vendor/plugin-update-checker/plugin-update-che
 
 // require ZIPPY_BOOKING_DIR_PATH . '/vendor/autoload.php';
 
-use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
+
+use  Zippy_Booking_Car\Src\Woocommerce\Zippy_Woo_Booking;
 
 
 /**
@@ -112,3 +115,5 @@ if (is_admin()) {
  */
 
 Zippy_Admin_Settings::get_instance();
+
+Zippy_Woo_Booking::get_instance();
