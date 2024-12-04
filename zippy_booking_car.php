@@ -91,7 +91,7 @@ if (is_admin()) {
     'zippy-booking-car'
   );
 
-  $zippyUpdateChecker->setBranch('main');
+  $zippyUpdateChecker->setBranch('production');
 
   // $zippyUpdateChecker->setAuthentication('your-token-here');
 
