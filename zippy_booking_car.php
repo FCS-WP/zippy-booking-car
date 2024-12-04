@@ -25,33 +25,33 @@ defined('ABSPATH') or die('°_°’');
 /* Set plugin version constant. */
 
 if (!defined('ZIPPY_BOOKING_VERSION')) {
-	define('ZIPPY_BOOKING_VERSION', '4.0');
+  define('ZIPPY_BOOKING_VERSION', '4.0');
 }
 
 /* Set plugin name. */
 
 if (!defined('ZIPPY_BOOKING_NAME')) {
-	define('ZIPPY_BOOKING_NAME', 'ZippySG Core');
+  define('ZIPPY_BOOKING_NAME', 'Zippy Booking Car');
 }
 
 if (!defined('ZIPPY_BOOKING_PREFIX')) {
-	define('ZIPPY_BOOKING_PREFIX', 'zippysg_core');
+  define('ZIPPY_BOOKING_PREFIX', 'zippy_booking_car');
 }
 
 if (!defined('ZIPPY_BOOKING_BASENAME')) {
-	define('ZIPPY_BOOKING_BASENAME', plugin_basename(__FILE__));
+  define('ZIPPY_BOOKING_BASENAME', plugin_basename(__FILE__));
 }
 
 /* Set constant path to the plugin directory. */
 
 if (!defined('ZIPPY_BOOKING_DIR_PATH')) {
-	define('ZIPPY_BOOKING_DIR_PATH', plugin_dir_path(__FILE__));
+  define('ZIPPY_BOOKING_DIR_PATH', plugin_dir_path(__FILE__));
 }
 
 /* Set constant url to the plugin directory. */
 
 if (!defined('ZIPPY_BOOKING_URL')) {
-	define('ZIPPY_BOOKING_URL', plugin_dir_url(__FILE__));
+  define('ZIPPY_BOOKING_URL', plugin_dir_url(__FILE__));
 }
 
 
@@ -70,9 +70,12 @@ if (!defined('ZIPPY_BOOKING_URL')) {
 // Includes
  --------------------------- --------------------------------------------- */
 require ZIPPY_BOOKING_DIR_PATH . '/includes/autoload.php';
+require ZIPPY_BOOKING_DIR_PATH . 'vendor/plugin-update-checker/plugin-update-checker.php';
+
 // require ZIPPY_BOOKING_DIR_PATH . '/vendor/autoload.php';
 
-use	Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
+use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 /**
  *
@@ -81,3 +84,43 @@ use	Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
 
 Zippy_Admin_Settings::get_instance();
 
+
+
+/*****************************************
+ * CUSTOM UPDATER FOR PLUGIN
+ * 
+ */
+if (is_admin()) {
+
+
+  $zippyUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/FCS-WP/zippy_booking_car/',
+    __FILE__,
+    'zippy-booking-car'
+  );
+
+  $zippyUpdateChecker->setBranch('main');
+
+  // $zippyUpdateChecker->setAuthentication('your-token-here');
+
+  add_action('in_plugin_update_message-' . ZIPPY_BOOKING_NAME . '/' . ZIPPY_BOOKING_NAME . '.php', 'plugin_name_show_upgrade_notification', 10, 2);
+  function plugin_name_show_upgrade_notification($current_plugin_metadata, $new_plugin_metadata)
+  {
+
+    /**
+     * Check "upgrade_notice" in readme.txt.
+     *
+     * Eg.:
+     * == Upgrade Notice ==
+     * = 20180624 = <- new version
+     * Notice		<- message
+     *
+     */
+    if (isset($new_plugin_metadata->upgrade_notice) && strlen(trim($new_plugin_metadata->upgrade_notice)) > 0) {
+
+      // Display "upgrade_notice".
+      echo sprintf('<span style="background-color:#d54e21;padding:10px;color:#f9f9f9;margin-top:10px;display:block;"><strong>%1$s: </strong>%2$s</span>', esc_attr('Important Upgrade Notice', 'exopite-multifilter'), esc_html(rtrim($new_plugin_metadata->upgrade_notice)));
+    }
+  }
+}
+// END CUSTOM UPDATER FOR PLUGIN
