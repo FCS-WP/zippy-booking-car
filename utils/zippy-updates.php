@@ -47,7 +47,7 @@ class Zippy_Updates
       'zippy-booking-car'
     );
 
-    $zippyUpdateChecker->setBranch('main');
+    $zippyUpdateChecker->setBranch('master');
 
     // $zippyUpdateChecker->setAuthentication('your-token-here');
   }
