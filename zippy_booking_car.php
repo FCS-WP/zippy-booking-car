@@ -3,7 +3,7 @@
 Plugin Name: Zippy Booking Car
 Plugin URI: https://zippy.sg/
 Description: Booking System, Manage Oder, Monthly Payment...
-Version: 4.0 Author: Zippy SG
+Version: 5.0 Author: Zippy SG
 Author URI: https://zippy.sg/
 License: GNU General Public
 License v3.0 License
@@ -25,7 +25,7 @@ defined('ABSPATH') or die('°_°’');
 /* Set plugin version constant. */
 
 if (!defined('ZIPPY_BOOKING_VERSION')) {
-  define('ZIPPY_BOOKING_VERSION', '4.0');
+  define('ZIPPY_BOOKING_VERSION', '5.0');
 }
 
 /* Set plugin name. */
@@ -70,57 +70,22 @@ if (!defined('ZIPPY_BOOKING_URL')) {
 // Includes
  --------------------------- --------------------------------------------- */
 require ZIPPY_BOOKING_DIR_PATH . '/includes/autoload.php';
-require ZIPPY_BOOKING_DIR_PATH . 'vendor/plugin-update-checker/plugin-update-checker.php';
 
 // require ZIPPY_BOOKING_DIR_PATH . '/vendor/autoload.php';
 
 use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+use Zippy_Booking_Car\Utils\Zippy_Updates;
 
 /**
  *
- * Init Zippy Core
+ * Check plugin version
+ */
+
+Zippy_Updates::get_instance();
+
+/**
+ *
+ * Init Zippy Plugin
  */
 
 Zippy_Admin_Settings::get_instance();
-
-
-
-/*****************************************
- * CUSTOM UPDATER FOR PLUGIN
- * 
- */
-if (is_admin()) {
-
-
-  $zippyUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/FCS-WP/zippy_booking_car/',
-    __FILE__,
-    'zippy-booking-car'
-  );
-
-  $zippyUpdateChecker->setBranch('main');
-
-  // $zippyUpdateChecker->setAuthentication('your-token-here');
-
-  add_action('in_plugin_update_message-' . ZIPPY_BOOKING_NAME . '/' . ZIPPY_BOOKING_NAME . '.php', 'plugin_name_show_upgrade_notification', 10, 2);
-  function plugin_name_show_upgrade_notification($current_plugin_metadata, $new_plugin_metadata)
-  {
-
-    /**
-     * Check "upgrade_notice" in readme.txt.
-     *
-     * Eg.:
-     * == Upgrade Notice ==
-     * = 20180624 = <- new version
-     * Notice		<- message
-     *
-     */
-    if (isset($new_plugin_metadata->upgrade_notice) && strlen(trim($new_plugin_metadata->upgrade_notice)) > 0) {
-
-      // Display "upgrade_notice".
-      echo sprintf('<span style="background-color:#d54e21;padding:10px;color:#f9f9f9;margin-top:10px;display:block;"><strong>%1$s: </strong>%2$s</span>', esc_attr('Important Upgrade Notice', 'exopite-multifilter'), esc_html(rtrim($new_plugin_metadata->upgrade_notice)));
-    }
-  }
-}
-// END CUSTOM UPDATER FOR PLUGIN
