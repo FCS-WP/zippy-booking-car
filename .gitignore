@@ -1,0 +1,7 @@
+# Ignore thir-party
+package-lock.json
+
+node_modules
+
+assets/dist
+
