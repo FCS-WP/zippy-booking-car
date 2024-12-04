@@ -70,22 +70,32 @@ if (!defined('ZIPPY_BOOKING_URL')) {
 // Includes
  --------------------------- --------------------------------------------- */
 require ZIPPY_BOOKING_DIR_PATH . '/includes/autoload.php';
+require ZIPPY_BOOKING_DIR_PATH . 'vendor/plugin-update-checker/plugin-update-checker.php';
+
 
 // require ZIPPY_BOOKING_DIR_PATH . '/vendor/autoload.php';
 
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
-use Zippy_Booking_Car\Utils\Zippy_Updates;
+
+Zippy_Admin_Settings::get_instance();
 
 /**
  *
  * Check plugin version
  */
 
-Zippy_Updates::get_instance();
+if (is_admin()) {
+  $zippyUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/FCS-WP/zippy_booking_car/',
+    __FILE__,
+    'zippy-booking-car'
+  );
+
+  $zippyUpdateChecker->setBranch('production');
+}
 
 /**
  *
  * Init Zippy Plugin
  */
-
-Zippy_Admin_Settings::get_instance();
