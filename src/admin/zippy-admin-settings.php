@@ -31,6 +31,22 @@ class Zippy_Admin_Settings
   public function __construct()
   {
     add_action('admin_menu',  array($this, 'zippy_booking_car_page'));
+
+    add_action('admin_enqueue_scripts', array($this, 'booking_assets'));
+  }
+
+  public function booking_assets()
+  {
+    $version = time();
+    $current_user_id = get_current_user_id();
+
+    // Pass the user ID to the script
+    wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
+    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
+
+    wp_localize_script('booking-js-current-id', 'admin_id', array(
+      'userID' => $current_user_id,
+    ));
   }
 
   function zippy_action_links($links)
@@ -41,7 +57,7 @@ class Zippy_Admin_Settings
 
   public function zippy_booking_car_page()
   {
-    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-admin-generic',6);
+    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-admin-generic', 6);
   }
 
   public function render()
