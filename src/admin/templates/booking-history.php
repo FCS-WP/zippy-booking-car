@@ -30,10 +30,10 @@
             <ul>
                 <?php
                     foreach ($orders as $order) {
-                        $order_time_by_moth_year = $order->get_date_created()->format('F Y');
+                        $order_time_by_month_year = $order->get_date_created()->format('F Y');
                 ?>
                     <li>
-                        <a href="#tab-<?php echo sanitize_title($order_time_by_moth_year) ?>">
+                        <a href="#tab-<?php echo sanitize_title($order_time_by_month_year) ?>">
                             <?php echo "#" . $order->get_meta("_custom_order_number") . " (" . wc_get_order_status_name($order->get_status()) . ")"  ?>
                         </a>
                     </li>
@@ -41,10 +41,10 @@
             </ul>
             <?php 
                 foreach ($orders as $order) { 
-                    $order_time_by_moth_year = $order->get_date_created()->format('F Y');
+                    $order_time_by_month_year = $order->get_date_created()->format('F Y');
             ?>
-            <div id="tab-<?php echo sanitize_title($order_time_by_moth_year) ?>">
-                <h3>Orders for <?php echo esc_html($order_time_by_moth_year); ?></h3>
+            <div id="tab-<?php echo sanitize_title($order_time_by_month_year) ?>">
+                <h3>Orders for <?php echo esc_html($order_time_by_month_year); ?></h3>
                 <div class="order-accordion">
                     <?php
                         if(!empty($child_orders)){ 
@@ -119,7 +119,7 @@
                     <?php }} ?>
                 </div>
                 <div style="margin-top: 10px;">
-                    <h3>Total for <?php echo $order_time_by_moth_year . ": " . wc_price($order->get_total()) ?></h3>
+                    <h3>Total for <?php echo $order_time_by_month_year . ": " . wc_price($order->get_total()) ?></h3>
                 </div>
             </div>
             <?php } ?>
