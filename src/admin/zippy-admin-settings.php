@@ -82,7 +82,12 @@ class Zippy_Admin_Settings
       $args = array(
           'limit' => -1,
           'customer_id' => $customer_id,
-          // 'status' => 'completed',
+          'meta_key'     => 'is_monthly_payment_order',
+          'meta_value'   => true,
+          'meta_compare' => '=',
+          'orderby'      => 'date',
+          'order'        => 'DESC',
+          'status' => 'completed',
       );
       $orders = wc_get_orders($args);
       
