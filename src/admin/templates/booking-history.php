@@ -33,7 +33,7 @@
                         $order_time_by_month_year = $order->get_date_created()->format('F Y');
                 ?>
                     <li>
-                        <a href="#tab-<?php echo sanitize_title($order_time_by_month_year) ?>">
+                        <a href="#tab-<?php echo sanitize_title("order-" . $order->get_id()) ?>">
                             <?php echo "#" . $order->get_meta("_custom_order_number") . " (" . wc_get_order_status_name($order->get_status()) . ")"  ?>
                         </a>
                     </li>
@@ -42,8 +42,17 @@
             <?php 
                 foreach ($orders as $order) { 
                     $order_time_by_month_year = $order->get_date_created()->format('F Y');
+                    $child_orders = [];
+                    $child_order_ids = unserialize($order->get_meta("list_of_orders"));
+                    if(!empty($child_order_ids)){
+                        $child_order_args = [
+                            'limit'   => -1,
+                            'post__in' => $child_order_ids,
+                        ];
+                        $child_orders = wc_get_orders($child_order_args);
+                    }
             ?>
-            <div id="tab-<?php echo sanitize_title($order_time_by_month_year) ?>">
+            <div id="tab-<?php echo sanitize_title("order-" . $order->get_id()) ?>">
                 <h3>Orders for <?php echo esc_html($order_time_by_month_year); ?></h3>
                 <div class="order-accordion">
                     <?php
