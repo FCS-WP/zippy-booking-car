@@ -35,7 +35,7 @@ class Zippy_Utils_Core
   }
   public static function encrypt_data_input($input)
   {
-    $encryption_key = ZIPPY_CORE_PREFIX;
+    $encryption_key = ZIPPY_BOOKING_PREFIX;
     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
     $input_data = openssl_encrypt($input, 'aes-256-cbc', $encryption_key, 0, $iv);
     $input_data_with_iv = base64_encode($iv . '::' . $input_data);
@@ -47,7 +47,7 @@ class Zippy_Utils_Core
 
     if (!isset($data_encryption) || empty($data_encryption)) return false;
 
-    $encryption_key = ZIPPY_CORE_PREFIX;
+    $encryption_key = ZIPPY_BOOKING_PREFIX;
 
     list($iv, $data) = explode('::', base64_decode($data_encryption), 2);
 
@@ -88,8 +88,8 @@ class Zippy_Utils_Core
   public static function divider()
   {
     return array(
-      'id'          => ZIPPY_CORE_PREFIX . '_divider',
-      'name'       => __('', ZIPPY_CORE_PREFIX . 'woocommerce-settings-tab'),
+      'id'          => ZIPPY_BOOKING_PREFIX . '_divider',
+      'name'       => __('', ZIPPY_BOOKING_PREFIX . 'woocommerce-settings-tab'),
       'type'        => 'title',
       'desc' => '<hr>'
     );
@@ -215,12 +215,12 @@ class Zippy_Utils_Core
     $template = $absolute_path . $relative_path . $template_name;
 
     //check for template in plugin's folder `includes/`
-    if (file_exists(ZIPPY_CORE_DIR_PATH . $relative_path . $template_name)) {
-      $template = ZIPPY_CORE_DIR_PATH . $relative_path . $template_name;
+    if (file_exists(ZIPPY_BOOKING_DIR_PATH . $relative_path . $template_name)) {
+      $template = ZIPPY_BOOKING_DIR_PATH . $relative_path . $template_name;
     }
 
-    $template = apply_filters_deprecated(ZIPPY_CORE_PREFIX . '\util\get_template\path_file', [$template, $vars], '1.0.0', ZIPPY_CORE_PREFIX . '\util\get_template\template');
-    $template = apply_filters(ZIPPY_CORE_PREFIX . '\util\get_template\template', $template, $template_name, $absolute_path, $relative_path);
+    $template = apply_filters_deprecated(ZIPPY_BOOKING_PREFIX . '\util\get_template\path_file', [$template, $vars], '1.0.0', ZIPPY_BOOKING_PREFIX . '\util\get_template\template');
+    $template = apply_filters(ZIPPY_BOOKING_PREFIX . '\util\get_template\template', $template, $template_name, $absolute_path, $relative_path);
 
     if (file_exists($template)) {
 
