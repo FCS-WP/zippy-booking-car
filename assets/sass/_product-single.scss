@@ -1,0 +1,9 @@
+#prduct-single-content {
+  .product-gallery {
+    img {
+      height: 150px;
+      width: 100%;
+      object-fit: scale-down;
+    }
+  }
+}

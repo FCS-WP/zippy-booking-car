@@ -1,0 +1,114 @@
+
+[data-vc-theme=light] .vc-week__day{
+    font-size: 12px;
+}   
+
+[data-vc-date] button{
+    border: 0;
+    font-size: 12px;
+}
+[data-vc=week] button{
+    border: 0;
+}
+
+.vc-arrow.vc-arrow_prev{
+    padding: 10px !important;
+}
+.vc-arrow.vc-arrow_next{
+    padding: 10px !important;
+}
+
+.single [type=button],.single  [type=submit],.single  button{
+    border: none !important;
+    padding: 5px;
+}
+
+[data-vc=grid]{
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
+.title-pickup-information{
+    p{
+        color: #f1192e;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bolder;
+        text-transform: capitalize;
+    }
+}
+
+.calendar-box-custom{
+    
+    .calendar-box{
+        #calendar{
+            padding-left: 10px;
+        }
+        
+    }
+}
+
+.summary-information{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    .col-summary-information{
+        display: flex;
+        align-items: end;
+        width: 50%;
+        input{
+            border: none;
+            padding: 0px;
+            margin-left: 7px;
+            font-weight: bolder;
+            font-size: 18px;
+        }
+        label{
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+    }
+
+}
+
+
+input:focus{
+    outline: none;
+}
+
+textarea{
+    border-radius: 10px !important;
+}
+
+[data-vc-theme=light] .vc-date__btn:hover{
+    background-color: #06b6d4;
+    color: #f1192e;
+}
+
+[data-vc-theme=light] .vc-date[data-vc-date-holiday] .vc-date__btn:hover, [data-vc-theme=light] .vc-date[data-vc-date-weekend] .vc-date__btn:hover{
+    background-color: #06b6d4;
+    color: #f1192e;
+}
+
+@media(max-width: 768px){
+    [data-vc=grid]{
+        flex-wrap: wrap;
+    }
+    [data-vc=dates]{
+        grid-template-columns: repeat(7, 1fr) !important;
+    }
+    [data-vc-date] button{
+        font-size: 14px;
+        width: 100%;
+    }
+}
+
+[data-vc-date] button{
+    font-size: 14px;
+    width: 100%;
+}
+
+[data-vc-theme=light] .vc-time__hour input, [data-vc-theme=light] .vc-time__minute input{
+    padding: 0px;
+    border: none;
+}

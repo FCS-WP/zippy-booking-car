@@ -1,5 +1,2 @@
-"use strict";
-$ = jQuery;
-$(document).ready(function () {
-  console.log($(".admin"));
-});
+import "./hbk_form";
+import "./trip_booking_form";
