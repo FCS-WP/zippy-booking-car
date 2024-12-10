@@ -158,15 +158,18 @@ $(document).ready(function () {
 
   openPopupButtonHour.on("click", function () {
     popupHour.css("display", "flex");
+    $('body').css('overflow', 'hidden');
   });
 
   closePopupButtonHour.on("click", function () {
     popupHour.css("display", "none");
+    $('body').css('overflow', 'auto');
   });
 
   popupHour.on("click", function (event) {
     if (event.target === $(this)[0]) {
       popupHour.css("display", "none");
+      $('body').css('overflow', 'auto');
     }
   });
 });
