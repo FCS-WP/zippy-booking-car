@@ -82,17 +82,21 @@ const $popup = $("#popup");
 // Open popup
 $openPopupButton.on("click", () => {
   $popup.css("display", "flex");
+  document.body.style.overflow = 'hidden';
+  $('body').css('overflow', 'hidden');
 });
 
 // Close popup
 $closePopupButton.on("click", () => {
   $popup.css("display", "none");
+  $('body').css('overflow', 'auto');
 });
 
 // Close popup when clicking outside the content
 $popup.on("click", (event) => {
   if ($(event.target).is($popup)) {
     $popup.css("display", "none");
+    $('body').css('overflow', 'auto');
   }
 });
 
