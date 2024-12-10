@@ -80,6 +80,8 @@ use  Zippy_Booking_Car\Src\Admin\Zippy_Admin_Settings;
 
 use  Zippy_Booking_Car\Src\Woocommerce\Zippy_Woo_Booking;
 
+use  Zippy_Booking_Car\Src\Forms\Zippy_Booking_Forms;
+
 
 /**
  * Zippy Plugin update
@@ -117,3 +119,5 @@ if (is_admin()) {
 Zippy_Admin_Settings::get_instance();
 
 Zippy_Woo_Booking::get_instance();
+
+Zippy_Booking_Forms::get_instance();

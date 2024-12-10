@@ -1,1 +1,7 @@
-// @import "./component/";
+@import "vanilla-calendar-pro/styles/layout.css"; // Only the skeleton
+@import "vanilla-calendar-pro/styles/themes/light.css"; // Light theme
+@import "vanilla-calendar-pro/styles/themes/dark.css"; // Dark theme
+@import "components";
+@import "customize";
+@import "overwrite_vanilla";
+@import "product-single";
