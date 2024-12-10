@@ -32,6 +32,7 @@ class Zippy_Booking_Forms
   {
     /* Set timezone SG */
     date_default_timezone_set('Asia/Singapore');
+
     /* Booking Assets  */
     add_action('wp_enqueue_scripts', array($this, 'booking_assets'));
 
