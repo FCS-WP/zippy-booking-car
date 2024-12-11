@@ -3,7 +3,7 @@
 Plugin Name: Zippy Booking Car
 Plugin URI: https://zippy.sg/
 Description: Booking System, Manage Oder, Monthly Payment...
-Version: 5.0 Author: Zippy SG
+Version: 6.0 Author: Zippy SG
 Author URI: https://zippy.sg/
 License: GNU General Public
 License v3.0 License

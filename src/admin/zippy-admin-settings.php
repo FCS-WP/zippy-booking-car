@@ -11,6 +11,7 @@ namespace Zippy_Booking_Car\Src\Admin;
 defined('ABSPATH') or die();
 
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
+use  WC_Order_Item_Product;
 
 class Zippy_Admin_Settings
 {
@@ -31,20 +32,25 @@ class Zippy_Admin_Settings
   public function __construct()
   {
     add_action('admin_menu',  array($this, 'zippy_booking_car_page'));
-    add_action('admin_enqueue_scripts', array($this, 'booking_assets'));
+    add_action('admin_enqueue_scripts', array($this, 'admin_booking_assets'));
     add_action('wp_ajax_create_payment_order', array($this, 'create_payment_order'));
     add_filter('woocommerce_order_number', array($this, 'custom_order_number_display'), 10, 2);
   }
 
-  public function booking_assets()
+  public function admin_booking_assets()
   {
     $version = time();
     $current_user_id = get_current_user_id();
 
     // Pass the user ID to the script
-    wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
-    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
-    wp_localize_script('booking-js', 'ajaxurl', admin_url('admin-ajax.php'));
+    // wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
+    // wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
+    wp_enqueue_script('admin-booking-table-js', ZIPPY_BOOKING_URL . 'assets/js/admin-booking-table.js', [], $version);
+    
+    //lib
+    wp_enqueue_script('admin-jquery-ui-js', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.js', [], $version);
+    wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.css', [], $version);
+
 
 
     wp_localize_script('booking-js-current-id', 'admin_id', array(
