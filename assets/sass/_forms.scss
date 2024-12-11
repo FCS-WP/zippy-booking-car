@@ -1,0 +1,619 @@
+.row-form-custom {
+  display: flex;
+  margin-bottom: 10px;
+
+  label {
+    margin-bottom: 10px;
+  }
+
+  input {
+    padding: 5px !important;
+    height: 38px;
+  }
+
+  select {
+    padding: 5px !important;
+    height: 38px;
+    background-color: transparent;
+  }
+}
+
+.col-1 {
+  .col-form-custom {
+    width: 100%;
+    input {
+      margin-right: 10px;
+    }
+  }
+}
+
+.col-2 {
+  justify-content: space-between;
+
+  .col-form-custom {
+    width: 49%;
+  }
+}
+
+.col-3 {
+  justify-content: space-between;
+
+  .col-form-custom {
+    width: 32%;
+  }
+}
+
+.products-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+
+  .product-item-col {
+    img {
+      width: 100%;
+    }
+  }
+
+  .product-item-col:nth-child(1) {
+    width: 35%;
+  }
+
+  .product-item-col:nth-child(3) {
+    width: 25%;
+  }
+
+  .product-item-col:nth-child(2) {
+    border-right: 1px solid hsl(0deg 0% 50.2% / 50.2%);
+    padding: 0 15px;
+    width: 40%;
+  }
+
+  .product-title {
+    font-size: 23px;
+    font-weight: bolder;
+  }
+
+  .product-full-description {
+    tr {
+      td {
+        border-width: 0 0 2px 0;
+      }
+    }
+  }
+
+  .center-product-col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      background-color: #000;
+      border-color: #fff;
+      border-radius: 5px;
+      padding: 10px 30px;
+
+      a {
+        color: #fff;
+
+        display: block;
+        text-transform: uppercase;
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+.hidden-field {
+  display: none;
+}
+
+.woocommerce-button.button.view,
+.woocommerce-button.button.cancel {
+  background-color: #f1192e;
+  color: #fff !important;
+  text-decoration: none;
+  padding: 5px 15px;
+}
+
+.woocommerce-orders-table__cell-order-actions {
+  text-align: center;
+
+  a:first-child {
+    margin-right: 7px;
+  }
+
+  a:last-child {
+    margin-left: 7px;
+  }
+}
+
+.woocommerce-orders-table__header-order-actions {
+  text-align: center;
+}
+
+.product_type_simple.add_to_cart_button {
+  display: none !important;
+}
+
+.date-time-form {
+  position: relative;
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 12px;
+
+  .line {
+    border-right: 1px solid #e0e0e0;
+  }
+
+  .form-item {
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    grid-gap: 8px;
+    gap: 8px;
+    cursor: pointer;
+
+    label {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .wrap-date-time {
+      display: flex;
+      justify-content: space-between;
+      color: #000;
+      font-weight: 600;
+    }
+  }
+}
+.row-checkout-form {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .location_checkout {
+    width: 100% !important;
+  }
+  .dropdown-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    grid-gap: 8px;
+    gap: 8px;
+    width: 49%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 12px;
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .wrap-form {
+      position: relative;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      span.value {
+        font-weight: 600;
+        color: #000;
+      }
+    }
+  }
+}
+
+.woocommerce-checkout-review-order-table {
+  display: none;
+}
+
+.input-radio-box {
+  display: flex;
+  flex-direction: column;
+  .input-radio-box-col {
+    width: 100% !important;
+    display: flex;
+    margin-top: 10px;
+  }
+}
+
+.col-total-price-information {
+  margin-top: 20px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  display: flex;
+  border-top: 2px solid #e0e0e0;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    font-weight: bold;
+    color: #f1192e;
+  }
+  label {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 16px;
+  }
+}
+
+.flatpickr-month {
+  display: flex;
+  width: 100%;
+  padding-top: 10px;
+
+  .flatpickr-prev-month {
+    width: 15px;
+  }
+
+  .flatpickr-next-month {
+    width: 15px;
+  }
+
+  .slideLeft {
+    display: none;
+  }
+
+  .slideRight {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .products-row {
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+
+    .product-item-col {
+      width: 50%;
+    }
+
+    .center-product-col {
+      width: 100%;
+    }
+
+    .product-item-col:nth-child(2) {
+      border-right: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .products-row {
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+
+    .product-item-col {
+      width: 100%;
+    }
+  }
+}
+.summary-information {
+  display: flex;
+  flex-wrap: wrap;
+  .label-summary-infor {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+.heading-custom-vanilla {
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+.label-pickup-time-vanilla {
+  margin-bottom: 0px;
+  margin-top: 20px;
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+.calendar-box-custom .calendar-box #calendar {
+  border-radius: 10px;
+}
+
+.time-avail {
+  margin-top: 10px;
+  border-top: 1px solid #cbd5e1;
+  padding-top: 10px;
+  .time-avail__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    p {
+      margin-bottom: 5px;
+      font-size: 15px;
+    }
+  }
+}
+
+.input-radio-box-col {
+  label {
+    margin-left: 10px;
+  }
+}
+
+.form_booking_car {
+  .pickupdate {
+    pointer: cursor;
+  }
+  .elementor-tab-title {
+    background: #666666;
+    color: #fff;
+    text-align: center;
+    border-color: #666 !important;
+  }
+  .elementor-tab-title:first-child {
+    border-radius: 16px 0 0 0;
+  }
+  .elementor-tab-title:last-child {
+    border-radius: 0 16px 0 0;
+  }
+
+  .elementor-active {
+    background-color: #fff;
+    color: #666 !important;
+  }
+  .elementor-tab-content {
+    border-color: #666 !important;
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+#btnReserve {
+  background-color: #666;
+  width: 100%;
+  color: #fff;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 8px;
+  transition: 0.3s;
+  &:hover {
+    background-color: #333;
+  }
+}
+
+.col-total-price-information span {
+  color: #666;
+}
+
+.input-text-pickup-information {
+  .col-form-custom {
+    border: 1px solid #cccccc;
+    border-radius: 7px;
+    padding: 10px;
+    &.pickup-type {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+    .pickupdate {
+      pointer-events: none;
+    }
+    #pickuptime {
+      pointer-events: none;
+    }
+    label {
+      margin-bottom: 0px;
+      font-size: 12px;
+      color: #666;
+      line-height: 18px;
+      display: block;
+      width: 100%;
+    }
+    input {
+      border: 0 !important;
+      padding: 0 !important;
+      font-size: 14px;
+      height: auto !important;
+      cursor: pointer;
+    }
+    select {
+      border: 0 !important;
+      padding: 0 !important;
+      font-size: 14px;
+      height: auto !important;
+    }
+    select:focus-visible {
+      outline: none !important;
+    }
+  }
+}
+
+.form_booking_car {
+  .elementor-tabs .elementor-tabs-wrapper {
+    display: flex !important;
+    .elementor-tab-title {
+      padding: 10px 15px;
+      text-transform: uppercase;
+      width: 50%;
+      font-size: 16px;
+      line-height: 20px;
+      @media (min-width: 767px) {
+        padding: 20px 25px;
+      }
+    }
+  }
+  .elementor-tab-mobile-title {
+    display: none !important;
+  }
+}
+
+.dropdown-form-checkout-total {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  &_title {
+    label {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+  &_value {
+    font-weight: bold;
+  }
+}
+
+.box-billing {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  &-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    &_col {
+      span {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// Hour Booking Car
+.layout-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column: auto;
+  gap: 16px;
+}
+
+.layout-col-6 {
+  grid-column: span 6;
+}
+
+.layout-col-4 {
+  grid-column: span 4;
+}
+
+.layout-col-12 {
+  grid-column: span 12;
+}
+
+@media (max-width: 768px) {
+  .layout-col-6 {
+    grid-column: span 12;
+  }
+  .layout-col-4 {
+    grid-column: span 12;
+  }
+}
+
+.overview-row {
+  display: flex;
+  justify-content: space-between;
+}
+.d-flex {
+  display: flex;
+  gap: 10px;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.d-none {
+  display: none;
+}
+.summary-information.no-flex {
+  display: block !important;
+  .col-summary-information {
+    width: 100% !important;
+    display: flex;
+  }
+  .col-summary-information label {
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+
+.value-summary {
+  border: none;
+  padding: 0px;
+  margin-left: 7px;
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+// Responsive for form
+@media (max-width: 768px) {
+  .row-form-custom {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  .col-2 {
+    .col-form-custom {
+      width: 100%;
+    }
+  }
+
+  .col-3 {
+    .col-form-custom {
+      width: 100%;
+    }
+  }
+}
+
+.heading-custom-vanilla {
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+.label-pickup-time-vanilla {
+  margin-bottom: 0px;
+  margin-top: 20px;
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+.calendar-box-custom .calendar-box #calendar {
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+.confirm-terms {
+  display: flex;
+  margin-top: 16px;
+  gap: 10px;
+  align-items: start;
+  .list-terms {
+    padding-left: 0;
+  }
+  .show-title {
+    padding-bottom: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    display: block;
+  }
+  .terms-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #f1192e;
+    color: white;
+  }
+}
+.note-midnight-fee {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1192e;
+}
+.position-relative {
+  position: relative;
+}
+.mb-1 {
+  margin-bottom: 6px;
+}

@@ -1,0 +1,73 @@
+.elementor-element-c80aafb,
+.elementor-element-f6c6b9a {
+  padding: 0;
+}
+
+.page-id-8 {
+  #masthead {
+    background: #000;
+    position: relative;
+  }
+}
+
+.page-id-8 {
+  main {
+    margin-top: 170px;
+    margin-bottom: 100px;
+  }
+}
+
+.page-id-7 {
+  #masthead {
+    background: #000;
+    position: relative;
+  }
+}
+
+.page-id-7 {
+  main {
+    margin-top: 170px;
+    margin-bottom: 100px;
+  }
+}
+
+.page-id-8 {
+  .entry-title {
+    text-align: center;
+    font-weight: bold;
+    text-transform: capitalize;
+    margin-bottom: 20px;
+  }
+
+  .woocommerce-MyAccount-navigation {
+    width: 100%;
+    margin-bottom: 50px;
+
+    ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+
+      li {
+        padding: 10px 20px;
+
+        a {
+          text-decoration: none;
+          color: #f1192e !important;
+        }
+      }
+
+      .is-active {
+        background-color: #f1192e;
+
+        a {
+          color: #fff !important;
+        }
+      }
+    }
+  }
+
+  .woocommerce-MyAccount-content {
+    width: 100%;
+  }
+}
