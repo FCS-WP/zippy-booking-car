@@ -47,7 +47,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         $tab_status = isset($monthly_payment_orders[$month_of_order])
                             ? ' (' . esc_html(wc_get_order_status_name($monthly_payment_orders[$month_of_order]->get_status())) . ')'
                             : '';
-                            var_dump($monthly_payment_orders[$month_of_order] ,"sss");
                     ?>
                         <li><a href="#tab-<?php echo sanitize_title($month_of_order) ?>"><?php echo esc_html($month_of_order) . $tab_status ?></a></li>
                     <?php
