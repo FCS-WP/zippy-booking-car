@@ -68,10 +68,6 @@ class Zippy_Booking_Forms
     wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
     wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
 
-    // Lib Assets
-    wp_enqueue_style('vanilla-celendar-css', ZIPPY_BOOKING_URL . '/assets/lib/vanilla-calendar.min.css', [], $version);
-    wp_enqueue_script('vanilla-scripts-js', ZIPPY_BOOKING_URL . '/assets/lib/vanilla-calendar.min.js', [], $version, true);
-
     wp_localize_script('booking-js-current-id', 'admin_id', array(
       'userID' => $current_user_id,
     ));
