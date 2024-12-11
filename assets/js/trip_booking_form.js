@@ -52,9 +52,11 @@ const options = {
     midnightCheck(self.context.selectedTime);
   },
 };
-
-const calendar = new Calendar("#calendar", options);
-calendar.init();
+const calendar = $("#calendar");
+if (calendar.length) {
+  const calendar = new Calendar("#calendar", options);
+  calendar.init();
+}
 
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
 function convertDate(inputDate) {
@@ -82,21 +84,21 @@ const $popup = $("#popup");
 // Open popup
 $openPopupButton.on("click", () => {
   $popup.css("display", "flex");
-  document.body.style.overflow = 'hidden';
-  $('body').css('overflow', 'hidden');
+  document.body.style.overflow = "hidden";
+  $("body").css("overflow", "hidden");
 });
 
 // Close popup
 $closePopupButton.on("click", () => {
   $popup.css("display", "none");
-  $('body').css('overflow', 'auto');
+  $("body").css("overflow", "auto");
 });
 
 // Close popup when clicking outside the content
 $popup.on("click", (event) => {
   if ($(event.target).is($popup)) {
     $popup.css("display", "none");
-    $('body').css('overflow', 'auto');
+    $("body").css("overflow", "auto");
   }
 });
 
