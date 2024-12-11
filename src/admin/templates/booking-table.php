@@ -12,50 +12,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     if (!empty($orders)) { ?>
         <div class="wrap">
             <h1>Details for Customer ID: <?php echo esc_html($customer_id) ?> </h1>
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-            <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-            <script>
-                jQuery(document).ready(function($) {
-                    $("#month-tabs").tabs();
-                    $(".order-accordion").accordion({
-                        collapsible: true,
-                        active: false,
-                        heightStyle: "content"
-                    });
-
-                    $(".payment-button").on("click", function() {
-                        var customer_id = $(this).data("customer-id");
-                        var month_of_order = $(this).data("month-of-order");
-
-                        if (!customer_id || !month_of_order) {
-                            alert("Invalid customer ID or month.");
-                            return;
-                        }
-
-                        $.ajax({
-                            url: ajaxurl, 
-                            method: "POST",
-                            data: {
-                                action: "create_payment_order",
-                                customer_id: customer_id,
-                                month_of_order: month_of_order
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    alert("Payment order created successfully!");
-                                    location.reload();
-                                } else {
-                                    alert(response.data.message || "Failed to create payment order.");
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("Error:", error);
-                                alert("An error occurred while creating the payment order.");
-                            }
-                        });
-                    });
-                });
-            </script>
             <?php
             $grouped_by_month = array();
             $monthly_payment_orders = array();
