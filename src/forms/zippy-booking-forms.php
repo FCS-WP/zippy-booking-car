@@ -32,6 +32,7 @@ class Zippy_Booking_Forms
   {
     /* Set timezone SG */
     date_default_timezone_set('Asia/Singapore');
+
     /* Booking Assets  */
     add_action('wp_enqueue_scripts', array($this, 'booking_assets'));
 
@@ -51,20 +52,23 @@ class Zippy_Booking_Forms
     add_filter('woocommerce_add_cart_item_data', array($this, 'handle_add_booking_cart'));
 
     /* Handle Add Extra Fee Booking */
-
     add_action('woocommerce_before_calculate_totals',  array($this, 'handle_add_extra_fee'));
+
+    
   }
 
   public function booking_assets()
   {
+    if (!is_archive() && !is_single() && !is_checkout()) return;
     $version = time();
+
     $current_user_id = get_current_user_id();
 
     // Form Assets
     wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
     wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
-    // Lib Assets
 
+    // Lib Assets
     wp_enqueue_style('vanilla-celendar-css', ZIPPY_BOOKING_URL . '/assets/lib/vanilla-calendar.min.css', [], $version);
     wp_enqueue_script('vanilla-scripts-js', ZIPPY_BOOKING_URL . '/assets/lib/vanilla-calendar.min.js', [], $version, true);
 
@@ -191,4 +195,5 @@ class Zippy_Booking_Forms
   {
     echo Zippy_Utils_Core::get_template('hour-form.php', [], dirname(__FILE__), '/templates');
   }
+
 }
