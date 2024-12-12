@@ -53,8 +53,6 @@ class Zippy_Booking_Forms
 
     /* Handle Add Extra Fee Booking */
     add_action('woocommerce_before_calculate_totals',  array($this, 'handle_add_extra_fee'));
-
-    
   }
 
   public function booking_assets()
@@ -65,8 +63,8 @@ class Zippy_Booking_Forms
     $current_user_id = get_current_user_id();
 
     // Form Assets
-    wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
-    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
+    wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/web.min.js', [], $version, true);
+    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/web.min.css', [], $version);
 
     wp_localize_script('booking-js-current-id', 'admin_id', array(
       'userID' => $current_user_id,
@@ -191,5 +189,4 @@ class Zippy_Booking_Forms
   {
     echo Zippy_Utils_Core::get_template('hour-form.php', [], dirname(__FILE__), '/templates');
   }
-
 }
