@@ -196,7 +196,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 ?>
             </div> <!-- End tabs container -->
 
-            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
             <?php if ($all_completed) { ?>
                 <a class="button go-to-history" style="margin-top: 20px;" href='<?php echo esc_url(admin_url('admin.php?page=booking-history')) ?>'>Go to History</a>
             <?php } ?>
@@ -206,7 +206,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     ?>
         <div class="wrap">
             <h1>No Orders Found for Customer ID: <?php echo esc_html($customer_id) ?></h1>
-            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
 
         </div>
     <?php
@@ -277,7 +277,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         <tr>
                             <td class="customer-name">#<?php echo esc_html($customer_id); ?> <?php echo esc_html($customer_name); ?></td>
                             <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>
-                            <td class="action"><a href="<?php echo esc_url(admin_url('admin.php?page=booking-table&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
+                            <td class="action"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
                         </tr>
                     <?php
                     }

@@ -77,20 +77,11 @@ class Zippy_Admin_Settings
       'booking-history',
       array($this, 'booking_history_render')
     );
-    //add Booking History submenu
-    add_submenu_page(
-      'zippy-bookings',
-      'Booking Table',
-      'Booking Table',
-      'manage_options',
-      'booking-table',
-      array($this, 'booking_table_render')
-    );
   }
 
   public function render()
   {
-    echo Zippy_Utils_Core::get_template('admin-settings.php', [], dirname(__FILE__), '/templates');
+    echo Zippy_Utils_Core::get_template('booking-table.php', [], dirname(__FILE__), '/templates');
   }
   public function booking_history_render()
   {
@@ -146,12 +137,6 @@ class Zippy_Admin_Settings
 
     echo Zippy_Utils_Core::get_template('booking-history.php', $data, dirname(__FILE__), '/templates');
   }
-
-  public function booking_table_render()
-  {
-    echo Zippy_Utils_Core::get_template('booking-table.php', [], dirname(__FILE__), '/templates');
-  }
-
 
   public function create_payment_order()
   {
