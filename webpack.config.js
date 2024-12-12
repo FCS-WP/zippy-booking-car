@@ -12,15 +12,18 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const destChildTheme = "./";
 
 // Define Work path
-const destFileCss = destChildTheme + "/assets/sass/app.scss";
-const destFileJs = destChildTheme + "/assets/js/index.js";
+const destFileCss = destChildTheme + "/assets/web/sass/app.scss";
+const destAdminFileCss = destChildTheme + "/assets/admin/sass/app.scss";
+const destAdminFileJs = destChildTheme + "/assets/admin/js/index.js";
+const destFileJs = destChildTheme + "/assets/web/js/index.js";
 const destOutput = destChildTheme + "/assets/dist";
 
 module.exports = [
   {
     stats: "minimal",
     entry: {
-      main: [destFileCss, destFileJs],
+      web:[destFileCss,destFileJs],
+      admin: [destAdminFileCss, destAdminFileJs]
     },
     output: {
       filename: destOutput + "/js/[name].min.js",
@@ -76,11 +79,11 @@ module.exports = [
         //load svg
         {
           test: /\.svg$/,
-          use:  ['@svgr/webpack'],
+          use: ["@svgr/webpack"],
           issuer: {
-              and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+            and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
           },
-        }
+        },
       ],
     },
     // externals: {
@@ -97,7 +100,7 @@ module.exports = [
       }),
       // css extraction into dedicated file
       new MiniCssExtractPlugin({
-        filename: destOutput + "/css/main.min.css",
+        filename: destOutput + "/css/[name].min.css",
       }),
       new webpack.ProvidePlugin({
         $: "jquery",
