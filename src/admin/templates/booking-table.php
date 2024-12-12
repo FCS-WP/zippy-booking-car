@@ -18,11 +18,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
             foreach ($orders as $order) {
                 $order_date = $order->get_date_created();
-                $month_of_order = $order_date->format('F Y');
-
-
                 $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
 
+                $month_of_order = $is_monthly_payment_order
+                    ? $order->get_meta('month_of_order', true)
+                    : $order_date->format('F Y');
 
                 if ($is_monthly_payment_order) {
                     $monthly_payment_orders[$month_of_order] = $order;
@@ -39,38 +39,82 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             }
             ?>
 
-
             <div id="month-tabs">
-                <ul>
-                    <?php
-                    foreach (array_keys($grouped_by_month) as $month_of_order) {
-                        $tab_status = isset($monthly_payment_orders[$month_of_order])
-                            ? ' (' . esc_html(wc_get_order_status_name($monthly_payment_orders[$month_of_order]->get_status())) . ')'
-                            : '';
-                    ?>
-                        <li><a href="#tab-<?php echo sanitize_title($month_of_order) ?>"><?php echo esc_html($month_of_order) . $tab_status ?></a></li>
-                    <?php
-                    } ?>
-                </ul>
+                <?php
+                $completed_months = [];
+                $all_completed = true;
+
+                foreach ($grouped_by_month as $month_of_order => $data) {
+                    if (isset($monthly_payment_orders[$month_of_order]) && $monthly_payment_orders[$month_of_order]->get_status() === 'completed') {
+
+                        $completed_months[] = $month_of_order;
+                    } else {
+
+                        $all_completed = false;
+                    }
+                }
+
+                if (!$all_completed) {
+                ?>
+                    <div class="not-all-completed">
+                        <ul>
+                            <?php
+                            foreach ($grouped_by_month as $month_of_order => $data) {
+
+                                if (isset($monthly_payment_orders[$month_of_order])) {
+                                    $order_status = $monthly_payment_orders[$month_of_order]->get_status();
+
+                                    if ($order_status === 'completed') {
+                                        continue;
+                                    }
+
+                                    $tab_status = ' (' . esc_html(wc_get_order_status_name($order_status)) . ')';
+                                } else {
+                                    $tab_status = '';
+                                }
+
+                            ?>
+                                <li class="<?php echo esc_attr($order_status); ?>">
+                                    <a href="#tab-<?php echo esc_attr(sanitize_title($month_of_order)); ?>">
+                                        <?php echo esc_html($month_of_order) . $tab_status; ?>
+                                    </a>
+                                </li>
+                            <?php
+                            }
+                            ?>
+                        </ul>
+                    </div>
 
                 <?php
-                // Tab content
-                foreach ($grouped_by_month as $month_of_order => $data) {
+                } else {
                 ?>
-                    <div id="tab-<?php echo sanitize_title($month_of_order) ?>">
-                        <h3>Orders for <?php echo  esc_html($month_of_order)  ?></h3>
+                    <div class="all-completed">
+                        <h3>All monthly orders have been paid.</h3>
+                        <a class="button go-to-history" href='<?php echo esc_url(admin_url('admin.php?page=booking-history')) ?>'>Go to History</a>
+                    </div>
+                <?php
+                }
+                ?>
+
+                <?php
+                foreach ($grouped_by_month as $month_of_order => $data) {
+                    if (isset($monthly_payment_orders[$month_of_order]) && $monthly_payment_orders[$month_of_order]->get_status() === 'completed') {
+                        continue;
+                    }
+                ?>
+                    <div id="tab-<?php echo sanitize_title($month_of_order) ?>" class="tab-content">
+                        <h3>Orders for <?php echo esc_html($month_of_order) ?></h3>
                         <div class="order-accordion">
                             <?php
                             foreach ($data['orders'] as $order) {
                             ?>
                                 <h4>Order #<?php echo esc_html($order->get_id()) ?></h4>
                                 <div>
-
                                     <!-- Display order details -->
                                     <table class="wp-list-table widefat fixed striped">
                                         <tr>
                                             <th>Order ID</th>
-                                            <td> <?php echo esc_html($order->get_id()) ?></td>
+                                            <td><?php echo esc_html($order->get_id()) ?></td>
                                         </tr>
                                         <tr>
                                             <th>Date</th>
@@ -78,7 +122,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                         </tr>
                                         <tr>
                                             <th>Customer</th>
-                                            <td><?php echo esc_html($order->get_billing_first_name() .  $order->get_billing_last_name()) ?></td>
+                                            <td><?php echo esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?></td>
                                         </tr>
                                         <tr>
                                             <th>Email</th>
@@ -103,7 +147,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                     <table class="wp-list-table widefat fixed striped">
                                         <thead>
                                             <tr>
-                                                <th>Product</th>
+                                                <th>Car</th>
                                                 <th>Quantity</th>
                                                 <th>Price</th>
                                             </tr>
@@ -126,8 +170,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php
                             }
                             ?>
-
                         </div> <!-- End order accordion -->
+
                         <?php
                         if (isset($monthly_payment_orders[$month_of_order])) {
                             $payment_order = $monthly_payment_orders[$month_of_order];
@@ -136,25 +180,24 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 <p><strong>Monthly Payment Order Status:</strong><span class="order-status"> <?php echo esc_html(wc_get_order_status_name($payment_order->get_status())) ?></span></p>
                                 <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
                             </div>
-                            <button class="button" disabled>Payment</button>
+                            <button class="button create-order-button" disabled>Create Order of Monthly</button>
                         <?php
                         } else {
                         ?>
                             <div style="margin-top: 10px;">
                                 <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
                             </div>
-                            <button class="button payment-button" data-customer-id="<?php echo esc_attr($customer_id) ?>" data-month-of-order="<?php echo esc_attr($month_of_order) ?>">Payment</button>
+                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id) ?>" data-month-of-order="<?php echo esc_attr($month_of_order) ?>">Create Order of Monthly</button>
                         <?php
                         }
                         ?>
-
                     </div> <!-- End tab content for the current month -->
                 <?php
                 }
                 ?>
+            </div> <!-- End tabs container -->
 
-            </div> <!--End tabs container -->
-            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button" style="margin-top: 20px;">Back to Bookings</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
 
         </div>
     <?php
@@ -162,7 +205,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     ?>
         <div class="wrap">
             <h1>No Orders Found for Customer ID: <?php echo esc_html($customer_id) ?></h1>
-            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button" style="margin-top: 20px;">Back to Bookings</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
 
         </div>
     <?php
@@ -213,8 +256,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             <thead>
                 <tr>
                     <th>Customer Name</th>
-                    <th>Number of Orders</th>
-                    <th>Action</th>
+                    <th style="width: 20%; text-align: center;">Number of Orders to be paid</th>
+                    <th style="width: 10%;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -224,15 +267,16 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         $customer_name = $data['customer_name'];
 
                         $filtered_orders = array_filter($data['orders'], function ($order) {
-                            return !$order->get_meta('is_monthly_payment_order');
+                            return !$order->get_meta('is_monthly_payment_order') && $order->get_status() !== 'completed';
                         });
+
                         $order_count = count($filtered_orders);
                 ?>
 
                         <tr>
-                            <td> #<?php echo esc_html($customer_id) ?> <?php echo esc_html($customer_name) ?></td>
-                            <td><?php echo esc_html($order_count) ?></td>
-                            <td><a href="<?php echo esc_url(admin_url('admin.php?page=booking-table&customer_id=' . $customer_id . '&action=view')) ?>">View</a></td>
+                            <td class="customer-name">#<?php echo esc_html($customer_id); ?> <?php echo esc_html($customer_name); ?></td>
+                            <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>
+                            <td class="action"><a href="<?php echo esc_url(admin_url('admin.php?page=booking-table&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
                         </tr>
                     <?php
                     }
@@ -243,7 +287,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     </tr>
                 <?php
                 }
-
                 ?>
             </tbody>
         </table>

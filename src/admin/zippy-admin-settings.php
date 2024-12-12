@@ -33,7 +33,9 @@ class Zippy_Admin_Settings
   {
     add_action('admin_menu',  array($this, 'zippy_booking_car_page'));
     add_action('admin_enqueue_scripts', array($this, 'admin_booking_assets'));
+    add_action('woocommerce_order_status_completed', array($this, 'handle_monthly_payment_orders'));
     add_action('wp_ajax_create_payment_order', array($this, 'create_payment_order'));
+    add_action('wp_ajax_nopriv_create_payment_order', array($this, 'create_payment_order'));
     add_filter('woocommerce_order_number', array($this, 'custom_order_number_display'), 10, 2);
   }
 
@@ -44,9 +46,10 @@ class Zippy_Admin_Settings
 
     // Pass the user ID to the script
     // wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
-    // wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
+    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
     wp_enqueue_script('admin-booking-table-js', ZIPPY_BOOKING_URL . 'assets/js/admin-booking-table.js', [], $version);
-    
+    // wp_enqueue_style('admin-booking-table-css', ZIPPY_BOOKING_URL . 'assets/sass/_admin-booking-table.scss', [], $version);
+
     //lib
     wp_enqueue_script('admin-jquery-ui-js', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.js', [], $version);
     wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.css', [], $version);
@@ -100,7 +103,7 @@ class Zippy_Admin_Settings
       $args = array(
         'limit' => -1,
         'customer_id' => $customer_id,
-        // 'status' => 'completed',
+        'status' => 'completed',
       );
       $orders = wc_get_orders($args);
 
@@ -241,7 +244,6 @@ class Zippy_Admin_Settings
     }
   }
 
-
   public function custom_order_number_display($order_number, $order)
   {
     $custom_order_number = $order->get_meta('_custom_order_number');
@@ -250,5 +252,32 @@ class Zippy_Admin_Settings
     }
 
     return $order_number;
+  }
+  public function handle_monthly_payment_orders($order_id)
+  {
+    $order = wc_get_order($order_id);
+
+    if (!$order->get_meta('is_monthly_payment_order', true)) {
+      return;
+    }
+
+    $month_of_order = $order->get_meta('month_of_order', true);
+    $customer_id = $order->get_customer_id();
+
+    $args = array(
+      'limit' => -1,
+      'customer_id' => $customer_id,
+    );
+
+    $orders = wc_get_orders($args);
+
+    foreach ($orders as $child_order) {
+      $child_order_month = $child_order->get_date_created()->format('F Y');
+      $is_monthly_payment_order = $child_order->get_meta('is_monthly_payment_order', true);
+
+      if ($child_order_month === $month_of_order && !$is_monthly_payment_order) {
+        $child_order->update_status('completed', 'Parent monthly order has been completed.');
+      }
+    }
   }
 }

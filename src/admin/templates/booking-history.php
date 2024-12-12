@@ -3,18 +3,6 @@
 ?>
     <div class="wrap">
         <h1>Details for Customer ID: <?php echo $customer_id; ?> </h1>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script>
-            jQuery(document).ready(function ($) {
-                $("#month-tabs").tabs(); // Initialize tabs
-                $(".order-accordion").accordion({
-                    collapsible: true,
-                    active: false, // Start with all orders collapsed
-                    heightStyle: "content"
-                });
-            });
-        </script>
         <style>
             #month-tabs .wp-list-table a{
                 color: #2271b1;
@@ -139,7 +127,7 @@
 <?php 
     } else {
 ?>
-    <h1>Bookings</h1>
+    <h1>History</h1>
     <?php if (!empty($order_infos)) { ?>
     <table class="wp-list-table widefat fixed striped">
         <thead>

@@ -1,0 +1,31 @@
+$pending-color: #336699;
+$completed-color: #339966;
+#month-tabs {
+  border: 0;
+  background: none;
+  .not-all-completed {
+    ul {
+      padding: 0;
+      border: 0;
+      background: none;
+      li {
+        border: 0;
+        background: #6699CC;
+        &.ui-state-active {
+          &.pending {
+            background: $pending-color !important;
+          }
+          &.completed {
+            background: $completed-color !important;
+          }
+        }
+      }
+    }
+  }
+}
+.ui-tabs-panel {
+  &.tab-content {
+    background: #FFFFFF !important;
+  }
+}
+
