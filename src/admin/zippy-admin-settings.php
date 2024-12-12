@@ -66,7 +66,7 @@ class Zippy_Admin_Settings
 
   public function zippy_booking_car_page()
   {
-    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-admin-generic', 6);
+    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-list-view', 6);
 
     //add Booking History submenu
     add_submenu_page(
