@@ -43,16 +43,13 @@ class Zippy_Admin_Settings
   {
     $version = time();
     $current_user_id = get_current_user_id();
-
-    // Pass the user ID to the script
-    // wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
-    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
-    wp_enqueue_script('admin-booking-table-js', ZIPPY_BOOKING_URL . 'assets/js/admin-booking-table.js', [], $version);
-    // wp_enqueue_style('admin-booking-table-css', ZIPPY_BOOKING_URL . 'assets/sass/_admin-booking-table.scss', [], $version);
-
     //lib
-    wp_enqueue_script('admin-jquery-ui-js', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.js', [], $version);
-    wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/lib/jquery-ui/jquery-ui.min.css', [], $version);
+    wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/libs/jquery-ui/jquery-ui.min.css', [], $version);
+    // Pass the user ID to the script
+    wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/admin.min.js', [], $version, true);
+    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/admin.min.css', [], $version);
+
+
 
 
 
