@@ -9,7 +9,7 @@ $(document).ready(function() {
         heightStyle: "content"
     });
 
-    $(".payment-button").on("click", function() {
+    $(".create-order-button").on("click", function() {
         var customer_id = $(this).data("customer-id");
         var month_of_order = $(this).data("month-of-order");
 

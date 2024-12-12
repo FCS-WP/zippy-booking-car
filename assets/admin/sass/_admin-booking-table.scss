@@ -10,7 +10,7 @@ $completed-color: #339966;
       background: none;
       li {
         border: 0;
-        background: #6699CC;
+        background: #6699cc;
         &.ui-state-active {
           &.pending {
             background: $pending-color !important;
@@ -25,7 +25,11 @@ $completed-color: #339966;
 }
 .ui-tabs-panel {
   &.tab-content {
-    background: #FFFFFF !important;
+    background: #ffffff !important;
   }
 }
-
+.back-to-bookings {
+  background: #6699cc !important;
+  color: white !important;
+  border: 1px solid #6699cc !important;
+}

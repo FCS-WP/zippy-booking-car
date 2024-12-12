@@ -90,7 +90,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 ?>
                     <div class="all-completed">
                         <h3>All monthly orders have been paid.</h3>
-                        <a class="button go-to-history" href='<?php echo esc_url(admin_url('admin.php?page=booking-history')) ?>'>Go to History</a>
                     </div>
                 <?php
                 }
@@ -180,14 +179,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 <p><strong>Monthly Payment Order Status:</strong><span class="order-status"> <?php echo esc_html(wc_get_order_status_name($payment_order->get_status())) ?></span></p>
                                 <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
                             </div>
-                            <button class="button create-order-button" disabled>Create Order for this Month</button>
+                            <button class="button create-order-button" disabled>Create order for this month</button>
                         <?php
                         } else {
                         ?>
                             <div style="margin-top: 10px;">
                                 <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
                             </div>
-                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id) ?>" data-month-of-order="<?php echo esc_attr($month_of_order) ?>">Create Order for this Month</button>
+                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id) ?>" data-month-of-order="<?php echo esc_attr($month_of_order) ?>">Create order for this month</button>
                         <?php
                         }
                         ?>
@@ -198,7 +197,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             </div> <!-- End tabs container -->
 
             <a href="<?php echo esc_url(admin_url('admin.php?page=booking-table')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
-
+            <?php if ($all_completed) { ?>
+                <a class="button go-to-history" style="margin-top: 20px;" href='<?php echo esc_url(admin_url('admin.php?page=booking-history')) ?>'>Go to History</a>
+            <?php } ?>
         </div>
     <?php
     } else {
