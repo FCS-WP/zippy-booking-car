@@ -218,8 +218,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     <?php
     }
 } else {
-    ?>
-    <?php
     $args = array(
         'limit' => -1,
         'orderby' => 'date',
@@ -228,8 +226,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     $orders = wc_get_orders($args);
 
     $grouped_orders = array();
-    ?>
-    <?php
+
     foreach ($orders as $order) {
         $customer_id = $order->get_customer_id();
 
@@ -255,15 +252,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
         }
         $grouped_orders[$customer_id]['orders'][] = $order;
     }
-    ?>
 
+    ksort($grouped_orders);
+    ?>
     <div class="wrap">
         <h1>Bookings</h1>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
                     <th>Customer Name</th>
-                    <th style="width: 20%; text-align: center;">Number of Orders to be paid</th>
+                    <th style="width: 15%; text-align: center;">Number of orders per month</th>
+                    <th style="width: 15%; text-align: center;">Number of orders to be paid</th>
                     <th style="width: 10%;">Action</th>
                 </tr>
             </thead>
@@ -272,17 +271,32 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 if (!empty($grouped_orders)) {
                     foreach ($grouped_orders as $customer_id => $data) {
                         $customer_name = $data['customer_name'];
+                        $months_grouped = array();
+
+                        foreach ($data['orders'] as $order) {
+                            if ($order->get_status() === 'completed') {
+                                continue; 
+                            }
+                            $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
+                            $month_of_order = $is_monthly_payment_order
+                                ? $order->get_meta('month_of_order', true)
+                                : $order->get_date_created()->format('F Y');
+
+                            if (!in_array($month_of_order, $months_grouped)) {
+                                $months_grouped[] = $month_of_order;
+                            }
+                        }
+                        $months_count = count($months_grouped);
 
                         $filtered_orders = array_filter($data['orders'], function ($order) {
-                            return !$order->get_meta('is_monthly_payment_order') && $order->get_status() !== 'completed';
+                            return $order->get_meta('is_monthly_payment_order') && $order->get_status() !== 'completed';
                         });
-
                         $order_count = count($filtered_orders);
                 ?>
-
                         <tr>
                             <td class="customer-name">#<?php echo esc_html($customer_id); ?> <?php echo esc_html($customer_name); ?></td>
-                            <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>
+                            <td class="months-grouped" style="text-align: center;"><?php echo esc_html($months_count); ?></td>
+                            <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>     
                             <td class="action"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
                         </tr>
                     <?php
@@ -297,7 +311,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 ?>
             </tbody>
         </table>
-
     </div>
 <?php
 }

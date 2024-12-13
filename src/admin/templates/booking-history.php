@@ -13,7 +13,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     foreach ($orders as $order) {
                         $order_time_by_month_year = $order->get_date_created()->format('F Y');
                     ?>
-                        <li>
+                        <li class="<?php echo sanitize_title($order->get_status()); ?>">
                             <a href="#tab-<?php echo sanitize_title("order-" . $order->get_id()) ?>">
                                 <?php echo "#" . $order->get_meta("_custom_order_number") . " (" . wc_get_order_status_name($order->get_status()) . ")"  ?>
                             </a>
@@ -116,7 +116,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 <?php } ?>
             </div>
         <?php } else {
-            echo "No Order Found!";
+            echo "<h3>No orders have been paid yet!</h3>";
         } ?>
     </div><a class="button back-to-history-bookings" href="admin.php?page=booking-history" style="margin-top: 20px;">Back to History Bookings</a>
     </div>
@@ -129,7 +129,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             <thead>
                 <tr>
                     <th>Customer Name</th>
-                    <th style="width: 20%; text-align: center;">Number of paid orders</th>
+                    <th style="width: 15%; text-align: center;">Number of paid orders</th>
                     <th style="width: 10%;">Action</th>
                 </tr>
             </thead>
