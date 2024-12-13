@@ -1,5 +1,5 @@
-$pending-color: #336699;
-$completed-color: #339966;
+$info: #336699;
+$primary: #339966;
 #month-tabs {
   border: 0;
   background: none;
@@ -13,10 +13,10 @@ $completed-color: #339966;
         background: #dddddd;
         &.ui-state-active {
           &.pending {
-            background: $pending-color !important;
+            background: $info !important;
           }
           &.completed {
-            background: $completed-color !important;
+            background: $primary !important;
           }
           padding-bottom: 0 !important;
         }
@@ -41,12 +41,12 @@ $completed-color: #339966;
       background: #dddddd;
       color: black;
       &.ui-state-active {
-        background: $pending-color !important;
+        background: $info !important;
         &.pending {
-          background: $pending-color !important;
+          background: $info !important;
         }
         &.completed {
-          background: $completed-color !important;
+          background: $primary !important;
         }
         padding-bottom: 0 !important;
       }
@@ -68,7 +68,31 @@ $completed-color: #339966;
 .back-to-bookings,
 .back-to-history-bookings,
 .view-order-detail-button {
-  background: $pending-color !important;
+  background: $info !important;
   color: white !important;
-  border: 1px solid $pending-color !important;
+  border: 1px solid $info !important;
+}
+table.table-customers {
+  border: 1px solid $info !important;
+  border-radius: 5px;
+  thead {
+    border-color: $info !important;
+    tr {
+      border-color: $info !important;
+      th {
+        background: $info !important;
+        color: white !important;
+      }
+    }
+  }
+  .customer-name {
+    font-weight: bold;
+    a {
+      color: #50575e !important;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        color: $info !important;
+      }
+    }
+  }
 }

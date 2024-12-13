@@ -123,40 +123,42 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 <?php
 } else {
 ?>
-    <h1>History</h1>
-    <?php if (!empty($order_infos)) { ?>
-        <table class="wp-list-table widefat fixed striped">
-            <thead>
-                <tr>
-                    <th>Customer Name</th>
-                    <th style="width: 15%; text-align: center;">Number of paid orders</th>
-                    <th style="width: 10%;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                foreach ($order_infos as $customer_id => $data) {
-                ?>
+    <div class="wrap">
+        <h1>History</h1>
+        <?php if (!empty($order_infos)) { ?>
+            <table class="wp-list-table widefat fixed striped table-customers">
+                <thead>
                     <tr>
-                        <td><?php echo esc_html($data["customer_name"]) . ' # ' . esc_html($customer_id); ?></td>
-                        <td style="text-align: center;">
-                            <?php
-                            $filtered_orders = array_filter($data['orders'], function ($order) {
-                                return $order->get_status() === 'completed';
-                            });
-
-                            $order_count = count($filtered_orders);
-                            echo $order_count;
-                            ?>
-
-                        </td>
-                        <td><a href="admin.php?page=booking-history&customer_id=<?php echo $customer_id ?>&action=view">View</a>
-                        </td>
+                        <th>Customer Name</th>
+                        <th style="width: 15%; text-align: center;">Number of paid orders</th>
+                        <th style="width: 10%; text-align: center;">Action</th>
                     </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-    <?php } else {
-        echo "No data found";
-    } ?>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($order_infos as $customer_id => $data) {
+                    ?>
+                        <tr>
+                            <td class="customer-name"><a href="admin.php?page=booking-history&customer_id=<?php echo $customer_id ?>&action=view">#<?php echo esc_html($customer_id) . ' ' . esc_html($data["customer_name"]); ?></a></td>
+                            <td class="order-count" style="text-align: center;">
+                                <?php
+                                $filtered_orders = array_filter($data['orders'], function ($order) {
+                                    return $order->get_status() === 'completed';
+                                });
+
+                                $order_count = count($filtered_orders);
+                                echo $order_count;
+                                ?>
+
+                            </td>
+                            <td class="action" style="text-align: center;"><a href="admin.php?page=booking-history&customer_id=<?php echo $customer_id ?>&action=view">View</a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+    </div>
+<?php } else {
+            echo "No data found";
+        } ?>
 <?php } ?>

@@ -257,13 +257,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     ?>
     <div class="wrap">
         <h1>Bookings</h1>
-        <table class="wp-list-table widefat fixed striped">
+        <table class="wp-list-table widefat fixed striped table-customers">
             <thead>
                 <tr>
                     <th>Customer Name</th>
                     <th style="width: 15%; text-align: center;">Number of orders per month</th>
                     <th style="width: 15%; text-align: center;">Number of orders to be paid</th>
-                    <th style="width: 10%;">Action</th>
+                    <th style="width: 10%; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -275,7 +275,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
                         foreach ($data['orders'] as $order) {
                             if ($order->get_status() === 'completed') {
-                                continue; 
+                                continue;
                             }
                             $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
                             $month_of_order = $is_monthly_payment_order
@@ -294,10 +294,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         $order_count = count($filtered_orders);
                 ?>
                         <tr>
-                            <td class="customer-name">#<?php echo esc_html($customer_id); ?> <?php echo esc_html($customer_name); ?></td>
+                            <td class="customer-name"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">#<?php echo esc_html($customer_id)." ".esc_html($customer_name); ?></a></td>
                             <td class="months-grouped" style="text-align: center;"><?php echo esc_html($months_count); ?></td>
-                            <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>     
-                            <td class="action"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
+                            <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>
+                            <td class="action" style="text-align: center;"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
                         </tr>
                     <?php
                     }
