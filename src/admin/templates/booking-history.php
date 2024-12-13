@@ -25,7 +25,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     $order_time_by_month_year = $order->get_date_created()->format('F Y');
                     $child_orders = [];
                     $child_order_ids = unserialize($order->get_meta("list_of_child_orders"));
-                    // var_dump($child_order_ids);die;
                     if (!empty($child_order_ids)) {
                         $child_order_args = [
                             'limit'   => -1,
