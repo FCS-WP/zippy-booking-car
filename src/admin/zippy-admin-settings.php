@@ -95,8 +95,12 @@ class Zippy_Admin_Settings
       );
       $orders = wc_get_orders($args);
 
+      $filtered_orders = array_filter($orders, function ($order) {
+        return $order->get_meta('is_monthly_payment_order') ? true : false;
+      });
+
       $data["customer_id"] = $customer_id;
-      $data["orders"] = $orders;
+      $data["orders"] = $filtered_orders;
     } else {
       $args = array(
         'limit' => -1,
@@ -109,6 +113,10 @@ class Zippy_Admin_Settings
         "order_infos" => [],
       ];
       foreach ($orders as $order) {
+        if (!$order->get_meta('is_monthly_payment_order')) {
+          continue;
+        }
+
         $customer_id = $order->get_customer_id();
 
         if (!$customer_id) {
@@ -134,6 +142,7 @@ class Zippy_Admin_Settings
         $data["order_infos"][$customer_id]['orders'][] = $order;
       }
     }
+
 
     echo Zippy_Utils_Core::get_template('booking-history.php', $data, dirname(__FILE__), '/templates');
   }

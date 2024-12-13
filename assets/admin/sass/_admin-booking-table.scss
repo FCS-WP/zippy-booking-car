@@ -3,14 +3,14 @@ $completed-color: #339966;
 #month-tabs {
   border: 0;
   background: none;
-  .not-all-completed {
+  &.not-all-completed {
     ul {
       padding: 0;
       border: 0;
       background: none;
       li {
         border: 0;
-        background: #6699cc;
+        background: #dddddd;
         &.ui-state-active {
           &.pending {
             background: $pending-color !important;
@@ -18,6 +18,43 @@ $completed-color: #339966;
           &.completed {
             background: $completed-color !important;
           }
+          padding-bottom: 0 !important;
+        }
+        a {
+          color: black;
+          text-decoration: underline;
+          &:focus,
+          &:active {
+            border: 0 !important;
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+  }
+  ul {
+    padding: 0;
+    border: 0;
+    background: none;
+    li {
+      border: 0;
+      background: #dddddd;
+      color: black;
+      &.ui-state-active {
+        background: $pending-color !important;
+        &.pending {
+          background: $pending-color !important;
+        }
+        &.completed {
+          background: $completed-color !important;
+        }
+        padding-bottom: 0 !important;
+      }
+      a {
+        &:focus,
+        &:active {
+          border: 0 !important;
+          box-shadow: none !important;
         }
       }
     }
@@ -28,8 +65,10 @@ $completed-color: #339966;
     background: #ffffff !important;
   }
 }
-.back-to-bookings {
-  background: #6699cc !important;
+.back-to-bookings,
+.back-to-history-bookings,
+.view-order-detail-button {
+  background: $pending-color !important;
   color: white !important;
-  border: 1px solid #6699cc !important;
+  border: 1px solid $pending-color !important;
 }

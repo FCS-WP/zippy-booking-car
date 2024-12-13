@@ -72,7 +72,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 } else {
                                     $tab_status = '';
                                 }
-
                             ?>
                                 <li class="<?php echo esc_attr($order_status); ?>">
                                     <a href="#tab-<?php echo esc_attr(sanitize_title($month_of_order)); ?>">
@@ -174,22 +173,29 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         <?php
                         if (isset($monthly_payment_orders[$month_of_order])) {
                             $payment_order = $monthly_payment_orders[$month_of_order];
+                            $order_id = $payment_order->get_id();
                         ?>
                             <div style="margin-top: 10px;">
-                                <p><strong>Monthly Payment Order Status:</strong><span class="order-status"> <?php echo esc_html(wc_get_order_status_name($payment_order->get_status())) ?></span></p>
-                                <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
+                                <p>
+                                    <strong>Monthly Payment Order Status:</strong>
+                                    <span class="order-status"> <?php echo esc_html(wc_get_order_status_name($payment_order->get_status())); ?></span>
+                                </p>
+                                <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
                             </div>
                             <button class="button create-order-button" disabled>Create order for this month</button>
+
+                            <a href="<?php echo esc_url(admin_url('post.php?post=' . $order_id . '&action=edit')); ?>" class="button view-order-detail-button">View Order</a>
                         <?php
                         } else {
                         ?>
                             <div style="margin-top: 10px;">
-                                <h3>Total for <?php echo esc_html($month_of_order) ?>: <?php echo wc_price($data['total']); ?>
+                                <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
                             </div>
-                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id) ?>" data-month-of-order="<?php echo esc_attr($month_of_order) ?>">Create order for this month</button>
+                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id); ?>" data-month-of-order="<?php echo esc_attr($month_of_order); ?>">Create order for this month</button>
                         <?php
                         }
                         ?>
+
                     </div> <!-- End tab content for the current month -->
                 <?php
                 }
