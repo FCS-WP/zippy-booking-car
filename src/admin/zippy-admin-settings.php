@@ -180,6 +180,7 @@ class Zippy_Admin_Settings
 
     $total_for_month = 0;
     $selected_orders = [];
+    $selected_orders_ids = [];
 
     foreach ($orders as $order) {
       $order_date = $order->get_date_created();
@@ -189,6 +190,7 @@ class Zippy_Admin_Settings
       if ($order_month_year === $month_of_order && !$is_monthly_payment_order) {
         $total_for_month += $order->get_total();
         $selected_orders[] = $order;
+        $selected_orders_ids[] =$order->get_id();
       }
     }
 
@@ -220,6 +222,7 @@ class Zippy_Admin_Settings
 
     $order->update_meta_data('is_monthly_payment_order', true);
     $order->update_meta_data('month_of_order', $month_of_order);
+    $order->update_meta_data('list_of_child_orders', serialize($selected_orders_ids));
 
     $custom_order_number = $order->get_id() . ' ' . $month_of_order . '-';
     $order->update_meta_data('_custom_order_number', $custom_order_number);
