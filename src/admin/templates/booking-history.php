@@ -39,15 +39,16 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php
                             if (!empty($child_orders)) {
                                 foreach ($child_orders as $child_order) {
+                                     $child_order_id = $child_order->get_id();
                             ?>
-                                    <h4>Order #<?php echo $child_order->get_id(); ?></h4>
+                                    <h4>Order #<?php echo $child_order_id ?></h4>
                                     <div>
                                         <table class="wp-list-table widefat fixed striped">
                                             <tr>
                                                 <th>Order ID</th>
                                                 <td>
                                                     <a href="admin.php?page=wc-orders&action=edit&id=<?php echo sanitize_title($child_order->get_id()); ?>" target="_blank">
-                                                        <?php echo "#" . $child_order->get_id(); ?>
+                                                        <?php echo "#" . $child_order_id; ?>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -69,6 +70,60 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                                     <a href="tel:<?php echo $child_order->get_billing_phone(); ?>">
                                                         <?php echo $child_order->get_billing_phone(); ?>
                                                     </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Pickup Date</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id,"pick_up_date", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Pickup Time</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "pick_up_time", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Pickup Location</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "pick_up_location", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Drop Off Location</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "drop_off_location", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>No. of Passengers</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "no_of_passengers", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>No. of Baggage</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "no_of_passengers", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Additional Stop</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "additional_stop", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Midnight Fee</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "midnight_fee", true); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Special Requests</th>
+                                                <td>
+                                                <?php echo get_post_meta($child_order_id, "special_requests", true); ?>
                                                 </td>
                                             </tr>
                                             <tr>
