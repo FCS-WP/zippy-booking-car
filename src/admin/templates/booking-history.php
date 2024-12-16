@@ -1,58 +1,6 @@
 <?php
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
 ?>
-    <style>
-        
-        .pagination {
-            display: flex;
-            justify-content: center; 
-            gap: 5px; 
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        
-        .pagination a, .pagination .dots {
-            display: inline-block;
-            padding: 6px 10px;
-            color: #369; 
-            text-decoration: none; 
-            border: 1px solid #ddd; 
-            background-color: #fff; 
-            border-radius: 2px; 
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04); 
-            transition: background-color 0.2s, color 0.2s; 
-        }
-
-        
-        .pagination a:hover {
-            background-color: #369; 
-            color: #fff; 
-            border-color: #369; 
-            /* font-weight: bold; */
-        }
-
-        
-        .pagination .current {
-            display: inline-block;
-            padding: 6px 10px;
-            color: #fff; 
-            background-color: #369; 
-            border: 1px solid #369; 
-            border-radius: 2px; 
-            font-weight: bold; 
-        }
-
-        
-        .pagination .prev,
-        .pagination .next {
-            font-weight: normal; 
-            text-transform: capitalize; 
-        }
-        .orders-summary{
-            text-align: center;
-        }
-    </style>
     <div class="wrap">
         <h1>Details for Customer ID: <?php echo $customer_id; ?> </h1>
         <?php
