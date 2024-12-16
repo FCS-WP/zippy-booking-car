@@ -111,6 +111,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         </div>
                         <div style="margin-top: 10px;">
                             <h3>Total for <?php echo $order_time_by_month_year . ": " . wc_price($order->get_total()) ?></h3>
+                            <a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>" class="button view-order-detail-button">View Order</a>
                         </div>
                     </div>
                 <?php } ?>
