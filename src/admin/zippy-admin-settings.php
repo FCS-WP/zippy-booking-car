@@ -224,7 +224,7 @@ class Zippy_Admin_Settings
     $order->update_meta_data('month_of_order', $month_of_order);
     $order->update_meta_data('list_of_child_orders', serialize($selected_orders_ids));
 
-    $custom_order_number = $order->get_id() . ' ' . $month_of_order . '-';
+    $custom_order_number = $order->get_id() . ' ' . $month_of_order . ' ';
     $order->update_meta_data('_custom_order_number', $custom_order_number);
 
     $order->calculate_totals();

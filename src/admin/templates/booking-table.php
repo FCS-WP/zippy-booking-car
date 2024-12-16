@@ -131,6 +131,60 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                             <td><?php echo esc_html($order->get_billing_phone()) ?></td>
                                         </tr>
                                         <tr>
+                                            <th>Pickup Date</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(),"pick_up_date", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Pickup Time</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "pick_up_time", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Pickup Location</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "pick_up_location", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Drop Off Location</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "drop_off_location", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>No. of Passengers</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>No. of Baggage</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Additional Stop</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "additional_stop", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Midnight Fee</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "midnight_fee", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Special Requests</th>
+                                            <td>
+                                            <?php echo get_post_meta($order->get_id(), "special_requests", true); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>Total</th>
                                             <td><?php echo wc_price($order->get_total()) ?></td>
                                         </tr>
