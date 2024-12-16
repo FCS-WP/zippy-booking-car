@@ -133,55 +133,55 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                         <tr>
                                             <th>Pickup Date</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(),"pick_up_date", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "pick_up_date", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Pickup Time</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "pick_up_time", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "pick_up_time", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Pickup Location</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "pick_up_location", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "pick_up_location", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Drop Off Location</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "drop_off_location", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "drop_off_location", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>No. of Passengers</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>No. of Baggage</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Additional Stop</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "additional_stop", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "additional_stop", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Midnight Fee</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "midnight_fee", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "midnight_fee", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Special Requests</th>
                                             <td>
-                                            <?php echo get_post_meta($order->get_id(), "special_requests", true); ?>
+                                                <?php echo get_post_meta($order->get_id(), "special_requests", true); ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -228,15 +228,21 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         if (isset($monthly_payment_orders[$month_of_order])) {
                             $payment_order = $monthly_payment_orders[$month_of_order];
                             $order_id = $payment_order->get_id();
+                            $order_status = $payment_order->get_status(); // Lấy trạng thái đơn hàng
                         ?>
                             <div style="margin-top: 10px;">
                                 <p>
                                     <strong>Monthly Payment Order Status:</strong>
-                                    <span class="order-status"> <?php echo esc_html(wc_get_order_status_name($payment_order->get_status())); ?></span>
+                                    <span class="order-status"> <?php echo esc_html(wc_get_order_status_name($order_status)); ?></span>
                                 </p>
                                 <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
                             </div>
-                            <button class="button create-order-button" disabled>Create order for this month</button>
+
+                            <!-- Nếu trạng thái đơn hàng là "completed", bỏ disabled của nút -->
+                            <button class="button create-order-button"
+                                <?php echo ($order_status == 'completed') ? '' : 'disabled'; ?>>
+                                Create order for this month
+                            </button>
 
                             <a href="<?php echo esc_url(admin_url('post.php?post=' . $order_id . '&action=edit')); ?>" class="button view-order-detail-button">View Order</a>
                         <?php
@@ -245,10 +251,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <div style="margin-top: 10px;">
                                 <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
                             </div>
-                            <button class="button create-order-button" data-customer-id="<?php echo esc_attr($customer_id); ?>" data-month-of-order="<?php echo esc_attr($month_of_order); ?>">Create order for this month</button>
+                            <button class="button create-order-button"
+                                data-customer-id="<?php echo esc_attr($customer_id); ?>"
+                                data-month-of-order="<?php echo esc_attr($month_of_order); ?>">Create order for this month</button>
                         <?php
                         }
                         ?>
+
 
                     </div> <!-- End tab content for the current month -->
                 <?php
@@ -267,7 +276,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
         <div class="wrap">
             <h1>No Orders Found for Customer ID: <?php echo esc_html($customer_id) ?></h1>
             <a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
-
         </div>
     <?php
     }
@@ -348,7 +356,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         $order_count = count($filtered_orders);
                 ?>
                         <tr>
-                            <td class="customer-name"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">#<?php echo esc_html($customer_id)." ".esc_html($customer_name); ?></a></td>
+                            <td class="customer-name"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">#<?php echo esc_html($customer_id) . " " . esc_html($customer_name); ?></a></td>
                             <td class="months-grouped" style="text-align: center;"><?php echo esc_html($months_count); ?></td>
                             <td class="order-count" style="text-align: center;"><?php echo esc_html($order_count); ?></td>
                             <td class="action" style="text-align: center;"><a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings&customer_id=' . $customer_id . '&action=view')); ?>">View</a></td>
