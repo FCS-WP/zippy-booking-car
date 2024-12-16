@@ -12,7 +12,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
         }
 
         
-        .pagination a {
+        .pagination a, .pagination .dots {
             display: inline-block;
             padding: 6px 10px;
             color: #369; 
