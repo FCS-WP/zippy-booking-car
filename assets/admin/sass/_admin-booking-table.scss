@@ -96,3 +96,64 @@ table.table-customers {
     }
   }
 }
+
+
+
+
+
+
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	gap: 5px;
+	margin-top: 20px;
+	font-size: 14px;
+	a {
+		display: inline-block;
+		padding: 6px 10px;
+		color: $info;
+		text-decoration: none;
+		border: 1px solid #ddd;
+		background-color: white;
+		border-radius: 2px;
+		box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+		transition: background-color 0.2s, color 0.2s;
+		&:hover {
+			background-color: $info;
+			color: white;
+			border-color: $info;
+		}
+	}
+	.dots {
+		display: inline-block;
+		padding: 6px 10px;
+		color: $info;
+		text-decoration: none;
+		border: 1px solid #ddd;
+		background-color: white;
+		border-radius: 2px;
+		box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+		transition: background-color 0.2s, color 0.2s;
+	}
+	.current {
+		display: inline-block;
+		padding: 6px 10px;
+		color: white;
+		background-color: $info;
+		border: 1px solid #369;
+		border-radius: 2px;
+		font-weight: bold;
+	}
+	.prev {
+		font-weight: normal;
+		text-transform: capitalize;
+	}
+	.next {
+		font-weight: normal;
+		text-transform: capitalize;
+	}
+}
+.orders-summary {
+	text-align: center;
+}

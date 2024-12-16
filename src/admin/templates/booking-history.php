@@ -170,6 +170,25 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 View Order
                             </a>
                         </div>
+                        <?php
+                            // Pagination
+
+                            $total_pages = ceil($total_orders / $orders_per_page);
+                            if ($total_pages > 1) {
+                                $pagination_args = [
+                                    'base'      => add_query_arg('paged', '%#%'),
+                                    'format'    => '',
+                                    'current'   => $current_page,
+                                    'total'     => $total_pages,
+                                    'prev_text' => __('&laquo; Previous'),
+                                    'next_text' => __('Next &raquo;'),
+                                ];
+                        ?>
+                            <div class="pagination">
+                                <?php echo paginate_links($pagination_args) ?>
+                            </div>
+                            <p class="orders-summary">Total monthly orders: <strong> <?php echo $total_orders ?></strong></p>
+                        <?php } ?>
                     </div>
                 <?php } ?>
             </div>
