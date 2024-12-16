@@ -187,7 +187,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <div class="pagination">
                                 <?php echo paginate_links($pagination_args) ?>
                             </div>
-                            <p class="orders-summary">Total monthly orders: <strong> <?php echo $total_orders ?></strong></p>
+                            <p class="orders-summary">Total: <strong> <?php echo $total_orders ?></strong></p>
                         <?php } ?>
                     </div>
                 <?php } ?>

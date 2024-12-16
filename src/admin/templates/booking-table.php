@@ -228,7 +228,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         if (isset($monthly_payment_orders[$month_of_order])) {
                             $payment_order = $monthly_payment_orders[$month_of_order];
                             $order_id = $payment_order->get_id();
-                            $order_status = $payment_order->get_status(); // Lấy trạng thái đơn hàng
+                            $order_status = $payment_order->get_status();
                         ?>
                             <div style="margin-top: 10px;">
                                 <p>
@@ -238,7 +238,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
                             </div>
 
-                            <!-- Nếu trạng thái đơn hàng là "completed", bỏ disabled của nút -->
                             <button class="button create-order-button"
                                 <?php echo ($order_status == 'completed') ? '' : 'disabled'; ?>>
                                 Create order for this month
