@@ -1,6 +1,58 @@
 <?php
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
 ?>
+    <style>
+        
+        .pagination {
+            display: flex;
+            justify-content: center; 
+            gap: 5px; 
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        
+        .pagination a {
+            display: inline-block;
+            padding: 6px 10px;
+            color: #369; 
+            text-decoration: none; 
+            border: 1px solid #ddd; 
+            background-color: #fff; 
+            border-radius: 2px; 
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04); 
+            transition: background-color 0.2s, color 0.2s; 
+        }
+
+        
+        .pagination a:hover {
+            background-color: #369; 
+            color: #fff; 
+            border-color: #369; 
+            /* font-weight: bold; */
+        }
+
+        
+        .pagination .current {
+            display: inline-block;
+            padding: 6px 10px;
+            color: #fff; 
+            background-color: #369; 
+            border: 1px solid #369; 
+            border-radius: 2px; 
+            font-weight: bold; 
+        }
+
+        
+        .pagination .prev,
+        .pagination .next {
+            font-weight: normal; 
+            text-transform: capitalize; 
+        }
+        .orders-summary{
+            text-align: center;
+        }
+    </style>
     <div class="wrap">
         <h1>Details for Customer ID: <?php echo $customer_id; ?> </h1>
         <?php
@@ -170,6 +222,25 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 View Order
                             </a>
                         </div>
+                        <?php
+                            // Pagination
+
+                            $total_pages = ceil($total_orders / $orders_per_page);
+                            if ($total_pages > 1) {
+                                $pagination_args = [
+                                    'base'      => add_query_arg('paged', '%#%'),
+                                    'format'    => '',
+                                    'current'   => $current_page,
+                                    'total'     => $total_pages,
+                                    'prev_text' => __('&laquo; Previous'),
+                                    'next_text' => __('Next &raquo;'),
+                                ];
+                        ?>
+                            <div class="pagination">
+                                <?php echo paginate_links($pagination_args) ?>
+                            </div>
+                            <p class="orders-summary">Total monthly orders: <strong> <?php echo $total_orders ?></strong></p>
+                        <?php } ?>
                     </div>
                 <?php } ?>
             </div>

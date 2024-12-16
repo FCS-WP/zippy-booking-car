@@ -87,25 +87,55 @@ class Zippy_Admin_Settings
   {
     $data = [];
     if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
+      
       $customer_id = sanitize_text_field($_GET['customer_id']);
+      
+      // Post per page
+      $orders_per_page = 7;
+
+      // Current Page
+      $current_page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+      
+      // Offset
+      $offset = ($current_page - 1) * $orders_per_page;
+
+      // Query array to count total orders
+
       $args = array(
         'limit' => -1,
         'customer_id' => $customer_id,
         'status' => 'completed',
+        'meta_key' => 'is_monthly_payment_order',
+        'meta_value' => 1,
+        'meta_compare' => '=',
+        'return' => "ids"
       );
+      $total_orders = count(wc_get_orders($args));
+      
+      
+      // New Query Array for Orders List
+
+      $args["limit"] = $orders_per_page;
+      $args["offset"] = $offset;
+      $args["orderby"] = "date";
+      $args["order"] = "DESC";
+      
+      unset($args["return"]);
+
       $orders = wc_get_orders($args);
 
-      $filtered_orders = array_filter($orders, function ($order) {
-        return $order->get_meta('is_monthly_payment_order') ? true : false;
-      });
-
       $data["customer_id"] = $customer_id;
-      $data["orders"] = $filtered_orders;
+      $data["orders"] = $orders;
+      $data["total_orders"] = $total_orders;
+      $data["current_page"] = $current_page;
+      $data["orders_per_page"] = $orders_per_page;
+
     } else {
+
       $args = array(
         'limit' => -1,
         'orderby' => 'date',
-        'order' => 'ASC',
+        'order' => 'DESC',
       );
       $orders = wc_get_orders($args);
 
