@@ -350,17 +350,9 @@ class Zippy_Woo_Booking
   function restrict_payment_methods_for_logged_in_users($available_gateways)
   {
     if (is_user_logged_in()) {
-      if(is_checkout() && get_query_var('order-pay')){
-        foreach ($available_gateways as $gateway_id => $gateway) {
-          if ($gateway_id === 'cheque') {
-            unset($available_gateways[$gateway_id]);
-          }
-        }
-      }else{
-        foreach ($available_gateways as $gateway_id => $gateway) {
-          if ($gateway_id !== 'cheque') {
-            unset($available_gateways[$gateway_id]);
-          }
+      foreach ($available_gateways as $gateway_id => $gateway) {
+        if ($gateway_id !== 'cheque') {
+          unset($available_gateways[$gateway_id]);
         }
       }
     } else {
