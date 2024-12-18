@@ -107,7 +107,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 }
 
                             ?>
-                                <li>
+                                <li class="<?php echo $tab_status; ?>">
                                     <a href="#tab-<?php echo esc_attr(sanitize_title($month_of_order)); ?>">
                                         <?php
                                         echo esc_html($month_of_order);
