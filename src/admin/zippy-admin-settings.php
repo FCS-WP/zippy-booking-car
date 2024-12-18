@@ -201,7 +201,6 @@ class Zippy_Admin_Settings
     $billing_last_name = get_user_meta($customer_id, 'billing_last_name', true);
     $customer_name = trim($billing_first_name . ' ' . $billing_last_name);
 
-    // Fetch all orders for the customer
     $args = array(
       'customer_id' => $customer_id,
       'limit' => -1,
@@ -216,7 +215,6 @@ class Zippy_Admin_Settings
       $order_date = $order->get_date_created();
       $order_month_year = $order_date->format('F Y');
 
-      // Lọc đơn hàng theo tháng và trạng thái là 'on-hold'
       $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
       if ($order_month_year === $month_of_order && !$is_monthly_payment_order && $order->get_status() === 'on-hold') {
         $total_for_month += $order->get_total();
@@ -230,7 +228,6 @@ class Zippy_Admin_Settings
       return;
     }
 
-    // Count existing summary orders for the same month
     $existing_summary_orders = wc_get_orders([
       'meta_key' => 'is_monthly_payment_order',
       'meta_value' => true,
