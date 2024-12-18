@@ -1,7 +1,5 @@
 <?php
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
-?>
-    <?php
     $customer_id = sanitize_text_field($_GET['customer_id']);
     $args = array(
         'limit' => -1,
@@ -15,28 +13,53 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             <?php
             $grouped_by_month = array();
             $monthly_payment_orders = array();
+            $summary_orders = [];
 
             foreach ($orders as $order) {
-                $order_date = $order->get_date_created();
                 $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
+                $order_date = $order->get_date_created();
 
                 $month_of_order = $is_monthly_payment_order
                     ? $order->get_meta('month_of_order', true)
                     : $order_date->format('F Y');
 
                 if ($is_monthly_payment_order) {
-                    $monthly_payment_orders[$month_of_order] = $order;
-                } else {
-                    if (!isset($grouped_by_month[$month_of_order])) {
-                        $grouped_by_month[$month_of_order] = array(
-                            'orders' => array(),
-                            'total' => 0
-                        );
+                    $summary_order_number = $order->get_meta('summary_order_number', true);
+
+                    if ($summary_order_number) {
+                        $summary_orders[$month_of_order][] = intval($summary_order_number);
                     }
-                    $grouped_by_month[$month_of_order]['orders'][] = $order;
+                    $monthly_payment_orders[$month_of_order][] = $order;
+                    continue;
+                }
+
+                if (!isset($grouped_by_month[$month_of_order])) {
+                    $grouped_by_month[$month_of_order] = array(
+                        'orders' => array(),
+                        'summary_orders' => array(),
+                        'total' => 0,
+                    );
+                }
+
+
+                $grouped_by_month[$month_of_order]['orders'][] = $order;
+
+                $summary_order_number = $order->get_meta('summary_order_number', true);
+                if ($summary_order_number) {
+                    $grouped_by_month[$month_of_order]['summary_orders'][] = intval($summary_order_number);
+                }
+
+                if ($order->get_status() === 'on-hold') {
                     $grouped_by_month[$month_of_order]['total'] += $order->get_total();
                 }
+
+                usort($grouped_by_month[$month_of_order]['orders'], function ($a, $b) {
+                    return $a->get_id() - $b->get_id();
+                });
             }
+
+            $GLOBALS['summary_orders'] = $summary_orders;
+
             ?>
 
             <div id="month-tabs">
@@ -45,11 +68,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 $all_completed = true;
 
                 foreach ($grouped_by_month as $month_of_order => $data) {
-                    if (isset($monthly_payment_orders[$month_of_order]) && $monthly_payment_orders[$month_of_order]->get_status() === 'completed') {
+                    $all_completed_for_month = true;
 
+                    foreach ($data['orders'] as $order) {
+                        if ($order->get_status() !== 'completed') {
+                            $all_completed_for_month = false;
+                            break;
+                        }
+                    }
+
+                    if ($all_completed_for_month) {
                         $completed_months[] = $month_of_order;
                     } else {
-
                         $all_completed = false;
                     }
                 }
@@ -61,27 +91,33 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php
                             foreach ($grouped_by_month as $month_of_order => $data) {
 
-                                if (isset($monthly_payment_orders[$month_of_order])) {
-                                    $order_status = $monthly_payment_orders[$month_of_order]->get_status();
-
-                                    if ($order_status === 'completed') {
-                                        continue;
-                                    }
-
-                                    $tab_status = ' (' . esc_html(wc_get_order_status_name($order_status)) . ')';
-                                } else {
-                                    $tab_status = '';
+                                if (in_array($month_of_order, $completed_months)) {
+                                    continue;
                                 }
+                                $tab_status = '';
+
+                                foreach ($monthly_payment_orders[$month_of_order] as $order) {
+
+                                    $month_of_order_key = $order->get_meta('month_of_order', true);
+
+                                    if ($month_of_order === $month_of_order_key) {
+                                        $tab_status = $order->get_status();
+                                        break;
+                                    }
+                                }
+
                             ?>
-                                <li class="<?php echo esc_attr($order_status); ?>">
+                                <li>
                                     <a href="#tab-<?php echo esc_attr(sanitize_title($month_of_order)); ?>">
-                                        <?php echo esc_html($month_of_order) . $tab_status; ?>
+                                        <?php echo esc_html($month_of_order) . ' (' . wc_get_order_status_name($tab_status) . ')';
+                                        ?>
                                     </a>
                                 </li>
                             <?php
                             }
                             ?>
                         </ul>
+
                     </div>
 
                 <?php
@@ -96,7 +132,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
                 <?php
                 foreach ($grouped_by_month as $month_of_order => $data) {
-                    if (isset($monthly_payment_orders[$month_of_order]) && $monthly_payment_orders[$month_of_order]->get_status() === 'completed') {
+                    if (in_array($month_of_order, $completed_months)) {
                         continue;
                     }
                 ?>
@@ -106,7 +142,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php
                             foreach ($data['orders'] as $order) {
                             ?>
-                                <h4>Order #<?php echo esc_html($order->get_id()) ?></h4>
+                                <h4 class="<?php echo $order->get_status() ?>">Order #<?php echo esc_html($order->get_id()) ?> (<?php echo esc_html(wc_get_order_status_name($order->get_status())) ?>)</h4>
                                 <div>
                                     <!-- Display order details -->
                                     <table class="wp-list-table widefat fixed striped">
@@ -224,40 +260,41 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             ?>
                         </div> <!-- End order accordion -->
 
-                        <?php
-                        if (isset($monthly_payment_orders[$month_of_order])) {
-                            $payment_order = $monthly_payment_orders[$month_of_order];
-                            $order_id = $payment_order->get_id();
-                            $order_status = $payment_order->get_status();
-                        ?>
-                            <div style="margin-top: 10px;">
-                                <p>
-                                    <strong>Monthly Payment Order Status:</strong>
-                                    <span class="order-status"> <?php echo esc_html(wc_get_order_status_name($order_status)); ?></span>
-                                </p>
-                                <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
-                            </div>
+                        <div style="margin-top: 10px;">
+                            <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
+                        </div>
 
-                            <button class="button create-order-button"
-                                <?php echo ($order_status == 'completed') ? '' : 'disabled'; ?>>
-                                Create order for this month
-                            </button>
 
-                            <a href="<?php echo esc_url(admin_url('post.php?post=' . $order_id . '&action=edit')); ?>" class="button view-order-detail-button">View Order</a>
                         <?php
-                        } else {
-                        ?>
-                            <div style="margin-top: 10px;">
-                                <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
-                            </div>
-                            <button class="button create-order-button"
-                                data-customer-id="<?php echo esc_attr($customer_id); ?>"
-                                data-month-of-order="<?php echo esc_attr($month_of_order); ?>">Create order for this month</button>
-                        <?php
+                        $all_pending = true;
+
+                        foreach ($data['orders'] as $order) {
+                            if ($order->get_status() !== 'pending') {
+                                $all_pending = false;
+                                break;
+                            }
                         }
+                        $button_disabled = $all_pending ? 'disabled' : '';
                         ?>
 
+                        <button class="button create-order-button"
+                            data-customer-id="<?php echo esc_attr($customer_id); ?>"
+                            data-month-of-order="<?php echo esc_attr($month_of_order); ?>"
+                            <?php echo $button_disabled; ?>>Create order for this month</button>
 
+                        <?php
+                        foreach ($monthly_payment_orders[$month_of_order] as $order) {
+
+                            $month_of_order_key = $order->get_meta('month_of_order', true);
+
+                            if ($month_of_order === $month_of_order_key) {
+                                $order_id_of_month = $order->get_id();
+                                break;
+                            }
+                        }
+                        $summary_order_url = admin_url('post.php?post=' . $order_id_of_month . '&action=edit');
+                        ?>
+                        <a href="<?php echo esc_url($summary_order_url); ?>" class="button view-order-detail-button">View order of month</a>
                     </div> <!-- End tab content for the current month -->
                 <?php
                 }
@@ -375,3 +412,4 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     </div>
 <?php
 }
+?>
