@@ -241,7 +241,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                         <thead>
                                             <tr>
                                                 <th>Car</th>
-                                                <th>Quantity</th>
+                                                <th>Time</th>
                                                 <th>Price</th>
                                             </tr>
                                         </thead>

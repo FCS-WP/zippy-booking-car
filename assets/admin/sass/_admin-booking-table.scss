@@ -74,6 +74,9 @@ $primary: #339966;
     .ui-icon {
       filter: brightness(0) invert(1) !important;
     }
+    &.ui-state-active {
+     border: 1px solid $primary !important;
+    }
   }
   .on-hold {
     background: #f8dda7 !important;
@@ -191,4 +194,24 @@ table.table-customers {
 }
 .orders-summary {
   text-align: end;
+}
+.order-child-items{
+  margin-right: 20px;
+  .order-child-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: #c3c3c3;
+  padding: 5px 10px;
+  margin: 10px 0;
+  height: 20px;
+  border-radius: 5px;
+  a{
+    text-decoration: underline;
+  }
+  p{
+    font-weight: bold;
+  }
+}
 }

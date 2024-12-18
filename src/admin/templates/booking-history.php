@@ -9,198 +9,104 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             <div id="month-tabs">
                 <ul>
                     <?php
+                    $orders_by_month = [];
                     foreach ($orders as $order) {
-                        $order_time_by_month_year = $order->get_date_created()->format('F Y');
+                        $order_time_by_month_year = $order->get_meta('month_of_order', true);;
+                        if (!isset($orders_by_month[$order_time_by_month_year])) {
+                            $orders_by_month[$order_time_by_month_year] = [];
+                        }
+                        $orders_by_month[$order_time_by_month_year][] = $order;
+                    }
+
+                    foreach ($orders_by_month as $month => $month_orders) {
+                        foreach ($month_orders as $order) {
+                            $tab_status = $order->get_status();
+                        }
                     ?>
-                        <li class="<?php echo sanitize_title($order->get_status()); ?>">
-                            <a href="#tab-<?php echo sanitize_title("order-" . $order->get_id()) ?>">
-                                <?php echo "#" . $order->get_meta("_custom_order_number") . " (" . wc_get_order_status_name($order->get_status()) . ")"  ?>
+                        <li class="<?php echo $tab_status; ?>">
+                            <a href="#tab-<?php echo esc_attr(sanitize_title($month)); ?>">
+                                <?php
+                                echo esc_html($month);
+
+                                if (!empty($tab_status)) {
+                                    echo ' (' . wc_get_order_status_name($tab_status) . ')';
+                                }
+                                ?>
                             </a>
                         </li>
                     <?php } ?>
                 </ul>
+
                 <?php
-                    foreach ($orders as $order) {
-                        $order_time_by_month_year = $order->get_date_created()->format('F Y');
-                        $child_orders = [];
-                        $child_order_ids = unserialize($order->get_meta("list_of_child_orders"));
-                        if (!empty($child_order_ids)) {
-                            $child_order_args = [
-                                'limit'   => -1,
-                                'post__in' => $child_order_ids,
-                            ];
-                            $child_orders = wc_get_orders($child_order_args);
-                        }
+                foreach ($orders_by_month as $month => $month_orders) {
                 ?>
-                    <div id="tab-<?php echo sanitize_title("order-" . $order->get_id()) ?>" class="tab-content">
-                        <h3>Orders for <?php echo esc_html($order_time_by_month_year); ?></h3>
+                    <div id="tab-<?php echo esc_attr(sanitize_title($month)); ?>" class="tab-content">
+                        <h3>Orders for <?php echo esc_html($month); ?></h3>
                         <div class="order-accordion">
                             <?php
-                            if (!empty($child_orders)) {
-                                foreach ($child_orders as $child_order) {
-                                     $child_order_id = $child_order->get_id();
+                            foreach ($month_orders as $order) {
+                                $child_orders = [];
+                                $child_order_ids = unserialize($order->get_meta("list_of_child_orders"));
+                                if (!empty($child_order_ids)) {
+                                    $child_order_args = [
+                                        'limit'   => -1,
+                                        'post__in' => $child_order_ids,
+                                    ];
+                                    $child_orders = wc_get_orders($child_order_args);
+                                    usort($child_orders, function ($a, $b) {
+                                        return $a->get_id() - $b->get_id();
+                                    });
+                                }
                             ?>
-                                <h4>Order #<?php echo $child_order_id ?></h4>
+                                <h4 class="<?php echo $tab_status; ?>">Order #<?php echo $order->get_meta('_custom_order_number') ?> (<?php echo wc_get_order_status_name($order->get_status()); ?>)</h4>
                                 <div>
                                     <table class="wp-list-table widefat fixed striped">
                                         <tr>
                                             <th>Order ID</th>
                                             <td>
-                                                <a href="admin.php?page=wc-orders&action=edit&id=<?php echo sanitize_title($child_order->get_id()); ?>" target="_blank">
-                                                    <?php echo "#" . $child_order_id; ?>
+                                                <a href="admin.php?page=wc-orders&action=edit&id=<?php echo $order->get_id(); ?>" target="_blank">
+                                                    <?php echo "#" . $order->get_id(); ?>
                                                 </a>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>Date</th>
-                                            <td><?php echo $child_order->get_date_created()->date('Y-m-d H:i:s'); ?></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Customer</th>
-                                            <td><a href="user-edit.php?user_id=<?php echo $customer_id ?>" target="_blank"><?php echo $child_order->get_billing_first_name() . " " . $child_order->get_billing_last_name(); ?></a></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Email</th>
-                                            <td><a href="mailto:<?php echo $child_order->get_billing_email(); ?>"><?php echo $child_order->get_billing_email(); ?></a></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Phone</th>
-                                            <td>
-                                                <a href="tel:<?php echo $child_order->get_billing_phone(); ?>">
-                                                    <?php echo $child_order->get_billing_phone(); ?>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Pickup Date</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id,"pick_up_date", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Pickup Time</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "pick_up_time", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Pickup Location</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "pick_up_location", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Drop Off Location</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "drop_off_location", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>No. of Passengers</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "no_of_passengers", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>No. of Baggage</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "no_of_passengers", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Additional Stop</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "additional_stop", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Midnight Fee</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "midnight_fee", true); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Special Requests</th>
-                                            <td>
-                                            <?php echo get_post_meta($child_order_id, "special_requests", true); ?>
-                                            </td>
+                                            <td><?php echo $order->get_date_created()->date('Y-m-d H:i:s'); ?></td>
                                         </tr>
                                         <tr>
                                             <th>Total</th>
-                                            <td><?php echo wc_price($child_order->get_total()); ?></td>
+                                            <td><?php echo wc_price($order->get_total()); ?></td>
                                         </tr>
-                                        <tr>
-                                            <th>Status</th>
-                                            <td><?php echo wc_get_order_status_name($child_order->get_status()); ?></td>
-                                        </tr>
-                                    </table>
-                                    <h5>Products</h5>
-                                    <table class="wp-list-table widefat fixed striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Quantity</th>
-                                                <th>Total Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            foreach ($child_order->get_items() as $item) {
-                                            ?>
-                                                <tr>
-                                                    <td>
-                                                        <a href="post.php?action=edit&post=<?php echo $item["product_id"]; ?>" target="_blank">
-                                                            <?php echo esc_html($item->get_name()); ?>
-                                                        </a>
-                                                    </td>
-                                                    <td><?php echo esc_html($item->get_quantity()); ?></td>
-                                                    <td><?php echo wc_price($item->get_total()) ?></td>
-                                                </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            <?php }} ?>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <h3>
-                                Total for <?php echo $order_time_by_month_year . ": " . wc_price($order->get_total()) ?>
-                            </h3>
-                            <a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>" class="button view-order-detail-button">
-                                View Order
-                            </a>
-                        </div>
-                        <?php
-                            // Pagination
 
-                            $total_pages = ceil($total_orders / $orders_per_page);
-                            if ($total_pages > 1) {
-                                $pagination_args = [
-                                    'base'      => add_query_arg('paged', '%#%'),
-                                    'format'    => '',
-                                    'current'   => $current_page,
-                                    'total'     => $total_pages,
-                                    'prev_text' => __('&laquo; Previous'),
-                                    'next_text' => __('Next &raquo;'),
-                                ];
-                        ?>
-                            <div class="pagination">
-                                <?php echo paginate_links($pagination_args) ?>
-                            </div>
-                            <p class="orders-summary">Total: <strong> <?php echo $total_orders ?></strong></p>
-                        <?php } ?>
+                                    </table>
+
+                                    <?php if (!empty($child_orders)) { ?>
+                                        <h4>Items</h4>
+                                        <div class="order-child-items">
+                                        <?php foreach ($child_orders as $child_order) { ?>
+                                            <div class="order-child-item">
+                                                <h5><a href="admin.php?page=wc-orders&action=edit&id=<?php echo $child_order->get_id(); ?>" target="_blank">Order #<?php echo $child_order->get_id(); ?></a> (<?php echo wc_get_order_status_name($child_order->get_status()); ?>)</h5>
+                                                <p>Total: <?php echo wc_price($child_order->get_total()); ?> </p>
+                                            </div>
+                                        <?php } ?>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                        </div>
                     </div>
                 <?php } ?>
             </div>
+
         <?php } else {
             echo "<h3>No orders have been paid yet!</h3>";
         } ?>
     </div>
-        <a class="button back-to-history-bookings" href="admin.php?page=booking-history" style="margin-top: 20px;">
-            Back to History Bookings
-        </a>
+    <a class="button back-to-history-bookings" href="admin.php?page=booking-history" style="margin-top: 20px;">
+        Back to History Bookings
+    </a>
 <?php
-    } else {
+} else {
 ?>
     <div class="wrap">
         <h1>History</h1>
@@ -238,8 +144,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 </tbody>
             </table>
     </div>
-<?php 
-    } else {
-        echo "No data found";
-    }
-} ?>
+<?php
+        } else {
+            echo "No data found";
+        }
+    } ?>
