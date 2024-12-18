@@ -60,6 +60,47 @@ $primary: #339966;
     }
   }
 }
+.tab-content {
+  .pending {
+    background: $info !important;
+    color: white !important;
+    .ui-icon {
+      filter: brightness(0) invert(1) !important;
+    }
+  }
+  .completed {
+    background: $primary !important;
+    color: white !important;
+    .ui-icon {
+      filter: brightness(0) invert(1) !important;
+    }
+  }
+  .on-hold {
+    background: #f8dda7 !important;
+    color: #573b00 !important;
+    .ui-icon {
+      filter: brightness(0) !important;
+    }
+    .ui-state-active {
+      .ui-icon {
+        filter: brightness(0) !important;
+      }
+    }
+  }
+  .processing {
+    background: #c6e1c6 !important;
+    color: #2c4700 !important;
+    .ui-icon {
+      filter: brightness(0) !important;
+    }
+    .ui-state-active {
+      .ui-icon {
+        filter: brightness(0) !important;
+      }
+    }
+  }
+}
+
 .ui-tabs-panel {
   &.tab-content {
     background: #ffffff !important;
