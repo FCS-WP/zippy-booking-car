@@ -49,11 +49,20 @@ class Zippy_Woo_Booking
     /* Custom Order Fields */
     add_filter('woocommerce_checkout_fields',  array($this, 'add_multiple_custom_checkout_fields'));
 
+    /* Custom Staff Order Fields */
+    add_action('woocommerce_before_order_notes',  array($this, 'add_custom_staff_checkout_fields'));
+
     /* Handle Save Custom Order Fields */
     add_action('woocommerce_checkout_update_order_meta', array($this, 'save_multiple_custom_checkout_fields'));
 
+    /* Handle Save Custom Staff Order Fields */
+    add_action('woocommerce_checkout_update_order_meta', array($this, 'save_custom_staff_checkout_fields'));
+
     /* Handle Display Custom Order Fields */
     add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_multiple_custom_checkout_fields_in_admin'));
+
+    /* Handle Display Custom Staff Order Fields */
+    add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_custom_fields_in_order_details'));
 
     /* Handle Payment By User Type*/
     add_filter('woocommerce_available_payment_gateways', array($this, 'restrict_payment_methods_for_logged_in_users'));
@@ -374,5 +383,55 @@ class Zippy_Woo_Booking
     }
 
     return $available_gateways;
+  }
+
+  public function add_custom_staff_checkout_fields($checkout) {
+    echo '<div id="custom_checkout_fields"><h3>' . __('Member Staff Details') . '</h3>';
+    
+    // Name field
+    woocommerce_form_field('name_member_staff', array(
+        'type'        => 'text',
+        'class'       => array('form-row-first'),
+        'label'       => __('Name'),
+        'required'    => false,
+    ), $checkout->get_value('name_member_staff'));
+    
+    // Phone field
+    woocommerce_form_field('phone_member_staff', array(
+        'type'        => 'text',
+        'class'       => array('form-row-last'),
+        'label'       => __('Phone'),
+        'required'    => false,
+    ), $checkout->get_value('phone_member_staff'));
+    
+    echo '</div>';
+  }
+  
+  public function save_custom_staff_checkout_fields($order_id) {
+    if (!empty($_POST['name_member_staff'])) {
+        update_post_meta($order_id, '_name_member_staff', sanitize_text_field($_POST['name_member_staff']));
+    }
+    if (!empty($_POST['phone_member_staff'])) {
+        update_post_meta($order_id, '_phone_member_staff', sanitize_text_field($_POST['phone_member_staff']));
+    }
+  }
+  
+  public function display_custom_fields_in_order_details($order) {
+    $name_member_staff = get_post_meta($order->get_id(), '_name_member_staff', true);
+    $phone_member_staff = get_post_meta($order->get_id(), '_phone_member_staff', true);
+  
+    echo '<section class="woocommerce-customer-details">';
+    echo '<h2>' . __('Member Staff Details') . '</h2>';
+    echo '<ul class="woocommerce-order-details">';
+    
+    if ($name_member_staff) {
+        echo '<li><strong>' . __('Name: ') . ':</strong> ' . esc_html($name_member_staff) . '</li>';
+    }
+    if ($phone_member_staff) {
+        echo '<li><strong>' . __('Phone: ') . ':</strong> ' . esc_html($phone_member_staff) . '</li>';
+    }
+  
+    echo '</ul>';
+    echo '</section>';
   }
 }
