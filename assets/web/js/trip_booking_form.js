@@ -69,7 +69,8 @@ function convertDate(inputDate) {
 }
 
 // Function to calculate booking total price after changing the date range
-const $selectElement = $("#additional_stop");
+const $selectElementTripForm = $("#additional_stop");
+const $selectElementHourForm = $("#hbk_pickup_fee");
 const $resultPrice = $("#price-total");
 const productPrice = $resultPrice.data("product-price");
 
@@ -103,14 +104,7 @@ $popup.on("click", (event) => {
 });
 
 $("#servicetype").on("change", function () {
-  const selectedValue = $(this).val();
-  const $inputFlightDiv = $("#input-flight");
-
-  if (selectedValue === "Point-to-point Transfer") {
-    $inputFlightDiv.css("display", "none");
-  } else {
-    $inputFlightDiv.css("display", "flex");
-  }
+  $("#input-flight").css("display", this.value === "Point-to-point Transfer" ? "none" : "flex");
 });
 
 function midnightCheck(time) {
@@ -126,20 +120,15 @@ function midnightCheck(time) {
   return true;
 }
 
-$selectElement.on("change", function () {
-  const selectedOption = $selectElement.find("option:selected");
-  const value = selectedOption.val();
-
-  if (value == 0) {
-    result_price_number = $resultPrice.text();
-    $resultPrice.html(Number(result_price_number) - 25);
-  }
-  if (value == 1) {
-    result_price_number = $resultPrice.text();
-    $resultPrice.html(Number(result_price_number) + 25);
-  }
+$("#additional_stop, #hbk_pickup_fee").on("change", function () {
+  $(".toggleDisplayElements").toggleClass("displayNone");
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  $("#additional_stop, #hbk_pickup_fee").on("change", function () {
+    $("#additional_stop, #hbk_pickup_fee").val(this.value);
+  });
+});
 function cacul_midnight_time(val) {
   result_price_number = $resultPrice.text();
 
@@ -151,3 +140,43 @@ function cacul_midnight_time(val) {
   }
   return;
 }
+
+
+$(document).ready(function () {
+  function handleFormSubmission(buttonId, formId, statusMessageId) {
+    $(buttonId).click(function (event) {
+      event.preventDefault();
+
+      var formData = $(formId).serialize();
+      var $btn = $(buttonId);
+      var $statusMessage = $(statusMessageId);
+
+      $btn.addClass("displayNone");
+      $statusMessage.removeClass("displayNone");
+
+      $.ajax({
+        url: "/wp-admin/admin-ajax.php",
+        type: "POST",
+        data: formData + "&action=enquiry_car_booking",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            alert("Send Enquire Success");
+          } else {
+            alert("Missing Fields");
+          }
+        },
+        error: function () {
+          alert("System error! Please try again.");
+        },
+        complete: function () {
+          $btn.removeClass("displayNone");
+          $statusMessage.addClass("displayNone");
+        },
+      });
+    });
+  }
+
+  handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit");
+  handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit");
+});
