@@ -434,5 +434,6 @@ class Zippy_Woo_Booking
     echo '</ul>';
     echo '</section>';
   }
-}
 
+
+}
