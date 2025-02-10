@@ -18,7 +18,7 @@ if (is_user_logged_in()) {
     </div>
   </div>
 </div>
-<form method="POST">
+<form method="POST" id="car_booking_hour_form">
   <div class="box-pickup-information">
     <div class="input-text-pickup-information">
       <div class="row-form-custom">
@@ -55,8 +55,8 @@ if (is_user_logged_in()) {
         <div class="col-form-custom pickup-type">
           <label for="additional_stop">Pick Up type <span style="color:red;">*</span></label>
           <select class="" id="hbk_pickup_fee" name="additional_stop">
-            <option value="0" data-price="0" selected>Inside Singapore</option>
-            <option value="1" data-price="25">Outside Singapore</option>
+            <option value="0" data-price="0" selected>Incity</option>
+            <option value="1" data-price="25">Outcity</option>
           </select>
         </div>
       </div>
@@ -103,6 +103,16 @@ if (is_user_logged_in()) {
         </div>
 
       </div>
+      <div class="row-form-custom col-2 displayNone toggleDisplayElements">
+        <div class="col-form-custom">
+          <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
+          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="" type="email" name="emailcustomer">
+        </div>
+        <div class="col-form-custom">
+          <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
+          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="" type="text" name="phonecustomer">
+        </div>
+      </div>
       <div class="row-form-custom col-1">
         <div class="col-form-custom col-1">
           <label for="special_requests">Special Requests</label>
@@ -110,6 +120,12 @@ if (is_user_logged_in()) {
         </div>
       </div>
     </div>
+    <div class="row-form-custom col-1">
+        <div class="extra_text_noti">
+          <p>Baby Seats (Subject to Availability)</p>
+          <p>Contact us for more enquiry</p>
+        </div>
+      </div>
     <div class="confirm-terms">
       <input class="terms-checkbox" type="checkbox" name="agree_terms" value="1" id="agree_terms_booing_hours" required>
       <label for="agree_terms_booing_hours">
@@ -119,7 +135,7 @@ if (is_user_logged_in()) {
         </ul>
       </label>
     </div>
-    <div class="col-total-price-information">
+    <div class="col-total-price-information toggleDisplayElements">
       <!-- <label>Total Price: </label><span > $<span id="price-total"><?php echo $current_price = $product->get_price(); ?></span><span id="default-price" style="display:none"><?php echo $current_price = $product->get_price(); ?></span></span> -->
       <label>Total Price: </label>
       <span> $
@@ -134,10 +150,17 @@ if (is_user_logged_in()) {
           ?>
         </span>
       </span>
+      <input type="hidden" name="price_product_default" value="<?php echo $_price_per_hour = get_post_meta($product->get_id(), '_price_per_hour', true); ?>">
     </div>
-    <div class="row-form-custom col-1">
-      <div class="col-form-custom">
-        <input class="" id="btnReserve" name="submit_hour_booking_form" type="submit" value="Payment Booking">
+    <div class="row-form-custom col-1 displayNone toggleDisplayElements">
+      <div class="col-form-custom ">
+        <input class="" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquiry Now">
+        <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Wait! Processing Send Enquire</p></div>
+      </div>
+    </div>
+    <div class="row-form-custom col-1 toggleDisplayElements">
+      <div class="col-form-custom ">
+        <input class="" id="btnReserve" name="submit_car_booking_time" type="submit" value="Payment Booking">
       </div>
     </div>
   </div>
