@@ -118,9 +118,10 @@ class Zippy_Booking_Forms
     $total_booking += 25; 
 
     $headers = ['Content-Type: text/html; charset=UTF-8', 'From: Imperial <impls@singnet.com.sg>'];
-    $subject = 'Enquiry Booking Car';
-    $message = "<p>Thank you for your interest in our services.</p>";
-    $message .= "<p>Service type: $service_type</p>";
+    $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
+    $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
+    $message .= "<h3>Your Enquiry Details:</h3>";
+    $message .= "<p>Service type:" . $service_type . "</p>";
     $message .= "<p>Car: $product_name</p>";
     $message .= "<p>Usage time: " . (($time_use == 1) ? "1 Trip" : "$time_use Hours") . "</p>";
     $message .= "<p>Pick up: $pick_up_location at $pick_up_time Date $pick_up_date</p>";
@@ -129,14 +130,41 @@ class Zippy_Booking_Forms
     $message .= "<p>Flight details: $flight_details</p>";
     $message .= "<p>ETA: $eta_time</p>";
     $message .= "<p>Special requests: $special_requests</p>";
-    $message .= "<p>Total Price: <strong>$$total_booking</strong></p>";
-    $message .= "<p>Thank You</p>";
+    $message .= "<br>";
+    $message .= "<h3>Preferred Contact Method:</h3>";
+    $message .= "<p>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
+    $message .= "<p>EMAIL: impls@singnet.com.sg</p>";
+    $message .= "<br>";
+    $message .= "<p>Our team will review your request and respond within  24 hours. If you have any urgent concerns, feel free to contact us.</p>";
+    $message .= "<p>We appreciate your patience and look forward to assisting you.</p>";
+    $message .= "<br>";
+    $message .= "<p>Best regards,</p>";
+    $message .= "<p>Imperial Chauffeur Services Pte. Ltd</p>";
+    $message .= "<p>Email: impls@singnet.com.sg</p>";
+    $message .= "<p>Website: https://imperialchauffeur.sg/</p>";
+    
 
     $send_customer = wp_mail($email_customer, $subject, $message, $headers);
 
-    $subjectAdmin = 'New Enquiry Booking Car';
-    $messageAdmin = "<p>There is an order for a new car:</p>";
-    $messageAdmin .= "<p>Customer information: $email_customer - $phone_customer</p>" . $message;
+    $subjectAdmin = 'New Enquiry Received';
+
+    $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
+    $messageAdmin .= "<h3>Enquiry Details:</h3>";
+    $messageAdmin .= "<p>Contact customer: " . $email_customer . " - " . $phone_customer . "</p>";
+    $messageAdmin .= "<p>Service type: " . $service_type . "</p>";
+    $messageAdmin .= "<p>Car: " . $product_name . "</p>";
+    $messageAdmin .= "<p>Usage time: " . (($time_use == 1) ? "1 Trip" : $time_use . " Hours") . "</p>";
+    $messageAdmin .= "<p>Pick up: " . $pick_up_location . " at " . $pick_up_time . " Date " . $pick_up_date . "</p>";
+    $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
+    $messageAdmin .= "<p>No of passengers: " . $no_of_passengers . "</p>";
+    $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
+    $messageAdmin .= "<p>ETA: " . $eta_time . "</p>";
+    $messageAdmin .= "<p>Special requests: " . $special_requests . "</p>";
+    $messageAdmin .= "<br>";
+    $messageAdmin .= "<p>Please review the enquiry and respond at your earliest convenience.</p>";
+    $messageAdmin .= "<br>";
+    $messageAdmin .= "<p>Best regards,</p>";
+    $messageAdmin .= "<p>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
 
     $send_admin = wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
 
