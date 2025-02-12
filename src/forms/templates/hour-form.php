@@ -154,7 +154,7 @@ if (is_user_logged_in()) {
     </div>
     <div class="row-form-custom col-1 displayNone toggleDisplayElements">
       <div class="col-form-custom ">
-        <input class="" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquiry Now">
+        <input class="" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
         <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Wait! Processing Send Enquire</p></div>
       </div>
     </div>
