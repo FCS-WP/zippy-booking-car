@@ -6,6 +6,9 @@ $today = date('d-m-Y');
 $key_member = 0;
 if (is_user_logged_in()) {
   $key_member = 1;
+  $current_user = wp_get_current_user(); 
+  $email_member = $current_user->user_email; 
+  $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
 }
 ?>
 <div id="popupHour" class="popup">
@@ -41,6 +44,16 @@ if (is_user_logged_in()) {
         }
       }
       ?>
+      <div class="row-form-custom col-2 toggleDisplayElements">
+        <div class="col-form-custom">
+          <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
+          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
+        </div>
+        <div class="col-form-custom">
+          <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
+          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
+        </div>
+      </div>
       <div class="row-form-custom col-2">
         <div class="col-form-custom position-relative">
           <div class="d-flex flex-wrap mb-1">
@@ -52,34 +65,25 @@ if (is_user_logged_in()) {
             <input type="text" id="hbk_pickup_time" name="pick_up_time" value="<?php echo date("H:i"); ?>" autocomplete="off" required />
           </div>
         </div>
-        <div class="col-form-custom pickup-type">
-          <label for="additional_stop">Pick Up type <span style="color:red;">*</span></label>
-          <select class="" id="hbk_pickup_fee" name="additional_stop">
-            <option value="0" data-price="0" selected>Incity</option>
-            <option value="1" data-price="25">Outcity</option>
-          </select>
-        </div>
-      </div>
-      <div class="row-form-custom col-1">
-        <div class="col-form-custom">
+        <div class="col-form-custom ">
           <label for="time_use">Time <span style="color:red;">*</span></label>
-          <select class="" id="hbk_time_value" name="time_use" required>
-            <option value="" selected>Please choose an option</option>
-            <?php
-            if ($isMin3h) {
-              echo ('<option value="3-hours">3 hours</option>');
-            }
-            ?>
-            <option value="4">4 hours</option>
-            <option value="5">5 hours</option>
-            <option value="6">6 hours</option>
-            <option value="7">7 hours</option>
-            <option value="8">8 hours</option>
-            <option value="9">9 hours</option>
-            <option value="10">10 hours</option>
-            <option value="11">11 hours</option>
-            <option value="12">12 hours</option>
-          </select>
+            <select class="" id="hbk_time_value" name="time_use" required>
+              <option value="" selected>Please choose an option</option>
+              <?php
+              if ($isMin3h) {
+                echo ('<option value="3-hours">3 hours</option>');
+              }
+              ?>
+              <option value="4">4 hours</option>
+              <option value="5">5 hours</option>
+              <option value="6">6 hours</option>
+              <option value="7">7 hours</option>
+              <option value="8">8 hours</option>
+              <option value="9">9 hours</option>
+              <option value="10">10 hours</option>
+              <option value="11">11 hours</option>
+              <option value="12">12 hours</option>
+            </select>
         </div>
       </div>
       <div class="row-form-custom col-2">
@@ -103,16 +107,6 @@ if (is_user_logged_in()) {
         </div>
 
       </div>
-      <div class="row-form-custom col-2 displayNone toggleDisplayElements">
-        <div class="col-form-custom">
-          <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
-          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="" type="email" name="emailcustomer">
-        </div>
-        <div class="col-form-custom">
-          <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
-          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="" type="text" name="phonecustomer">
-        </div>
-      </div>
       <div class="row-form-custom col-1">
         <div class="col-form-custom col-1">
           <label for="special_requests">Special Requests</label>
@@ -120,12 +114,6 @@ if (is_user_logged_in()) {
         </div>
       </div>
     </div>
-    <div class="row-form-custom col-1">
-        <div class="extra_text_noti">
-          <p>Baby Seats (Subject to Availability)</p>
-          <p>Contact us for more enquiry</p>
-        </div>
-      </div>
     <div class="confirm-terms">
       <input class="terms-checkbox" type="checkbox" name="agree_terms" value="1" id="agree_terms_booing_hours" required>
       <label for="agree_terms_booing_hours">
@@ -135,7 +123,7 @@ if (is_user_logged_in()) {
         </ul>
       </label>
     </div>
-    <div class="col-total-price-information toggleDisplayElements">
+    <div class="col-total-price-information displayNone toggleDisplayElements">
       <!-- <label>Total Price: </label><span > $<span id="price-total"><?php echo $current_price = $product->get_price(); ?></span><span id="default-price" style="display:none"><?php echo $current_price = $product->get_price(); ?></span></span> -->
       <label>Total Price: </label>
       <span> $
@@ -152,15 +140,10 @@ if (is_user_logged_in()) {
       </span>
       <input type="hidden" name="price_product_default" value="<?php echo $_price_per_hour = get_post_meta($product->get_id(), '_price_per_hour', true); ?>">
     </div>
-    <div class="row-form-custom col-1 displayNone toggleDisplayElements">
+    <div class="row-form-custom col-1 toggleDisplayElements">
       <div class="col-form-custom ">
         <input class="zippy_btn_submit" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
         <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Wait! Processing Send Enquire</p></div>
-      </div>
-    </div>
-    <div class="row-form-custom col-1 toggleDisplayElements">
-      <div class="col-form-custom ">
-        <input class="" id="btnReserve" name="submit_car_booking_time" type="submit" value="Payment Booking">
       </div>
     </div>
   </div>
