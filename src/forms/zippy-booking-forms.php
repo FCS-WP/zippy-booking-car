@@ -76,11 +76,12 @@ class Zippy_Booking_Forms
   }
 
   function enquiry_car_booking() {
+    
     if (empty($_POST)) {
         wp_send_json_error(array('message' => 'Invalid request.'));
     }
 
-    $required_fields = ['emailcustomer', 'phonecustomer', 'pick_up_date', 'pick_up_time', 'pick_up_location', 'drop_off_location', 'no_of_passengers', 'service_type', 'id_product', 'price_product_default', 'time_use'];
+    $required_fields = ['emailcustomer', 'phonecustomer', 'pick_up_date', 'pick_up_time', 'pick_up_location', 'drop_off_location', 'no_of_passengers', 'service_type', 'id_product', 'time_use'];
 
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
@@ -111,11 +112,73 @@ class Zippy_Booking_Forms
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
 
-    $total_booking = $price_product_default * $time_use;
-    if ($midnight_fee == 1) {
-        $total_booking += 25;
+    $order = wc_create_order();
+    $order->add_product(wc_get_product($product_id), $time_use);
+
+
+    if( is_user_logged_in() ) {
+      $user = wp_get_current_user();
+      $billing_name = !empty($user->first_name) ? $user->first_name : $user->user_login; 
+      $email_customer = $user->user_email;
+      $phone_customer = get_user_meta( $user->ID, 'billing_phone', true );
+  
+    } else {
+        $billing_name = !empty($user_name) ? $user_name : $email_customer;
+        $phone_customer = $phone_customer;
     }
-    $total_booking += 25; 
+  
+    $order->set_address(array(
+        'first_name' => $billing_name,
+        'email'      => $email_customer,
+        'phone'      => $phone_customer,
+    ), 'billing');
+  
+    if (is_user_logged_in()) {
+        $order->set_customer_id($user->ID); 
+    }
+
+    $order->set_payment_method('cod');
+
+    $order->calculate_totals();
+    $order->update_status('pending');
+
+    $order_id = $order->get_id();
+
+    if (!empty($no_of_passengers)) {
+      update_post_meta($order_id, 'no_of_passengers', $no_of_passengers);
+    }
+
+    if (!empty($no_of_baggage)) {
+      update_post_meta($order_id, 'no_of_baggage', $no_of_baggage);
+    }
+
+    if (!empty($service_type)) {
+      update_post_meta($order_id, 'service_type', $service_type);
+    }
+    if (!empty($flight_details)) {
+      update_post_meta($order_id, 'flight_details', $flight_details);
+    }
+    if (!empty($eta_time)) {
+      update_post_meta($order_id, 'eta_time', $eta_time);
+    }
+    if (!empty($key_member)) {
+      update_post_meta($order_id, 'key_member', $key_member);
+    }
+    if (!empty($pick_up_date)) {
+      update_post_meta($order_id, 'pick_up_date', $pick_up_date);
+    }
+    if (!empty($pick_up_time)) {
+      update_post_meta($order_id, 'pick_up_time', $pick_up_time);
+    }
+    if (!empty($pick_up_location)) {
+      update_post_meta($order_id, 'pick_up_location', $pick_up_location);
+    }
+    if (!empty($drop_off_location)) {
+      update_post_meta($order_id, 'drop_off_location', $drop_off_location);
+    }
+    if (!empty($special_requests)) {
+      update_post_meta($order_id, 'special_requests', $special_requests);
+    }
 
     $headers = ['Content-Type: text/html; charset=UTF-8', 'From: Imperial <impls@singnet.com.sg>'];
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
