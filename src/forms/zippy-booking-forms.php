@@ -76,9 +76,6 @@ class Zippy_Booking_Forms
   }
 
   function enquiry_car_booking() {
-    if (is_user_logged_in()) {
-      $user_name = $current_user->display_name;
-    }
     
     if (empty($_POST)) {
         wp_send_json_error(array('message' => 'Invalid request.'));
@@ -118,17 +115,27 @@ class Zippy_Booking_Forms
     $order = wc_create_order();
     $order->add_product(wc_get_product($product_id), $time_use);
 
-    if(!empty($user_name)){
-      $billing_name = $user_name;
-    }else{
-      $billing_name = $email_customer;
-    }
 
+    if( is_user_logged_in() ) {
+      $user = wp_get_current_user();
+      $billing_name = !empty($user->first_name) ? $user->first_name : $user->user_login; 
+      $email_customer = $user->user_email;
+      $phone_customer = get_user_meta( $user->ID, 'billing_phone', true );
+  
+    } else {
+        $billing_name = !empty($user_name) ? $user_name : $email_customer;
+        $phone_customer = $phone_customer;
+    }
+  
     $order->set_address(array(
-      'first_name' =>  $billing_name,
-      'email'      => $email_customer,
-      'phone'      => $phone_customer,
-  ), 'billing');
+        'first_name' => $billing_name,
+        'email'      => $email_customer,
+        'phone'      => $phone_customer,
+    ), 'billing');
+  
+    if (is_user_logged_in()) {
+        $order->set_customer_id($user->ID); 
+    }
 
     $order->set_payment_method('cod');
 
