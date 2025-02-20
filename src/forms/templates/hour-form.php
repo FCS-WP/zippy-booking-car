@@ -9,6 +9,7 @@ if (is_user_logged_in()) {
   $current_user = wp_get_current_user(); 
   $email_member = $current_user->user_email; 
   $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
+  $display_name_user = $current_user->display_name;
 }
 ?>
 <div id="popupHour" class="popup">
@@ -44,6 +45,12 @@ if (is_user_logged_in()) {
         }
       }
       ?>
+      <div class="row-form-custom col-1">
+        <div class="col-form-custom">
+          <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
+          <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+        </div>
+      </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
@@ -143,7 +150,7 @@ if (is_user_logged_in()) {
     <div class="row-form-custom col-1 toggleDisplayElements">
       <div class="col-form-custom ">
         <input class="zippy_btn_submit" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
-        <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Wait! Processing Send Enquire</p></div>
+        <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Please hold while we send your enquiry</p></div>
       </div>
     </div>
   </div>

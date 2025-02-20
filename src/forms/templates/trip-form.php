@@ -8,8 +8,10 @@ if (is_user_logged_in()) {
   $current_user = wp_get_current_user(); 
   $email_member = $current_user->user_email; 
   $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
+  $display_name_user = $current_user->display_name;
 }
 ?>
+
 <div id="popup" class="popup">
   <div class="popup-content">
     <div class="calendar-box-custom">
@@ -20,6 +22,16 @@ if (is_user_logged_in()) {
     </div>
   </div>
 </div>
+
+<div id="popup_time" class="popup_time">
+  <div class="popup-content_time">
+    <div class="calendar-box-custom_time">
+      <div id="select_time"></div>
+      <button class="close-popup-btn_time" id="closePopup_time">Continute Booking</button>
+    </div>
+  </div>
+</div>
+
 <form method="POST" id="car_booking_form">
   <div class="box-pickup-information">
 
@@ -29,6 +41,12 @@ if (is_user_logged_in()) {
         <input name="key_member" type="hidden" value="<?php echo $key_member; ?>">
         <input name="midnight_fee" id="trip_midnight_fee" type="hidden" value="0">
         <input name="time_use" id="time_use" type="hidden" value="1">
+      </div>
+      <div class="row-form-custom col-1">
+        <div class="col-form-custom">
+          <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
+          <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+        </div>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom">
@@ -76,18 +94,9 @@ if (is_user_logged_in()) {
           <label for="flight">Flight Details<span style="color:red;">*</span></label>
           <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="" type="text" name="flight_details">
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom" id="openPopupTime">
           <label for="eta_time">ETE/ETA Time</label>
-          <select name="eta_time" id="eta_time">
-            <?php
-            for ($hour = 0; $hour < 24; $hour++) {
-                for ($minute = 0; $minute < 60; $minute += 5) {
-                    $time = sprintf('%02d:%02d', $hour, $minute);
-                    echo "<option value=\"$time\">$time</option>";
-                }
-            }
-            ?>
-        </select>
+          <input type="text" name="eta_time" id="eta_time" value="Enter ETE/ETA time">
         </div>
       </div>
       <div class="row-form-custom col-2">
@@ -123,7 +132,7 @@ if (is_user_logged_in()) {
     <div class="row-form-custom col-1 toggleDisplayElements">
       <div class="col-form-custom ">
         <input class="zippy_btn_submit" id="btnEnquiryNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
-        <div id="message_status_submit" class="displayNone"><div class="loader"></div><p> Wait! Processing Send Enquire</p></div>
+        <div id="message_status_submit" class="displayNone"><div class="loader"></div><p> Please hold while we send your enquiry</p></div>
       </div>
     </div>
   </div>
