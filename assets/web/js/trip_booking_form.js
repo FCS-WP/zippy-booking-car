@@ -58,6 +58,35 @@ if (calendar.length) {
   calendar.init();
 }
 
+
+const options_time = {
+  selectionTimeMode: 24,
+  timeStepMinute: 5,
+
+  layouts: {
+    default: `
+      <h5 class="heading-custom-vanilla">Pick ETE/ETA Time</h5>
+      <#ControlTime />
+      <div class="time-avail">
+        <div class="time-avail__item">
+          <p>Pick ETE/ETA time</p><p id="get_time_eta">00:00</p>
+        </div>
+      </div>
+      
+    `,
+  },
+  onChangeTime(self) {
+    var time = self.context.selectedTime;
+    $("#get_time_eta").text(time);
+    $("#eta_time").val(time);
+  },
+};
+const select_time = $("#select_time");
+if (select_time.length) {
+  const select_time = new Calendar("#select_time", options_time);
+  select_time.init();
+}
+
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
 function convertDate(inputDate) {
   const date = new Date(inputDate);
@@ -79,8 +108,11 @@ let additional_stop = 0;
 let result_price_number = 0;
 
 const $openPopupButton = $("#openPopup");
+const $openPopupTimeButton = $("#openPopupTime");
 const $closePopupButton = $("#closePopup");
+const $closePopupTimeButton = $("#closePopup_time");
 const $popup = $("#popup");
+const $popup_time = $("#popup_time");
 
 // Open popup
 $openPopupButton.on("click", () => {
@@ -89,9 +121,20 @@ $openPopupButton.on("click", () => {
   $("body").css("overflow", "hidden");
 });
 
+$openPopupTimeButton.on("click", () => {
+  $popup_time.css("display", "flex");
+  document.body.style.overflow = "hidden";
+  $("body").css("overflow", "hidden");
+});
+
 // Close popup
 $closePopupButton.on("click", () => {
   $popup.css("display", "none");
+  $("body").css("overflow", "auto");
+});
+
+$closePopupTimeButton.on("click", () => {
+  $popup_time.css("display", "none");
   $("body").css("overflow", "auto");
 });
 
@@ -161,9 +204,9 @@ $(document).ready(function () {
         dataType: "json",
         success: function (response) {
           if (response.success) {
-            alert("Send Enquire Success");
+            alert("Enquiry Sent");
           } else {
-            alert("Missing Fields");
+            alert("Missing Fields. PLease try again!");
           }
         },
         error: function () {

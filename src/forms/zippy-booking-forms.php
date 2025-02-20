@@ -89,6 +89,7 @@ class Zippy_Booking_Forms
         }
     }
 
+    $name_customer = sanitize_text_field($_POST['namecustomer']);
     $email_customer = sanitize_email($_POST['emailcustomer']);
     $phone_customer = sanitize_text_field($_POST['phonecustomer']);
     $pick_up_date = sanitize_text_field($_POST['pick_up_date']);
@@ -115,32 +116,26 @@ class Zippy_Booking_Forms
     $order = wc_create_order();
     $order->add_product(wc_get_product($product_id), $time_use);
 
-
-    if( is_user_logged_in() ) {
-      $user = wp_get_current_user();
-      $billing_name = !empty($user->first_name) ? $user->first_name : $user->user_login; 
-      $email_customer = $user->user_email;
-      $phone_customer = get_user_meta( $user->ID, 'billing_phone', true );
-  
-    } else {
-        $billing_name = !empty($user_name) ? $user_name : $email_customer;
-        $phone_customer = $phone_customer;
-    }
-  
     $order->set_address(array(
-        'first_name' => $billing_name,
+        'first_name' => $name_customer,
         'email'      => $email_customer,
         'phone'      => $phone_customer,
     ), 'billing');
-  
+    
     if (is_user_logged_in()) {
-        $order->set_customer_id($user->ID); 
+      $user = wp_get_current_user();
+      if ($user->ID) { 
+          $order->set_customer_id($user->ID);
+      }
+      $order->update_status('on-hold');
+    }else{
+      $order->update_status('pending');
     }
 
     $order->set_payment_method('cod');
 
     $order->calculate_totals();
-    $order->update_status('pending');
+    
 
     $order_id = $order->get_id();
 
@@ -213,7 +208,7 @@ class Zippy_Booking_Forms
 
     $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Contact customer: " . $email_customer . " - " . $phone_customer . "</p>";
+    $messageAdmin .= "<p>Contact customer: " . $name_customer . " - " . $email_customer . " - " . $phone_customer . "</p>";
     $messageAdmin .= "<p>Service type: " . $service_type . "</p>";
     $messageAdmin .= "<p>Car: " . $product_name . "</p>";
     $messageAdmin .= "<p>Usage time: " . (($time_use == 1) ? "1 Trip" : $time_use . " Hours") . "</p>";
