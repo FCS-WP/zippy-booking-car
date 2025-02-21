@@ -208,20 +208,27 @@ class Zippy_Booking_Forms
 
     $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Contact customer: " . $name_customer . " / " . $email_customer . " / " . $phone_customer . "</p>";
+    $messageAdmin .= "<p>Customer: " . $name_customer . "/" . $email_customer . "/" . $phone_customer . "</p>";
     $messageAdmin .= "<p>Job Type: " . $service_type . "</p>";
     $messageAdmin .= "<p>Vehicle Type: " . $product_name . "</p>";
-    $messageAdmin .= "<p>Usage time: " . (($time_use == 1) ? "1 Trip" : $time_use . " Hours") . "</p>";
-    $messageAdmin .= "<p>Pick up time: " . $pick_up_time . " Date " . $pick_up_date . "</p>";
-    $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
-    $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
+    $messageAdmin .= "<p>Date: " . $pick_up_date . "</p>";
+    $messageAdmin .= "<p>Time: " . $pick_up_time . "</p>";
+    
     if($service_type == "Airport Arrival Transfer"){
-      $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
-      $messageAdmin .= "<p>ETD: " . $eta_time . "</p>";
-    }elseif($service_type == "Airport Departure Transfer"){
+      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
       $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
       $messageAdmin .= "<p>ETA: " . $eta_time . "</p>";
+      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
+    }elseif($service_type == "Airport Departure Transfer"){
+      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
+      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
+      $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
+      $messageAdmin .= "<p>ETD: " . $eta_time . "</p>";
+    }else{
+      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
+      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
     }
+    
     $messageAdmin .= "<p>No of pax: " . $no_of_passengers . "</p>";
     $messageAdmin .= "<p>No of luggages:  " . $no_of_baggage . "</p>";
     $messageAdmin .= "<p>Special requests: " . $special_requests . "</p>";

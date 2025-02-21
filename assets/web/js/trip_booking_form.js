@@ -23,7 +23,10 @@ const options = {
           <#DateRangeTooltip />
         </div>
         </div>
-      <div class="time-avail">
+        <div class="time-avail">
+        <div class="time-avail__item">
+          <p>Pick up date</p><p id="get_date_pickup">04-12-2024</p>
+        </div>
         <div class="time-avail__item">
           <p>Pick up time</p>
           <div class="pickup_time_row">
@@ -36,9 +39,6 @@ const options = {
               <select id="pick_up_minute" class="pick_up_minute"></select>
             </div>
           </div>
-        </div>
-        <div class="time-avail__item">
-          <p>Pick up date</p><p id="get_date_pickup">04-12-2024</p>
         </div>
       </div>
       

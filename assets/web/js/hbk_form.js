@@ -25,7 +25,10 @@ $(document).ready(function () {
           </div>
           </div>
         <div class="time-avail">
-          <div class="time-avail__item">
+        <div class="time-avail__item">
+        <p>Pick up date</p><p id="get_hbk_date_pickup">04-12-2024</p>
+      </div>  
+        <div class="time-avail__item">
             <p>Pick up time</p>
             <div class="pickup_time_row">
               <div class="col_pick_up_time_select">
@@ -38,9 +41,7 @@ $(document).ready(function () {
               </div>
             </div>
           </div>
-          <div class="time-avail__item">
-            <p>Pick up date</p><p id="get_hbk_date_pickup">04-12-2024</p>
-          </div>
+          
         </div>
         
       `,
