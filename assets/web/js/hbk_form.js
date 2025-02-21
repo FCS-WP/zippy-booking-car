@@ -68,9 +68,23 @@ $(document).ready(function () {
     const today = new Date();
     const formattedDate = convertDate(today); 
     $("#get_hbk_date_pickup").text(formattedDate);
+
+    const current_time =  $("#hbk_pickup_time");
+    const select_hour =  $("#pick_up_hour_disposal");
+    const select_minutes =  $("#pick_up_minute_disposal");
+    var timeParts = (current_time.val()).split(":");
+    var hour = timeParts[0];  
+    var minute = timeParts[1];
+
+    select_hour.val(hour);
+    select_minutes.val(roundUpToNearestFive(minute));  
   }
 
   $(document).ready(setDefaultPickupDateDisposal);
+
+  function roundUpToNearestFive(num) {
+    return Math.ceil(num / 5) * 5;
+  }
 
   if ($("#tab_hour_picker").length > 0) {
     const tabHourPicker = new Calendar("#tab_hour_picker", options);
