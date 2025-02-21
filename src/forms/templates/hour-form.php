@@ -4,6 +4,8 @@ global $product;
 if (!is_product()) return;
 $today = date('d-m-Y');
 $key_member = 0;
+$minutes = ceil(date("i") / 5) * 5;
+$time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
 if (is_user_logged_in()) {
   $key_member = 1;
   $current_user = wp_get_current_user(); 
@@ -69,7 +71,7 @@ if (is_user_logged_in()) {
           </div>
           <div class="d-flex" id="openPopupHour">
             <input type="text" id="hbk_pickup_date" name="pick_up_date" value="<?php echo $today;?>" placeholder="Select date" autocomplete="off" required />
-            <input type="text" id="hbk_pickup_time" name="pick_up_time" value="<?php echo date("H:i"); ?>" autocomplete="off" required />
+            <input type="text" id="hbk_pickup_time" name="pick_up_time" value="<?php echo $time; ?>" autocomplete="off" required />
           </div>
         </div>
         <div class="col-form-custom ">

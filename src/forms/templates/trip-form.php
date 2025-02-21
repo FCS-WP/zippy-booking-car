@@ -3,6 +3,8 @@ global $product;
 if (!is_product()) return;
 $today = date('d-m-Y');
 $key_member = 0;
+$minutes = ceil(date("i") / 5) * 5;
+$time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
 if (is_user_logged_in()) {
   $key_member = 1;
   $current_user = wp_get_current_user(); 
@@ -66,7 +68,7 @@ if (is_user_logged_in()) {
           </div>
           <div class="d-flex">
             <input class="pickupdate" id="pickupdate" value="<?php echo $today; ?>" type="text" name="pick_up_date" required>
-            <input type="text" id="pickuptime" name="pick_up_time" min="00:00" max="24:00" value="<?php echo date("H:i"); ?>" required>
+            <input type="text" id="pickuptime" name="pick_up_time" min="00:00" max="24:00" value="<?php echo $time; ?>" required>
           </div>
         </div>
         <div class="col-form-custom ">

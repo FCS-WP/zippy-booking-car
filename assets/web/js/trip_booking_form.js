@@ -65,10 +65,23 @@ function setDefaultPickupDate() {
   const today = new Date();
   const formattedDate = convertDate(today); 
   $("#get_date_pickup").text(formattedDate);
+
+  const current_time =  $("#pickuptime");
+  const select_hour =  $("#pick_up_hour");
+  const select_minutes =  $("#pick_up_minute");
+  var timeParts = (current_time.val()).split(":");
+  var hour = timeParts[0];  
+  var minute = timeParts[1];
+
+  select_hour.val(hour);
+  select_minutes.val(roundUpToNearestFive(minute));    
 }
 
 $(document).ready(setDefaultPickupDate);
 
+function roundUpToNearestFive(num) {
+  return Math.ceil(num / 5) * 5;
+}
 
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
 function convertDate(inputDate) {
