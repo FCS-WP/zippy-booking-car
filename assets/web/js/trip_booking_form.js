@@ -7,7 +7,7 @@ const options = {
   disableDatesPast: true,
   layouts: {
     default: `
-      <h5 class="heading-custom-vanilla">Pick Up Date</h5>
+      <h5 class="heading-custom-vanilla">Pick Up Date and Time</h5>
       <div class="vc-header" data-vc="header" role="toolbar" aria-label="Calendar Navigation">
         <#ArrowPrev />  
         <div class="vc-header__content" data-vc-header="content">
@@ -25,7 +25,7 @@ const options = {
         </div>
         <div class="time-avail">
         <div class="time-avail__item">
-          <p>Pick up date</p><p id="get_date_pickup">04-12-2024</p>
+          <p>Pick up date</p><p id="get_date_pickup"></p>
         </div>
         <div class="time-avail__item">
           <p>Pick up time</p>
@@ -60,6 +60,14 @@ if (calendar.length) {
   const calendar = new Calendar("#calendar", options);
   calendar.init();
 }
+
+function setDefaultPickupDate() {
+  const today = new Date();
+  const formattedDate = convertDate(today); 
+  $("#get_date_pickup").text(formattedDate);
+}
+
+$(document).ready(setDefaultPickupDate);
 
 
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
