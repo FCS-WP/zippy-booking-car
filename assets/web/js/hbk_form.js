@@ -1,5 +1,6 @@
 import { Calendar, Options } from "vanilla-calendar-pro";
 $(document).ready(function () {
+  
   // Init date picker for hourly booking
   const options = {
     disableDatesPast: true,
@@ -23,10 +24,19 @@ $(document).ready(function () {
             <#DateRangeTooltip />
           </div>
           </div>
-        <#ControlTime />
         <div class="time-avail">
           <div class="time-avail__item">
-            <p>Pick up time</p><p id="get_hbk_time_pickup">00:00</p>
+            <p>Pick up time</p>
+            <div class="pickup_time_row">
+              <div class="col_pick_up_time_select">
+                <label>Hour:</label>
+                <select id="pick_up_hour_disposal" ></select>
+              </div>
+              <div class="col_pick_up_time_select">
+                <label>Minutes:</label>
+                <select id="pick_up_minute_disposal"></select>
+              </div>
+            </div>
           </div>
           <div class="time-avail__item">
             <p>Pick up date</p><p id="get_hbk_date_pickup">04-12-2024</p>
@@ -44,89 +54,13 @@ $(document).ready(function () {
       $("#hbk_pickup_time").val(selectedTime);
       $("#get_hbk_date_pickup").text(dateConverted);
 
-      if (isToday(selectedDate)) {
-        let today = new Date();
-        self.set({
-          selectedDates: self.context.selectedDates,
-          timeMinHour: today.getHours() + 1,
-          timeMaxHour: 23,
-          layouts: {
-            default: `
-              <h5 class="heading-custom-vanilla">Pick Up Date</h5>
-              <div class="vc-header" data-vc="header" role="toolbar" aria-label="Calendar Navigation">
-                <#ArrowPrev />  
-                <div class="vc-header__content" data-vc-header="content">
-                  <#Year /> | <#Month />
-                </div>
-                <#ArrowNext />
-              </div>
-              <div class="vc-wrapper" data-vc="wrapper">
-                <#WeekNumbers />
-                <div class="vc-content" data-vc="content">
-                  <#Week />
-                  <#Dates />
-                  <#DateRangeTooltip />
-                </div>
-                </div>
-              <#ControlTime />
-              <div class="time-avail">
-                <div class="time-avail__item">
-                  <p>Pick up time</p><p id="get_hbk_time_pickup">${selectedTime}</p>
-                </div>
-                <div class="time-avail__item">
-                  <p>Pick up date</p><p id="get_hbk_date_pickup">${dateConverted}</p>
-                </div>
-              </div>
-              
-            `,
-          },
-        });
-        let newHours = today.getHours() + ":0";
-        hbkMidnightCheck(newHours);
-      } else {
-        self.set({
-          selectedDates: self.context.selectedDates,
-          timeMinHour: 0,
-          timeMaxHour: 23,
-          layouts: {
-            default: `
-              <h5 class="heading-custom-vanilla">Pick Up Date</h5>
-              <div class="vc-header" data-vc="header" role="toolbar" aria-label="Calendar Navigation">
-                <#ArrowPrev />  
-                <div class="vc-header__content" data-vc-header="content">
-                  <#Year /> | <#Month />
-                </div>
-                <#ArrowNext />
-              </div>
-              <div class="vc-wrapper" data-vc="wrapper">
-                <#WeekNumbers />
-                <div class="vc-content" data-vc="content">
-                  <#Week />
-                  <#Dates />
-                  <#DateRangeTooltip />
-                </div>
-                </div>
-              <#ControlTime />
-              <div class="time-avail">
-                <div class="time-avail__item">
-                  <p>Pick up time</p><p id="get_hbk_time_pickup">00:00</p>
-                </div>
-                <div class="time-avail__item">
-                  <p>Pick up date</p><p id="get_hbk_date_pickup">${dateConverted}</p>
-                </div>
-              </div>
-              
-            `,
-          },
-        });
-        hbkMidnightCheck("0:0");
-      }
     },
-    onChangeTime(self) {
-      hbkMidnightCheck(self.context.selectedTime);
-      $("#hbk_pickup_time").val(self.context.selectedTime);
-      $("#get_hbk_time_pickup").html(self.context.selectedTime);
-    },
+    // onChangeTime(self) {
+    //   hbkMidnightCheck(self.context.selectedTime);
+    //   $("#hbk_pickup_time").val(self.context.selectedTime);
+    //   $("#get_hbk_time_pickup").html(self.context.selectedTime);
+    // },
+    
   };
 
   if ($("#tab_hour_picker").length > 0) {
@@ -172,6 +106,29 @@ $(document).ready(function () {
       $('body').css('overflow', 'auto');
     }
   });
+
+  const $pick_up_hour_disposal = $("#pick_up_hour_disposal");
+  const $pick_up_minute_disposal = $("#pick_up_minute_disposal");
+
+  for (let i = 0; i <= 23; i++) {
+    $pick_up_hour_disposal.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
+  }
+
+  for (let i = 0; i < 60; i += 5) {
+    const value = i.toString().padStart(2, "0");
+    $pick_up_minute_disposal.append(`<option value="${value}">${value}</option>`);
+  }
+
+  $('#pick_up_hour_disposal, #pick_up_minute_disposal').on('change', () => {
+    const hour = $('#pick_up_hour_disposal').val();
+    const minute = $('#pick_up_minute_disposal').val();
+    
+    if (hour !== null && minute !== null) {
+        $('#hbk_pickup_time').val(`${hour}:${minute}`);
+    }
+  });
+  
+
 });
 
 function calcHbkPrices() {
@@ -218,3 +175,7 @@ function convertDate(inputDate = new Date()) {
 
   return `${day}-${month}-${year}`;
 }
+
+
+
+

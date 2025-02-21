@@ -72,3 +72,47 @@
 #openPopupTime {
   cursor: pointer;
 }
+
+
+.row_50{
+  display: flex;
+  justify-content: space-between;
+
+  .col_time_select{
+    width: 49%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    label{
+      display: inline-block !important;
+      width: auto !important;
+    }
+
+    select{
+      text-align: center;
+    }
+  }
+}
+
+.pickup_time_row{
+  display: flex;
+
+  .col_pick_up_time_select{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+
+    label{
+      font-size: 14px;
+    }
+
+    select{
+      border: none;
+      margin: 0 5px;
+      padding: 0px;
+      border-bottom: 1px solid #cbd5e1;
+      font-size: 15px;
+    }
+  }
+}

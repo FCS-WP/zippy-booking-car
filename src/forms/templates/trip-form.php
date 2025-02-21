@@ -45,17 +45,17 @@ if (is_user_logged_in()) {
       <div class="row-form-custom col-1">
         <div class="col-form-custom">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
-          <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <input class=""  aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
         </div>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
-          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
+          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
         </div>
         <div class="col-form-custom">
           <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
-          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
+          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
         </div>
       </div>
       <div class="row-form-custom col-2">
@@ -95,8 +95,18 @@ if (is_user_logged_in()) {
           <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="" type="text" name="flight_details">
         </div>
         <div class="col-form-custom" id="openPopupTime">
-          <label for="eta_time">ETE/ETA Time</label>
-          <input type="text" name="eta_time" id="eta_time" value="Enter ETE/ETA time">
+          <label for="eta_time">ETA Time</label>
+          <input type="hidden" name="eta_time" id="eta_time" value="Enter ETE/ETA time">
+          <div class="row_50">
+            <div class="col_time_select">
+              <label>Hour:</label>
+              <select id="ete_hour"></select>
+            </div>
+            <div class="col_time_select">
+              <label>Minutes:</label>
+              <select id="ete_minute"></select>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row-form-custom col-2">
@@ -112,7 +122,7 @@ if (is_user_logged_in()) {
       <div class="row-form-custom col-1">
         <div class="col-form-custom">
           <label for="special_requests">Special Requests</label>
-          <input size="40" maxlength="400" class="" id="hbk_special_requests" aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
+          <input size="40" maxlength="400" class=""  aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
         </div>
       </div>
     </div>

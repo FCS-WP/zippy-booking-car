@@ -4,7 +4,7 @@ import { Calendar, Options } from "vanilla-calendar-pro";
 const options = {
   selectionTimeMode: 24,
   timeStepMinute: 5,
-
+  disableDatesPast: true,
   layouts: {
     default: `
       <h5 class="heading-custom-vanilla">Pick Up Date</h5>
@@ -23,10 +23,19 @@ const options = {
           <#DateRangeTooltip />
         </div>
         </div>
-      <#ControlTime />
       <div class="time-avail">
         <div class="time-avail__item">
-          <p>Pick up time</p><p id="get_time_pickup">00:00</p>
+          <p>Pick up time</p>
+          <div class="pickup_time_row">
+            <div class="col_pick_up_time_select">
+              <label>Hour:</label>
+              <select id="pick_up_hour" class="pick_up_hour"></select>
+            </div>
+            <div class="col_pick_up_time_select">
+              <label>Minutes:</label>
+              <select id="pick_up_minute" class="pick_up_minute"></select>
+            </div>
+          </div>
         </div>
         <div class="time-avail__item">
           <p>Pick up date</p><p id="get_date_pickup">04-12-2024</p>
@@ -42,14 +51,8 @@ const options = {
       const pickupdate = $("#pickupdate");
       pickupdate.val(convertDate(date));
       $("#get_date_pickup").text(convertDate(date));
-      midnightCheck(self.context.selectedTime);
+      // midnightCheck(self.context.selectedTime);
     }
-  },
-  onChangeTime(self) {
-    var time = self.context.selectedTime;
-    $("#get_time_pickup").text(time);
-    $("#pickuptime").val(time);
-    midnightCheck(self.context.selectedTime);
   },
 };
 const calendar = $("#calendar");
@@ -58,34 +61,6 @@ if (calendar.length) {
   calendar.init();
 }
 
-
-const options_time = {
-  selectionTimeMode: 24,
-  timeStepMinute: 5,
-
-  layouts: {
-    default: `
-      <h5 class="heading-custom-vanilla">Pick ETE/ETA Time</h5>
-      <#ControlTime />
-      <div class="time-avail">
-        <div class="time-avail__item">
-          <p>Pick ETE/ETA time</p><p id="get_time_eta">00:00</p>
-        </div>
-      </div>
-      
-    `,
-  },
-  onChangeTime(self) {
-    var time = self.context.selectedTime;
-    $("#get_time_eta").text(time);
-    $("#eta_time").val(time);
-  },
-};
-const select_time = $("#select_time");
-if (select_time.length) {
-  const select_time = new Calendar("#select_time", options_time);
-  select_time.init();
-}
 
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
 function convertDate(inputDate) {
@@ -108,21 +83,12 @@ let additional_stop = 0;
 let result_price_number = 0;
 
 const $openPopupButton = $("#openPopup");
-const $openPopupTimeButton = $("#openPopupTime");
 const $closePopupButton = $("#closePopup");
-const $closePopupTimeButton = $("#closePopup_time");
 const $popup = $("#popup");
-const $popup_time = $("#popup_time");
 
 // Open popup
 $openPopupButton.on("click", () => {
   $popup.css("display", "flex");
-  document.body.style.overflow = "hidden";
-  $("body").css("overflow", "hidden");
-});
-
-$openPopupTimeButton.on("click", () => {
-  $popup_time.css("display", "flex");
   document.body.style.overflow = "hidden";
   $("body").css("overflow", "hidden");
 });
@@ -133,10 +99,6 @@ $closePopupButton.on("click", () => {
   $("body").css("overflow", "auto");
 });
 
-$closePopupTimeButton.on("click", () => {
-  $popup_time.css("display", "none");
-  $("body").css("overflow", "auto");
-});
 
 // Close popup when clicking outside the content
 $popup.on("click", (event) => {
@@ -223,3 +185,42 @@ $(document).ready(function () {
   handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit");
   handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit");
 });
+
+const $hourSelect = $("#ete_hour");
+const $minuteSelect = $("#ete_minute");
+const $pickUphourSelect = $("#pick_up_hour");
+const $pickUpminuteSelect = $("#pick_up_minute");
+
+
+for (let i = 0; i <= 23; i++) {
+  $hourSelect.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
+  $pickUphourSelect.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
+}
+
+for (let i = 0; i < 60; i += 5) {
+  const value = i.toString().padStart(2, "0");
+  $minuteSelect.append(`<option value="${value}">${value}</option>`);
+  $pickUpminuteSelect.append(`<option value="${value}">${value}</option>`);
+  
+}
+
+$('#ete_hour, #ete_minute').on('change', () => {
+  const hour = $('#ete_hour').val();
+  const minute = $('#ete_minute').val();
+  
+  if (hour !== null && minute !== null) {
+      $('#eta_time').val(`${hour}:${minute}`);
+  }
+});
+
+
+$('#pick_up_hour, #pick_up_minute').on('change', () => {
+  const hour = $('#pick_up_hour').val();
+  const minute = $('#pick_up_minute').val();
+  
+  if (hour !== null && minute !== null) {
+      $('#pickuptime').val(`${hour}:${minute}`);
+  }
+});
+
+
