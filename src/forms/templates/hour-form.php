@@ -20,7 +20,7 @@ if (is_user_logged_in()) {
       <div class="calendar-box">
         <div id="tab_hour_picker"></div>
       </div>
-      <button class="close-btn close-popup-btn" id="closePopupHour">Continute Booking</button>
+      <button class="close-btn close-popup-btn" id="closePopupHour">Continue Booking</button>
     </div>
   </div>
 </div>

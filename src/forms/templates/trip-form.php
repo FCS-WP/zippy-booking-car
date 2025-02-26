@@ -20,7 +20,7 @@ if (is_user_logged_in()) {
       <div class="calendar-box">
         <div id="calendar"></div>
       </div>
-      <button class="close-popup-btn" id="closePopup">Continute Booking</button>
+      <button class="close-popup-btn" id="closePopup">Continue Booking</button>
     </div>
   </div>
 </div>
@@ -97,7 +97,7 @@ if (is_user_logged_in()) {
           <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="" type="text" name="flight_details">
         </div>
         <div class="col-form-custom" id="openPopupTime">
-          <label for="eta_time">ETA Time</label>
+          <label for="eta_time"><span id="switch_time_label">ETA</span> Time</label>
           <input type="hidden" name="eta_time" id="eta_time" value="Enter ETE/ETA time">
           <div class="row_50">
             <div class="col_time_select">

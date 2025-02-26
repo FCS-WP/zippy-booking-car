@@ -131,6 +131,14 @@ $popup.on("click", (event) => {
 
 $("#servicetype").on("change", function () {
   $("#input-flight").css("display", this.value === "Point-to-point Transfer" ? "none" : "flex");
+  if($("#servicetype").val() == "Airport Arrival Transfer"){
+    $("#switch_time_label").text('ETA');
+  }else if($("#servicetype").val() == "Airport Departure Transfer"){
+    $("#switch_time_label").text('ETD');
+  }
+  else{
+    $("#switch_time_label").text('');
+  }
 });
 
 function midnightCheck(time) {
