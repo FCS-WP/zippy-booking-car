@@ -61,6 +61,11 @@ if (calendar.length) {
   calendar.init();
 }
 
+function roundUpToNearestFive(num) {
+  return Math.ceil(num / 5) * 5;
+}
+
+
 function setDefaultPickupDate() {
   const today = new Date();
   const formattedDate = convertDate(today); 
@@ -79,9 +84,6 @@ function setDefaultPickupDate() {
 
 $(document).ready(setDefaultPickupDate);
 
-function roundUpToNearestFive(num) {
-  return Math.ceil(num / 5) * 5;
-}
 
 // Function to convert date format from yyyy-mm-dd to dd-mm-yyyy
 function convertDate(inputDate) {
