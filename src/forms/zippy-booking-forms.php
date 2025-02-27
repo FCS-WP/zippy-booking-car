@@ -81,7 +81,7 @@ class Zippy_Booking_Forms
         wp_send_json_error(array('message' => 'Invalid request.'));
     }
 
-    $required_fields = ['emailcustomer', 'phonecustomer', 'pick_up_date', 'pick_up_time', 'pick_up_location', 'drop_off_location', 'no_of_passengers', 'service_type', 'id_product', 'time_use'];
+    $required_fields = ['emailcustomer', 'phonecustomer', 'pick_up_date', 'pick_up_time', 'pick_up_location', 'drop_off_location', 'no_of_passengers', 'service_type', 'id_product', 'time_use', 'agree_terms'];
 
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
@@ -112,7 +112,7 @@ class Zippy_Booking_Forms
     $admin_email = get_option('admin_email');
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
-
+    
     $order = wc_create_order();
     $order->add_product(wc_get_product($product_id), $time_use);
 
@@ -179,15 +179,32 @@ class Zippy_Booking_Forms
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
     $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
     $message .= "<h3>Your Enquiry Details:</h3>";
-    $message .= "<p>Service type:" . $service_type . "</p>";
-    $message .= "<p>Car: $product_name</p>";
-    $message .= "<p>Usage time: " . (($time_use == 1) ? "1 Trip" : "$time_use Hours") . "</p>";
-    $message .= "<p>Pick up: $pick_up_location at $pick_up_time Date $pick_up_date</p>";
-    $message .= "<p>Drop off location: $drop_off_location</p>";
-    $message .= "<p>No of passengers: $no_of_passengers</p>";
-    $message .= "<p>Flight details: $flight_details</p>";
-    $message .= "<p>ETA: $eta_time</p>";
+    $message .= "<p>Service type: " . $service_type . "</p>";
+    $message .= "<p>Vehicle Type: $product_name</p>";
+    if($service_type == "Hourly/Disposal"){
+      $message .= "<p>Usage time: " . $time_use . " Hours</p>";
+    }
+    $message .= "<p>Pick up Date: $pick_up_date</p>";
+    $message .= "<p>Pick up Time: $pick_up_time</p>";
+    $message .= "<p>Pick up location: $pick_up_location</p>";
+    if($service_type == "Airport Arrival Transfer"){
+      $message .= "<p>Flight details: $flight_details</p>";
+      $message .= "<p>ETA: $eta_time</p>";
+      $message .= "<p>Drop off location: $drop_off_location</p>";
+    }elseif($service_type == "Airport Departure Transfer"){
+      $message .= "<p>Drop off location: $drop_off_location</p>";
+      $message .= "<p>Flight details: $flight_details</p>";
+      $message .= "<p>ETD: $eta_time</p>";
+    }
+    else{
+      $message .= "<p>Drop off location: $drop_off_location</p>";
+    }
+    
+    $message .= "<p>No of pax: $no_of_passengers</p>";
+    $message .= "<p>No of luggages: $no_of_baggage</p>";
     $message .= "<p>Special requests: $special_requests</p>";
+
+
     $message .= "<br>";
     $message .= "<h3>Preferred Contact Method:</h3>";
     $message .= "<p>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
@@ -211,9 +228,12 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p>Customer: " . $name_customer . "/" . $email_customer . "/" . $phone_customer . "</p>";
     $messageAdmin .= "<p>Job Type: " . $service_type . "</p>";
     $messageAdmin .= "<p>Vehicle Type: " . $product_name . "</p>";
+    if($service_type == "Hourly/Disposal"){
+      $messageAdmin .= "<p>Usage time: " . $time_use . " Hours</p>";
+    }
     $messageAdmin .= "<p>Date: " . $pick_up_date . "</p>";
     $messageAdmin .= "<p>Time: " . $pick_up_time . "</p>";
-    
+
     if($service_type == "Airport Arrival Transfer"){
       $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
       $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
@@ -229,6 +249,8 @@ class Zippy_Booking_Forms
       $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
     }
     
+    
+
     $messageAdmin .= "<p>No of pax: " . $no_of_passengers . "</p>";
     $messageAdmin .= "<p>No of luggages:  " . $no_of_baggage . "</p>";
     $messageAdmin .= "<p>Special requests: " . $special_requests . "</p>";
