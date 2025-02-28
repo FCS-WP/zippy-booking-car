@@ -231,8 +231,8 @@ class Zippy_Booking_Forms
     if($service_type == "Hourly/Disposal"){
       $messageAdmin .= "<p>Usage time: " . $time_use . " Hours</p>";
     }
-    $messageAdmin .= "<p>Date: " . $pick_up_date . "</p>";
-    $messageAdmin .= "<p>Time: " . $pick_up_time . "</p>";
+    $messageAdmin .= "<p>Pick Up Date: " . $pick_up_date . "</p>";
+    $messageAdmin .= "<p>Pick Up Time: " . $pick_up_time . "</p>";
 
     if($service_type == "Airport Arrival Transfer"){
       $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
