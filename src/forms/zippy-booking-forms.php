@@ -11,6 +11,7 @@ namespace Zippy_Booking_Car\Src\Forms;
 defined('ABSPATH') or die();
 
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
+use WC_Order_Item_Fee;
 
 class Zippy_Booking_Forms
 {
@@ -108,12 +109,14 @@ class Zippy_Booking_Forms
     $price_product_default = floatval($_POST['price_product_default']);
     $time_use = intval($_POST['time_use']);
     $product_id = intval($_POST['id_product']);
+    $key_member = intval($_POST['key_member']);
 
     $admin_email = get_option('admin_email');
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
     
     $order = wc_create_order();
+
     $order->add_product(wc_get_product($product_id), $time_use);
 
     $order->set_address(array(
@@ -136,8 +139,27 @@ class Zippy_Booking_Forms
 
     $order->calculate_totals();
     
+    $order_total = $order->get_subtotal(); 
+    $gst_amount = $order_total*0.09;;
+    $cc_amount = $order_total*0.05;;
 
     $order_id = $order->get_id();
+
+    $fee_GST = new WC_Order_Item_Fee();
+    $fee_GST->set_name('9% GST'); 
+    $fee_GST->set_total($gst_amount);
+    $fee_GST->set_tax_class('');
+    $fee_GST->set_tax_status('none');
+    $order->add_item($fee_GST);
+
+    $fee_CC = new WC_Order_Item_Fee();
+    $fee_CC->set_name('5% CC fee'); 
+    $fee_CC->set_total($cc_amount);
+    $fee_CC->set_tax_class('');
+    $fee_CC->set_tax_status('none');
+    $order->add_item($fee_CC);
+   
+    $order->calculate_totals();
 
     if (!empty($no_of_passengers)) {
       update_post_meta($order_id, 'no_of_passengers', $no_of_passengers);
@@ -179,6 +201,7 @@ class Zippy_Booking_Forms
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
     $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
     $message .= "<h3>Your Enquiry Details:</h3>";
+    $message .= "<p>Customer: " . $name_customer . "/" . $email_customer . " & " . $phone_customer . "</p>";
     $message .= "<p>Service type: " . $service_type . "</p>";
     $message .= "<p>Vehicle Type: $product_name</p>";
     if($service_type == "Hourly/Disposal"){
@@ -225,8 +248,13 @@ class Zippy_Booking_Forms
 
     $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Customer: " . $name_customer . "/" . $email_customer . "/" . $phone_customer . "</p>";
-    $messageAdmin .= "<p>Job Type: " . $service_type . "</p>";
+    if($key_member == 0){
+      $messageAdmin .= "<p>Customer Type: Visitor</p>";  
+    }else{
+      $messageAdmin .= "<p>Customer Type: Member</p>";  
+    }
+    $messageAdmin .= "<p>Customer: " . $name_customer . "/" . $email_customer . " & " . $phone_customer . "</p>";
+    $messageAdmin .= "<p>Service Type: " . $service_type . "</p>";
     $messageAdmin .= "<p>Vehicle Type: " . $product_name . "</p>";
     if($service_type == "Hourly/Disposal"){
       $messageAdmin .= "<p>Usage time: " . $time_use . " Hours</p>";
@@ -248,9 +276,6 @@ class Zippy_Booking_Forms
       $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
       $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
     }
-    
-    
-
     $messageAdmin .= "<p>No of pax: " . $no_of_passengers . "</p>";
     $messageAdmin .= "<p>No of luggages:  " . $no_of_baggage . "</p>";
     $messageAdmin .= "<p>Special requests: " . $special_requests . "</p>";
