@@ -201,7 +201,6 @@ class Zippy_Booking_Forms
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
     $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
     $message .= "<h3>Your Enquiry Details:</h3>";
-    $message .= "<p>Customer: " . $name_customer . "/" . $email_customer . " & " . $phone_customer . "</p>";
     $message .= "<p>Service type: " . $service_type . "</p>";
     $message .= "<p>Vehicle Type: $product_name</p>";
     if($service_type == "Hourly/Disposal"){
