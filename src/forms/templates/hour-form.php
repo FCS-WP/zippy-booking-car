@@ -92,6 +92,19 @@ if (is_user_logged_in()) {
               <option value="10">10 hours</option>
               <option value="11">11 hours</option>
               <option value="12">12 hours</option>
+              <option value="12">13 hours</option>
+              <option value="12">14 hours</option>
+              <option value="12">15 hours</option>
+              <option value="12">16 hours</option>
+              <option value="12">17 hours</option>
+              <option value="12">18 hours</option>
+              <option value="12">19 hours</option>
+              <option value="12">20 hours</option>
+              <option value="12">21 hours</option>
+              <option value="12">22 hours</option>
+              <option value="12">23 hours</option>
+              <option value="12">24 hours</option>
+
             </select>
         </div>
       </div>
