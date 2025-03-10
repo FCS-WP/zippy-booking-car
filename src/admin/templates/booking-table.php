@@ -146,10 +146,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         <div class="order-accordion">
                             <?php
                             foreach ($data['orders'] as $order) {
+                                $order_id = $order->get_id();
+                                $order_link = admin_url( "post.php?post=$order_id&action=edit" );
                             ?>
-                                <h4 class="<?php echo $order->get_status() ?>">Order #<?php echo esc_html($order->get_id()) ?> (<?php echo esc_html(wc_get_order_status_name($order->get_status())) ?>)</h4>
+                                <h4 class="<?php echo $order->get_status() ?>">
+                                    <p class="space_center_title">Order #<?php echo esc_html($order->get_id()) ?> (<?php echo esc_html(wc_get_order_status_name($order->get_status())) ?>)
+                                    <a href="<?php echo $order_link; ?>" class='edit_order_btn orange_background_color button view-order-detail-button border-radius-tab'>Edit Order</a></p>
+                                </h4>
                                 <div>
+
                                     <!-- Display order details -->
+                                    
                                     <table class="wp-list-table widefat fixed striped">
                                         <tr>
                                             <th>Order ID</th>
@@ -234,7 +241,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                             <td><?php echo esc_html(wc_get_order_status_name($order->get_status())) ?></td>
                                         </tr>
                                     </table>
-
                                     <!-- Products table -->
                                     <h5>Products</h5>
                                     <table class="wp-list-table widefat fixed striped">

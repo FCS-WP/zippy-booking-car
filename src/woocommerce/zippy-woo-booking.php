@@ -72,6 +72,9 @@ class Zippy_Woo_Booking
 
     /* Update Checkout After Applied Coupon */
     add_action('woocommerce_applied_coupon', array($this, 'after_apply_coupon_action'));
+
+    /* Include all order has custome field name is is_monthly_payment_order equal 1 and the rest will be exclude */
+    add_filter('woocommerce_my_account_my_orders_query', array($this, 'filter_my_account_orders_query'));
   }
 
   function after_apply_coupon_action($coupon_code)
@@ -434,4 +437,15 @@ class Zippy_Woo_Booking
     echo '</ul>';
     echo '</section>';
   }
+
+  public function filter_my_account_orders_query( $query_args ) {
+    $query_args['meta_query'][] = array(
+        'key'     => 'is_monthly_payment_order',
+        'value'   => '1',
+        'compare' => '='
+    );
+
+    return $query_args;
+  }
+
 }
