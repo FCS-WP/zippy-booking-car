@@ -3,11 +3,16 @@ $ = jQuery;
 
 $(document).ready(function() {
     $("#month-tabs").tabs();
+
     $(".order-accordion").accordion({
         collapsible: true,
         active: false,
         heightStyle: "content"
     });
+
+    $('.edit_order_btn').click(function(e){
+        e.stopPropagation();
+    })
 
     $(".create-order-button").on("click", function() {
         var customer_id = $(this).data("customer-id");
