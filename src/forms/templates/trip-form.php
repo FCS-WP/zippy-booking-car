@@ -99,9 +99,9 @@ if (is_user_logged_in()) {
         </div>
       </div>
       <div class="row-form-custom col-2" id="input-flight">
-        <div class="col-form-custom js-validate-trip">
+        <div class="col-form-custom">
           <label for="flight">Flight Details<span style="color:red;"></span></label>
-          <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="" type="text" name="flight_details">
+          <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="Enter your flight details" type="text" name="flight_details">
         </div>
         <div class="col-form-custom js-validate-trip" id="openPopupTime">
           <label for="eta_time"><span id="switch_time_label">ETA</span> Time</label>
