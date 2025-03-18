@@ -48,23 +48,26 @@ if (is_user_logged_in()) {
       }
       ?>
       <div class="row-form-custom col-1">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
           <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
           <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
           <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom position-relative">
+        <div class="col-form-custom js-validate-hour position-relative">
           <div class="d-flex flex-wrap mb-1">
             <label for="pick_up_date">Pick Up Date & Time <span style="color:red;">*</span></label>
             <span class="note-midnight-fee" id="note_midnight_fee" style="display: none;">(Midnight fee has been applied.)</span>
@@ -73,8 +76,9 @@ if (is_user_logged_in()) {
             <input type="text" id="hbk_pickup_date" name="pick_up_date" value="<?php echo $today;?>" placeholder="Select date" autocomplete="off" required />
             <input type="text" id="hbk_pickup_time" name="pick_up_time" value="<?php echo $time; ?>" autocomplete="off" required />
           </div>
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom ">
+        <div class="col-form-custom js-validate-hour">
           <label for="time_use">Time <span style="color:red;">*</span></label>
             <select class="" id="hbk_time_value" name="time_use" required>
               <option value="" selected>Please choose an option</option>
@@ -106,26 +110,31 @@ if (is_user_logged_in()) {
               <option value="12">24 hours</option>
 
             </select>
+            <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="pick_up_location">Pick Up Location <span style="color:red;">*</span></label>
           <input size="40" maxlength="60" class="" id="hbk_pickup_location" aria-required="true" aria-invalid="false" placeholder="Enter location" value="" type="text" name="pick_up_location" required>
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="drop_off_location">Drop Off Location <span style="color:red;">*</span></label>
           <input size="40" maxlength="50" class="" id="hbk_dropoff_location" aria-required="true" aria-invalid="false" placeholder="Enter location" value="" type="text" name="drop_off_location" required>
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="no_of_passengers">No. of Passengers <span style="color:red;">*</span></label>
           <input size="40" class="" id="hbk_number_of_passengers" aria-required="true" aria-invalid="false" placeholder="Enter number" value="" type="number" max="100" min="1" name="no_of_passengers" required>
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-hour">
           <label for="no_of_baggage">No. of Baggage <span style="color:red;">*</span></label>
           <input size="40" class="" id="hbk_number_of_baggages" aria-required="true" aria-invalid="false" placeholder="Enter number" value="" type="number" max="100" min="1" name="no_of_baggage" required>
+          <div class="error-msg"></div>
         </div>
 
       </div>
@@ -133,16 +142,18 @@ if (is_user_logged_in()) {
         <div class="col-form-custom col-1">
           <label for="special_requests">Special Requests</label>
           <input size="40" maxlength="400" class="" id="hbk_special_requests" aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
+          
         </div>
       </div>
     </div>
-    <div class="confirm-terms">
+    <div class="confirm-terms js-validate-hour">
       <input class="terms-checkbox" type="checkbox" name="agree_terms" value="1" id="agree_terms_booing_hours" required>
       <label for="agree_terms_booing_hours">
         <ul class="list-terms">
           <li class="show-title">I submit this form to request for the services listed above. I understand that my booking will only be confirmed after I have received an email confirmation.</li>
           <li class="show-title">I have read and understood the terms and conditions</li>
         </ul>
+        <span class="error-msg"></span>
       </label>
     </div>
     <div class="col-total-price-information displayNone toggleDisplayElements">

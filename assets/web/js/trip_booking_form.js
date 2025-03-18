@@ -177,44 +177,77 @@ function cacul_midnight_time(val) {
   return;
 }
 
+function validateForm(selector) {
+  let isValidateSuccess = true;
+  $(selector).removeAttr("style");
+  $('.error-msg').html("");
+  
+  $(selector).each(function(index, item){
+      let value = $.trim($(item).find('input, select').val());
+
+      if (value === '') {
+          $(item).find('.error-msg').text("This field is required");
+          $(item).css('border-color', 'red');
+          isValidateSuccess = false;
+      }
+
+      if ($(item).find('input').attr('name') === 'agree_terms') {
+          if (!$(item).find('input').is(":checked")) {
+              $(item).find('.error-msg').text("Please agree to the terms & conditions");
+              $(item).css('border-color', 'red');
+              isValidateSuccess = false;
+          }
+      }
+  });
+  
+  return isValidateSuccess;
+}
+
+
 
 $(document).ready(function () {
-  function handleFormSubmission(buttonId, formId, statusMessageId) {
+  function handleFormSubmission(buttonId, formId, statusMessageId, validateTypeForm) {
     $(buttonId).click(function (event) {
       event.preventDefault();
 
       var formData = $(formId).serialize();
+    
       var $btn = $(buttonId);
       var $statusMessage = $(statusMessageId);
+      
+      let statusValidate = validateForm(validateTypeForm);
 
-      $btn.addClass("displayNone");
-      $statusMessage.removeClass("displayNone");
-
-      $.ajax({
-        url: "/wp-admin/admin-ajax.php",
-        type: "POST",
-        data: formData + "&action=enquiry_car_booking",
-        dataType: "json",
-        success: function (response) {
-          if (response.success) {
-            alert("Enquiry Sent");
-          } else {
-            alert("Missing Fields. PLease try again!");
-          }
-        },
-        error: function () {
-          alert("System error! Please try again.");
-        },
-        complete: function () {
-          $btn.removeClass("displayNone");
-          $statusMessage.addClass("displayNone");
-        },
-      });
+      if(statusValidate ==  true){
+        
+        $btn.addClass("displayNone");
+        $statusMessage.removeClass("displayNone");
+        $.ajax({
+          url: "/wp-admin/admin-ajax.php",
+          type: "POST",
+          data: formData + "&action=enquiry_car_booking",
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              alert("Enquiry Sent");
+            } else {
+              alert("Missing Fields. PLease try again!");
+            }
+          },
+          error: function () {
+            alert("System error! Please try again.");
+          },
+          complete: function () {
+            $btn.removeClass("displayNone");
+            $statusMessage.addClass("displayNone");
+          },
+        });
+      }
+      
     });
   }
 
-  handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit");
-  handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit");
+  handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit", ".js-validate-trip");
+  handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit", ".js-validate-hour");
 });
 
 const $hourSelect = $("#ete_hour");
