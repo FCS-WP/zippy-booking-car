@@ -45,23 +45,26 @@ if (is_user_logged_in()) {
         <input name="time_use" id="time_use" type="hidden" value="1">
       </div>
       <div class="row-form-custom col-1">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
           <input class=""  aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
           <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
-          <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
+        <div class="col-form-custom js-validate-trip">
+          <label for="phonecustomer ">Customer Phone<span style="color:red;">*</span></label>
           <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom position-relative" id="openPopup">
+        <div class="col-form-custom position-relative js-validate-trip" id="openPopup">
           <div class="d-flex flex-wrap mb-1">
             <label for="hbk_pickup_date">Pick Up Date & Time <span style="color:red;">*</span></label>
             <span class="note-midnight-fee note-trip-midnight" style="display: none;">(Midnight fee has been applied.)</span>
@@ -69,9 +72,10 @@ if (is_user_logged_in()) {
           <div class="d-flex">
             <input class="pickupdate" id="pickupdate" value="<?php echo $today; ?>" type="text" name="pick_up_date" required>
             <input type="text" id="pickuptime" name="pick_up_time" min="00:00" max="24:00" value="<?php echo $time; ?>" required>
+            <div class="error-msg"></div>
           </div>
         </div>
-        <div class="col-form-custom ">
+        <div class="col-form-custom js-validate-trip">
           <label for="servicetype">Type Services <span style="color:red;">*</span></label>
           <select class="" id="servicetype" name="service_type" required>
             <option value="">Please choose an option</option>
@@ -79,46 +83,54 @@ if (is_user_logged_in()) {
             <option value="Airport Departure Transfer">Airport Departure Transfer</option>
             <option value="Point-to-point Transfer">Point-to-point Transfer</option>
           </select>
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="pickuplocation">Pick Up <span style="color:red;">*</span></label>
           <input size="40" maxlength="60" class="" id="pickuplocation" aria-required="true" aria-invalid="false" placeholder="Enter location" value="" type="text" name="pick_up_location" required>
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="doaddress">Drop Off <span style="color:red;">*</span></label>
           <input size="40" maxlength="50" class="" id="dolocation" aria-required="true" aria-invalid="false" placeholder="Enter location" value="" type="text" name="drop_off_location" required>
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2" id="input-flight">
-        <div class="col-form-custom">
-          <label for="flight">Flight Details<span style="color:red;">*</span></label>
+        <div class="col-form-custom js-validate-trip">
+          <label for="flight">Flight Details<span style="color:red;"></span></label>
           <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" value="" type="text" name="flight_details">
         </div>
-        <div class="col-form-custom" id="openPopupTime">
+        <div class="col-form-custom js-validate-trip" id="openPopupTime">
           <label for="eta_time"><span id="switch_time_label">ETA</span> Time</label>
-          <input type="hidden" name="eta_time" id="eta_time" value="Enter ETE/ETA time">
+          <input type="hidden" name="eta_time" id="eta_time" value="Enter ETE/ETA time" value="00:00">
           <div class="row_50">
             <div class="col_time_select">
               <label>Hour:</label>
               <select id="ete_hour"></select>
+              <div class="error-msg"></div>
             </div>
             <div class="col_time_select">
               <label>Minutes:</label>
               <select id="ete_minute"></select>
+              <div class="error-msg"></div>
+              
             </div>
           </div>
         </div>
       </div>
       <div class="row-form-custom col-2">
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="noofpassengers">No. of Passengers <span style="color:red;">*</span></label>
           <input class="" id="noofpassengers" aria-required="true" aria-invalid="false" placeholder="Enter No. of Passengers" value="" type="number" name="no_of_passengers" min="1" max="100" required>
+          <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
+        <div class="col-form-custom js-validate-trip">
           <label for="noofbaggage">No. of Baggage <span style="color:red;">*</span></label>
           <input class="" id="noofbaggage" aria-required="true" aria-invalid="false" placeholder="Enter No. of Baggage" value="" type="number" name="no_of_baggage" min="1" max="100" required>
+          <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-1">
@@ -128,13 +140,14 @@ if (is_user_logged_in()) {
         </div>
       </div>
     </div>
-    <div class="confirm-terms">
-      <input class="terms-checkbox" type="checkbox" name="agree_terms" value="1" id="agree_terms" required>
+    <div class="confirm-terms js-validate-trip">
+      <input class="terms-checkbox" type="checkbox" name="agree_terms" id="agree_terms" required>
       <label for="agree_terms">
         <ul class="list-terms">
           <li class="show-title">I submit this form to request for the services listed above. I understand that my booking will only be confirmed after I have received an email confirmation.</li>
           <li class="show-title">I have read and understood the terms and conditions</li>
         </ul>
+        <span class="error-msg"></span>
       </label>
     </div>
     <div class="col-total-price-information displayNone toggleDisplayElements" >
