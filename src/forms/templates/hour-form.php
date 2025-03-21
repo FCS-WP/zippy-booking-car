@@ -73,8 +73,8 @@ if (is_user_logged_in()) {
             <span class="note-midnight-fee" id="note_midnight_fee" style="display: none;">(Midnight fee has been applied.)</span>
           </div>
           <div class="d-flex" id="openPopupHour">
-            <input type="text" id="hbk_pickup_date" name="pick_up_date" value="<?php echo $today;?>" placeholder="Select date" autocomplete="off" required />
-            <input type="text" id="hbk_pickup_time" name="pick_up_time" value="<?php echo $time; ?>" autocomplete="off" required />
+            <input type="text" id="hbk_pickup_date" name="pick_up_date" value="" placeholder="Select date" autocomplete="off" required />
+            <input type="text" id="hbk_pickup_time" name="pick_up_time" value="" autocomplete="off" placeholder="Select time" required />
           </div>
           <div class="error-msg"></div>
         </div>
