@@ -75,7 +75,155 @@ class Zippy_Booking_Forms
       'userID' => $current_user_id,
     ));
   }
+  
+  //function send email to customer when website has new order
+  public function send_enquiry_email($email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details = '', $eta_time = '', $time_use = '', $no_of_passengers, $no_of_baggage, $special_requests) {
+    $headers = [
+        'Content-Type: text/html; charset=UTF-8', 
+        'From: Imperial <impls@singnet.com.sg>'
+    ];
+    
+    $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
+    
+    $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
+    $message .= "<h3>Your Enquiry Details:</h3>";
+    $message .= "<p>Service type: $service_type</p>";
+    $message .= "<p>Vehicle Type: $product_name</p>";
+    
+    if ($service_type == "Hourly/Disposal") {
+        $message .= "<p>Usage time: $time_use Hours</p>";
+    }
+    
+    $message .= "<p>Pick up Date: $pick_up_date</p>";
+    $message .= "<p>Pick up Time: $pick_up_time</p>";
+    $message .= "<p>Pick up location: $pick_up_location</p>";
+    
+    if ($service_type == "Airport Arrival Transfer") {
+        $message .= "<p>Flight details: $flight_details</p>";
+        $message .= "<p>ETA: $eta_time</p>";
+        $message .= "<p>Drop off location: $drop_off_location</p>";
+    } elseif ($service_type == "Airport Departure Transfer") {
+        $message .= "<p>Drop off location: $drop_off_location</p>";
+        $message .= "<p>Flight details: $flight_details</p>";
+        $message .= "<p>ETD: $eta_time</p>";
+    } else {
+        $message .= "<p>Drop off location: $drop_off_location</p>";
+    }
+    
+    $message .= "<p>No of pax: $no_of_passengers</p>";
+    $message .= "<p>No of luggages: $no_of_baggage</p>";
+    $message .= "<p>Special requests: $special_requests</p>";
+    
+    $message .= "<br><h3>Preferred Contact Method:</h3>";
+    $message .= "<p>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
+    $message .= "<p>EMAIL: impls@singnet.com.sg</p>";
+    $message .= "<br><p>Our team will review your request and respond within 24 hours. If you have any urgent concerns, feel free to contact us.</p>";
+    $message .= "<p>We appreciate your patience and look forward to assisting you.</p><br>";
+    $message .= "<p>Best regards,</p>";
+    $message .= "<p>Imperial Chauffeur Services Pte. Ltd</p>";
+    $message .= "<p>Email: impls@singnet.com.sg</p>";
+    $message .= "<p>Website: <a href='https://imperialchauffeur.sg/'>imperialchauffeur.sg</a></p>";
+    
+    return wp_mail($email_customer, $subject, $message, $headers);
+}
 
+  //function send email to admin when website has new order
+  public function send_enquiry_admin_email($admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests) {
+    $headers = [
+      'Content-Type: text/html; charset=UTF-8', 
+      'From: Imperial <impls@singnet.com.sg>'
+    ];
+
+    $subjectAdmin = 'New Enquiry Received';
+    $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
+    $messageAdmin .= "<h3>Enquiry Details:</h3>";
+    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
+    $messageAdmin .= "<p>Customer: $name_customer / $email_customer & $phone_customer</p>";
+    $messageAdmin .= "<p>Service Type: $service_type</p>";
+    $messageAdmin .= "<p>Vehicle Type: $product_name</p>";
+    
+    if ($service_type == "Hourly/Disposal") {
+        $messageAdmin .= "<p>Usage time: $time_use Hours</p>";
+    }
+    
+    $messageAdmin .= "<p>Pick Up Date: $pick_up_date</p>";
+    $messageAdmin .= "<p>Pick Up Time: $pick_up_time</p>";
+    
+    if ($service_type == "Airport Arrival Transfer") {
+        $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
+        $messageAdmin .= "<p>Flight details: $flight_details</p>";
+        $messageAdmin .= "<p>ETA: $eta_time</p>";
+        $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
+    } elseif ($service_type == "Airport Departure Transfer") {
+        $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
+        $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
+        $messageAdmin .= "<p>Flight details: $flight_details</p>";
+        $messageAdmin .= "<p>ETD: $eta_time</p>";
+    } else {
+        $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
+        $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
+    }
+    
+    $messageAdmin .= "<p>No of pax: $no_of_passengers</p>";
+    $messageAdmin .= "<p>No of luggages: $no_of_baggage</p>";
+    $messageAdmin .= "<p>Special requests: $special_requests</p>";
+    $messageAdmin .= "<br><p>Please review the enquiry and respond at your earliest convenience.</p><br>";
+    $messageAdmin .= "<p>Best regards,</p>";
+    $messageAdmin .= "<p>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
+    
+    return wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
+  }
+
+  //function create order when website has new enquiry
+  public function create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer) {
+    $order = wc_create_order();
+    
+    $order->add_product(wc_get_product($product_id), $time_use);
+    
+    $order->set_address([
+        'first_name' => $name_customer,
+        'email'      => $email_customer,
+        'phone'      => $phone_customer,
+    ], 'billing');
+    
+    if (is_user_logged_in()) {
+        $user = wp_get_current_user();
+        if ($user->ID) { 
+            $order->set_customer_id($user->ID);
+        }
+        $order->update_status('on-hold');
+    } else {
+        $order->update_status('pending');
+    }
+    
+    $order->set_payment_method('cod');
+    
+    $order->calculate_totals();
+    $order_total = $order->get_subtotal();
+    
+    $gst_amount = $order_total * 0.09;
+    $cc_amount = $order_total * 0.05;
+    
+    $fee_GST = new WC_Order_Item_Fee();
+    $fee_GST->set_name('9% GST'); 
+    $fee_GST->set_total($gst_amount);
+    $fee_GST->set_tax_class('');
+    $fee_GST->set_tax_status('none');
+    $order->add_item($fee_GST);
+    
+    $fee_CC = new WC_Order_Item_Fee();
+    $fee_CC->set_name('5% CC fee'); 
+    $fee_CC->set_total($cc_amount);
+    $fee_CC->set_tax_class('');
+    $fee_CC->set_tax_status('none');
+    $order->add_item($fee_CC);
+    
+    $order->calculate_totals();
+    
+    return $order->get_id();
+  }
+
+  //handle enquiry button ajax
   function enquiry_car_booking() {
     
     if (empty($_POST)) {
@@ -115,178 +263,32 @@ class Zippy_Booking_Forms
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
     
-    $order = wc_create_order();
+    $order_id = self::create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer);
 
-    $order->add_product(wc_get_product($product_id), $time_use);
+    $customer_infors = [
+      'no_of_passengers' => $no_of_passengers,
+      'no_of_baggage' => $no_of_baggage,
+      'service_type' => $service_type,
+      'flight_details' => $flight_details,
+      'eta_time' => $eta_time,
+      'key_member' => $key_member,
+      'pick_up_date' => $pick_up_date,
+      'pick_up_time' => $pick_up_time,
+      'pick_up_location' => $pick_up_location,
+      'drop_off_location' => $drop_off_location,
+      'special_requests' => $special_requests,
+    ];
 
-    $order->set_address(array(
-        'first_name' => $name_customer,
-        'email'      => $email_customer,
-        'phone'      => $phone_customer,
-    ), 'billing');
-    
-    if (is_user_logged_in()) {
-      $user = wp_get_current_user();
-      if ($user->ID) { 
-          $order->set_customer_id($user->ID);
-      }
-      $order->update_status('on-hold');
-    }else{
-      $order->update_status('pending');
-    }
-
-    $order->set_payment_method('cod');
-
-    $order->calculate_totals();
-    
-    $order_total = $order->get_subtotal(); 
-    $gst_amount = $order_total*0.09;;
-    $cc_amount = $order_total*0.05;;
-
-    $order_id = $order->get_id();
-
-    $fee_GST = new WC_Order_Item_Fee();
-    $fee_GST->set_name('9% GST'); 
-    $fee_GST->set_total($gst_amount);
-    $fee_GST->set_tax_class('');
-    $fee_GST->set_tax_status('none');
-    $order->add_item($fee_GST);
-
-    $fee_CC = new WC_Order_Item_Fee();
-    $fee_CC->set_name('5% CC fee'); 
-    $fee_CC->set_total($cc_amount);
-    $fee_CC->set_tax_class('');
-    $fee_CC->set_tax_status('none');
-    $order->add_item($fee_CC);
-   
-    $order->calculate_totals();
-
-    if (!empty($no_of_passengers)) {
-      update_post_meta($order_id, 'no_of_passengers', $no_of_passengers);
-    }
-
-    if (!empty($no_of_baggage)) {
-      update_post_meta($order_id, 'no_of_baggage', $no_of_baggage);
-    }
-
-    if (!empty($service_type)) {
-      update_post_meta($order_id, 'service_type', $service_type);
-    }
-    if (!empty($flight_details)) {
-      update_post_meta($order_id, 'flight_details', $flight_details);
-    }
-    if (!empty($eta_time)) {
-      update_post_meta($order_id, 'eta_time', $eta_time);
-    }
-    if (!empty($key_member)) {
-      update_post_meta($order_id, 'key_member', $key_member);
-    }
-    if (!empty($pick_up_date)) {
-      update_post_meta($order_id, 'pick_up_date', $pick_up_date);
-    }
-    if (!empty($pick_up_time)) {
-      update_post_meta($order_id, 'pick_up_time', $pick_up_time);
-    }
-    if (!empty($pick_up_location)) {
-      update_post_meta($order_id, 'pick_up_location', $pick_up_location);
-    }
-    if (!empty($drop_off_location)) {
-      update_post_meta($order_id, 'drop_off_location', $drop_off_location);
-    }
-    if (!empty($special_requests)) {
-      update_post_meta($order_id, 'special_requests', $special_requests);
-    }
-
-    $headers = ['Content-Type: text/html; charset=UTF-8', 'From: Imperial <impls@singnet.com.sg>'];
-    $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
-    $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
-    $message .= "<h3>Your Enquiry Details:</h3>";
-    $message .= "<p>Service type: " . $service_type . "</p>";
-    $message .= "<p>Vehicle Type: $product_name</p>";
-    if($service_type == "Hourly/Disposal"){
-      $message .= "<p>Usage time: " . $time_use . " Hours</p>";
-    }
-    $message .= "<p>Pick up Date: $pick_up_date</p>";
-    $message .= "<p>Pick up Time: $pick_up_time</p>";
-    $message .= "<p>Pick up location: $pick_up_location</p>";
-    if($service_type == "Airport Arrival Transfer"){
-      $message .= "<p>Flight details: $flight_details</p>";
-      $message .= "<p>ETA: $eta_time</p>";
-      $message .= "<p>Drop off location: $drop_off_location</p>";
-    }elseif($service_type == "Airport Departure Transfer"){
-      $message .= "<p>Drop off location: $drop_off_location</p>";
-      $message .= "<p>Flight details: $flight_details</p>";
-      $message .= "<p>ETD: $eta_time</p>";
-    }
-    else{
-      $message .= "<p>Drop off location: $drop_off_location</p>";
+    foreach($customer_infors as $customer_infor => $value){
+      update_post_meta($order_id, $customer_infor, $value);
     }
     
-    $message .= "<p>No of pax: $no_of_passengers</p>";
-    $message .= "<p>No of luggages: $no_of_baggage</p>";
-    $message .= "<p>Special requests: $special_requests</p>";
-
-
-    $message .= "<br>";
-    $message .= "<h3>Preferred Contact Method:</h3>";
-    $message .= "<p>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
-    $message .= "<p>EMAIL: impls@singnet.com.sg</p>";
-    $message .= "<br>";
-    $message .= "<p>Our team will review your request and respond within  24 hours. If you have any urgent concerns, feel free to contact us.</p>";
-    $message .= "<p>We appreciate your patience and look forward to assisting you.</p>";
-    $message .= "<br>";
-    $message .= "<p>Best regards,</p>";
-    $message .= "<p>Imperial Chauffeur Services Pte. Ltd</p>";
-    $message .= "<p>Email: impls@singnet.com.sg</p>";
-    $message .= "<p>Website: https://imperialchauffeur.sg/</p>";
+    $status_customer_email = self::send_enquiry_email($email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
+  
+    $status_admin_email = self::send_enquiry_admin_email($admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
     
 
-    $send_customer = wp_mail($email_customer, $subject, $message, $headers);
-
-    $subjectAdmin = 'New Enquiry Received';
-
-    $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
-    $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    if($key_member == 0){
-      $messageAdmin .= "<p>Customer Type: Visitor</p>";  
-    }else{
-      $messageAdmin .= "<p>Customer Type: Member</p>";  
-    }
-    $messageAdmin .= "<p>Customer: " . $name_customer . "/" . $email_customer . " & " . $phone_customer . "</p>";
-    $messageAdmin .= "<p>Service Type: " . $service_type . "</p>";
-    $messageAdmin .= "<p>Vehicle Type: " . $product_name . "</p>";
-    if($service_type == "Hourly/Disposal"){
-      $messageAdmin .= "<p>Usage time: " . $time_use . " Hours</p>";
-    }
-    $messageAdmin .= "<p>Pick Up Date: " . $pick_up_date . "</p>";
-    $messageAdmin .= "<p>Pick Up Time: " . $pick_up_time . "</p>";
-
-    if($service_type == "Airport Arrival Transfer"){
-      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
-      $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
-      $messageAdmin .= "<p>ETA: " . $eta_time . "</p>";
-      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
-    }elseif($service_type == "Airport Departure Transfer"){
-      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
-      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
-      $messageAdmin .= "<p>Flight details: " . $flight_details . "</p>";
-      $messageAdmin .= "<p>ETD: " . $eta_time . "</p>";
-    }else{
-      $messageAdmin .= "<p>Pick up location: " . $pick_up_location . "</p>";
-      $messageAdmin .= "<p>Drop off location: " . $drop_off_location . "</p>";
-    }
-    $messageAdmin .= "<p>No of pax: " . $no_of_passengers . "</p>";
-    $messageAdmin .= "<p>No of luggages:  " . $no_of_baggage . "</p>";
-    $messageAdmin .= "<p>Special requests: " . $special_requests . "</p>";
-    $messageAdmin .= "<br>";
-    $messageAdmin .= "<p>Please review the enquiry and respond at your earliest convenience.</p>";
-    $messageAdmin .= "<br>";
-    $messageAdmin .= "<p>Best regards,</p>";
-    $messageAdmin .= "<p>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
-
-    $send_admin = wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
-
-    if ($send_customer && $send_admin) {
+    if ($status_customer_email && $status_admin_email) {
         wp_send_json_success(array('message' => 'sucess.'));
     } else {
         wp_send_json_error(array('message' => 'fails'));
