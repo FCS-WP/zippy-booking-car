@@ -70,10 +70,10 @@ if (is_user_logged_in()) {
             <span class="note-midnight-fee note-trip-midnight" style="display: none;">(Midnight fee has been applied.)</span>
           </div>
           <div class="d-flex">
-            <input class="pickupdate" id="pickupdate" value="<?php echo $today; ?>" type="text" name="pick_up_date" required>
-            <input type="text" id="pickuptime" name="pick_up_time" min="00:00" max="24:00" value="<?php echo $time; ?>" required>
-            <div class="error-msg"></div>
+            <input class="pickupdate" id="pickupdate" value="" placeholder="Select date" type="text" name="pick_up_date" required>
+            <input type="text" id="pickuptime" name="pick_up_time" min="00:00" max="24:00" placeholder="Select time" value="" required>
           </div>
+          <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-trip">
           <label for="servicetype">Type Services <span style="color:red;">*</span></label>
