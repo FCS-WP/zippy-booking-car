@@ -230,7 +230,7 @@ $(document).ready(function () {
             if (response.success) {
               alert("Enquiry Sent");
             } else {
-              alert("Missing Fields. PLease try again!");
+              alert("Missing Fields. Please try again!");
             }
           },
           error: function () {
