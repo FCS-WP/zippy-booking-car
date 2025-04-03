@@ -175,10 +175,10 @@ class Zippy_Booking_Forms
   }
 
   //function create order when website has new enquiry
-  public function create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer) {
+  public function create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type) {
     $order = wc_create_order();
     
-    $order->add_product(wc_get_product($product_id), $time_use);
+    $product = wc_get_product($product_id);
     
     $order->set_address([
         'first_name' => $name_customer,
@@ -197,28 +197,61 @@ class Zippy_Booking_Forms
     }
     
     $order->set_payment_method('cod');
-    
-    $order->calculate_totals();
-    $order_total = $order->get_subtotal();
-    
-    $gst_amount = $order_total * 0.09;
-    $cc_amount = $order_total * 0.05;
-    
+
+    $regular_price = $product ? $product->get_price() : 0;
+    $order_total = 0;
+
+    if($service_type == "Hourly/Disposal"){
+      $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
+      $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
+
+      $total_price = $price_per_hour * $time_use;
+    } else {
+      $total_price = $regular_price * $time_use;
+    }
+
+
+    $order_total += $total_price;
+
+    // Add product to order
+    if ($product) {
+      $item = new \WC_Order_Item_Product();
+      $item->set_product($product);
+      $item->set_quantity($time_use);
+      $item->set_subtotal($total_price);
+      $item->set_total($total_price);
+      $order->add_item($item);
+    }
+
+    // GST Tax
+    $gst_tax = floor($order_total * 0.09 * 100) / 100;
+
+    // CC Tax
+    $total_after_gst = $order_total + $gst_tax;
+    $cc_tax = floor($total_after_gst * 0.05 * 100) / 100;
+
+
+    // Final price
+    $final_total = $total_after_gst + $cc_tax;
+
+    // Add Tax to Order
     $fee_GST = new WC_Order_Item_Fee();
     $fee_GST->set_name('9% GST'); 
-    $fee_GST->set_total($gst_amount);
+    $fee_GST->set_total($gst_tax);
     $fee_GST->set_tax_class('');
     $fee_GST->set_tax_status('none');
     $order->add_item($fee_GST);
     
     $fee_CC = new WC_Order_Item_Fee();
     $fee_CC->set_name('5% CC fee'); 
-    $fee_CC->set_total($cc_amount);
+    $fee_CC->set_total($cc_tax);
     $fee_CC->set_tax_class('');
     $fee_CC->set_tax_status('none');
     $order->add_item($fee_CC);
-    
-    $order->calculate_totals();
+
+    $order->set_total($final_total);
+
+    $order->save();
     
     return $order->get_id();
   }
@@ -263,7 +296,7 @@ class Zippy_Booking_Forms
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
     
-    $order_id = self::create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer);
+    $order_id = self::create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type);
 
     $customer_infors = [
       'no_of_passengers' => $no_of_passengers,
