@@ -137,7 +137,7 @@ class Zippy_Booking_Forms
     $subjectAdmin = 'New Enquiry Received';
     $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
+    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Public" : "Member") . "</p>";
     $messageAdmin .= "<p>Customer: $name_customer / $email_customer & $phone_customer</p>";
     $messageAdmin .= "<p>Service Type: $service_type</p>";
     $messageAdmin .= "<p>Vehicle Type: $product_name</p>";
