@@ -129,7 +129,6 @@ class Zippy_Booking_Forms
 
   //function send email to admin when website has new order
   public function send_enquiry_admin_email($order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests) {
-    $admin_email = "tai.phan@floatingcube.com";
     $headers = [
       'Content-Type: text/html; charset=UTF-8', 
       'From: Imperial <impls@singnet.com.sg>'
