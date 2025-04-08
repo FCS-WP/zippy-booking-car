@@ -128,7 +128,8 @@ class Zippy_Booking_Forms
 }
 
   //function send email to admin when website has new order
-  public function send_enquiry_admin_email($admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests) {
+  public function send_enquiry_admin_email($order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests) {
+    $admin_email = "tai.phan@floatingcube.com";
     $headers = [
       'Content-Type: text/html; charset=UTF-8', 
       'From: Imperial <impls@singnet.com.sg>'
@@ -137,7 +138,8 @@ class Zippy_Booking_Forms
     $subjectAdmin = 'New Enquiry Received';
     $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Public" : "Member") . "</p>";
+    $messageAdmin .= "<p>Order No: #$order_id</p>";
+    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
     $messageAdmin .= "<p>Customer: $name_customer / $email_customer & $phone_customer</p>";
     $messageAdmin .= "<p>Service Type: $service_type</p>";
     $messageAdmin .= "<p>Vehicle Type: $product_name</p>";
@@ -318,7 +320,7 @@ class Zippy_Booking_Forms
     
     $status_customer_email = self::send_enquiry_email($email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
   
-    $status_admin_email = self::send_enquiry_admin_email($admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
+    $status_admin_email = self::send_enquiry_admin_email($order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
     
 
     if ($status_customer_email && $status_admin_email) {
