@@ -1,4 +1,4 @@
-// import { Calendar, Options } from "vanilla-calendar-pro";
+import { Calendar, Options } from "vanilla-calendar-pro";
 
 // Option for vanilla calendar JS
 const options = {

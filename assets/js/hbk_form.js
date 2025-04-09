@@ -1,4 +1,4 @@
-// import { Calendar, Options } from "vanilla-calendar-pro";
+import { Calendar, Options } from "vanilla-calendar-pro";
 $(document).ready(function () {
   // Init date picker for hourly booking
   const options = {
