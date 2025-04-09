@@ -233,3 +233,28 @@ table.table-customers {
     }
   }
 }
+
+
+.order-accordion{
+  h4{
+    display: flex !important;
+    align-items: center;
+  }
+
+  .space_center_title{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    margin: 0px;
+  }
+}
+
+.orange_background_color{
+  background-color: #FFCC00 !important;
+  color: #000 !important;
+}
+
+.border_radius_tab{
+  border-radius: 5px 5px 0 0 !important;
+}
