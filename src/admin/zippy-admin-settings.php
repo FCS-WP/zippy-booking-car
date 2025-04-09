@@ -46,9 +46,11 @@ class Zippy_Admin_Settings
     //lib
     wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/libs/jquery-ui/jquery-ui.min.css', [], $version);
     // Pass the user ID to the script
-    wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
-    // wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
-    wp_enqueue_script('booking-table-js', ZIPPY_BOOKING_URL . 'assets/js/admin_booking_table.js', [], $version);
+    wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/admin.min.js', [], $version, true);
+    wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/admin.min.css', [], $version);
+
+
+
 
 
     wp_localize_script('booking-js-current-id', 'admin_id', array(
