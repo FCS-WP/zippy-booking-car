@@ -32,16 +32,19 @@ class Zippy_Admin_Settings
   public function __construct()
   {
     add_action('admin_menu',  array($this, 'zippy_booking_car_page'));
-    add_action('admin_enqueue_scripts', array($this, 'booking_assets'));
+    add_action('admin_enqueue_scripts', array($this, 'admin_booking_assets'));
+    add_action('woocommerce_order_status_changed', array($this, 'handle_monthly_payment_orders'));
     add_action('wp_ajax_create_payment_order', array($this, 'create_payment_order'));
+    add_action('wp_ajax_nopriv_create_payment_order', array($this, 'create_payment_order'));
     add_filter('woocommerce_order_number', array($this, 'custom_order_number_display'), 10, 2);
   }
 
-  public function booking_assets()
+  public function admin_booking_assets()
   {
     $version = time();
     $current_user_id = get_current_user_id();
-
+    //lib
+    wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/libs/jquery-ui/jquery-ui.min.css', [], $version);
     // Pass the user ID to the script
     wp_enqueue_script('booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/main.min.js', [], $version, true);
     // wp_enqueue_style('booking-css', ZIPPY_BOOKING_URL . '/assets/dist/css/main.min.css', [], $version);
@@ -61,7 +64,7 @@ class Zippy_Admin_Settings
 
   public function zippy_booking_car_page()
   {
-    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-admin-generic', 6);
+    add_menu_page('Zippy Bookings', 'Zippy Bookings', 'manage_options', 'zippy-bookings', array($this, 'render'), 'dashicons-list-view', 6);
 
     //add Booking History submenu
     add_submenu_page(
@@ -72,40 +75,64 @@ class Zippy_Admin_Settings
       'booking-history',
       array($this, 'booking_history_render')
     );
-    //add Booking History submenu
-    add_submenu_page(
-      'zippy-bookings',
-      'Booking Table',
-      'Booking Table',
-      'manage_options',
-      'booking-table',
-      array($this, 'booking_table_render')
-    );
   }
 
   public function render()
   {
-    echo Zippy_Utils_Core::get_template('admin-settings.php', [], dirname(__FILE__), '/templates');
+    echo Zippy_Utils_Core::get_template('booking-table.php', [], dirname(__FILE__), '/templates');
   }
   public function booking_history_render()
   {
     $data = [];
     if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
+
       $customer_id = sanitize_text_field($_GET['customer_id']);
+
+      // Post per page
+      $orders_per_page = 7;
+
+      // Current Page
+      $current_page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+
+      // Offset
+      $offset = ($current_page - 1) * $orders_per_page;
+
+      // Query array to count total orders
+
       $args = array(
         'limit' => -1,
         'customer_id' => $customer_id,
-        // 'status' => 'completed',
+        'status' => 'completed',
+        'meta_key' => 'is_monthly_payment_order',
+        'meta_value' => 1,
+        'meta_compare' => '=',
+        'return' => "ids"
       );
+      $total_orders = count(wc_get_orders($args));
+
+
+      // New Query Array for Orders List
+
+      $args["limit"] = $orders_per_page;
+      $args["offset"] = $offset;
+      $args["orderby"] = "date";
+      $args["order"] = "DESC";
+
+      unset($args["return"]);
+
       $orders = wc_get_orders($args);
 
       $data["customer_id"] = $customer_id;
       $data["orders"] = $orders;
+      $data["total_orders"] = $total_orders;
+      $data["current_page"] = $current_page;
+      $data["orders_per_page"] = $orders_per_page;
     } else {
+
       $args = array(
         'limit' => -1,
         'orderby' => 'date',
-        'order' => 'ASC',
+        'order' => 'DESC',
       );
       $orders = wc_get_orders($args);
 
@@ -113,6 +140,10 @@ class Zippy_Admin_Settings
         "order_infos" => [],
       ];
       foreach ($orders as $order) {
+        if (!$order->get_meta('is_monthly_payment_order')) {
+          continue;
+        }
+
         $customer_id = $order->get_customer_id();
 
         if (!$customer_id) {
@@ -139,14 +170,9 @@ class Zippy_Admin_Settings
       }
     }
 
+
     echo Zippy_Utils_Core::get_template('booking-history.php', $data, dirname(__FILE__), '/templates');
   }
-
-  public function booking_table_render()
-  {
-    echo Zippy_Utils_Core::get_template('booking-table.php', [], dirname(__FILE__), '/templates');
-  }
-
 
   public function create_payment_order()
   {
@@ -181,23 +207,43 @@ class Zippy_Admin_Settings
 
     $total_for_month = 0;
     $selected_orders = [];
+    $selected_orders_ids = [];
 
     foreach ($orders as $order) {
       $order_date = $order->get_date_created();
       $order_month_year = $order_date->format('F Y');
 
       $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
-      if ($order_month_year === $month_of_order && !$is_monthly_payment_order) {
+      if ($order_month_year === $month_of_order && !$is_monthly_payment_order && $order->get_status() === 'on-hold') {
         $total_for_month += $order->get_total();
         $selected_orders[] = $order;
+        $selected_orders_ids[] = $order->get_id();
       }
     }
 
     if ($total_for_month <= 0) {
-      wp_send_json_error(['message' => 'No orders found for the specified month']);
+      wp_send_json_error(['message' => 'No on-hold orders found for the specified month']);
       return;
     }
 
+    $existing_summary_orders = wc_get_orders([
+      'meta_key' => 'is_monthly_payment_order',
+      'meta_value' => true,
+      'limit' => -1,
+    ]);
+
+    $summary_order_count = 0;
+    foreach ($existing_summary_orders as $existing_order) {
+      $order_month = $existing_order->get_meta('month_of_order', true);
+      if ($order_month === $month_of_order) {
+        $summary_order_count++;
+      }
+    }
+
+    // Increment summary_order_count to ensure unique order numbers
+    $current_order_number = $summary_order_count + 1;
+
+    // Create the new order
     $order = wc_create_order();
     $order->set_customer_id($customer_id);
     $order->set_billing_first_name($billing_first_name);
@@ -207,6 +253,8 @@ class Zippy_Admin_Settings
     $order->set_status('pending');
 
     foreach ($selected_orders as $selected_order) {
+      $selected_order->update_status('pending', 'Updated to pending by parent monthly order creation.');
+
       $product_name = 'Order #' . $selected_order->get_id() . ' (' . $customer_name . ' - ' . $month_of_order . ')';
       $item = new WC_Order_Item_Product();
       $item->set_name($product_name);
@@ -221,8 +269,10 @@ class Zippy_Admin_Settings
 
     $order->update_meta_data('is_monthly_payment_order', true);
     $order->update_meta_data('month_of_order', $month_of_order);
+    $order->update_meta_data('list_of_child_orders', serialize($selected_orders_ids));
+    $order->update_meta_data('summary_order_number', $current_order_number);
 
-    $custom_order_number = $order->get_id() . ' ' . $month_of_order . '-';
+    $custom_order_number = $order->get_id() . ' ' . $month_of_order . ' #' . $current_order_number ;
     $order->update_meta_data('_custom_order_number', $custom_order_number);
 
     $order->calculate_totals();
@@ -230,12 +280,15 @@ class Zippy_Admin_Settings
     $order_id = $order->save();
 
     if ($order_id) {
-      wp_send_json_success(['order_id' => $order_id, 'total' => wc_price($total_for_month)]);
+      wp_send_json_success([
+        'order_id' => $order_id,
+        'total' => wc_price($total_for_month),
+        'summary_order_number' => $current_order_number
+      ]);
     } else {
       wp_send_json_error(['message' => 'Failed to create order']);
     }
   }
-
 
   public function custom_order_number_display($order_number, $order)
   {
@@ -245,5 +298,29 @@ class Zippy_Admin_Settings
     }
 
     return $order_number;
+  }
+  public function handle_monthly_payment_orders($order_id)
+  {
+    $order = wc_get_order($order_id);
+
+    if (!$order->get_meta('is_monthly_payment_order', true)) {
+      return;
+    }
+
+    $child_orders_ids = $order->get_meta('list_of_child_orders', true);
+    $child_orders_ids = !empty($child_orders_ids) ? unserialize($child_orders_ids) : [];
+
+    if (empty($child_orders_ids)) {
+      return;
+    }
+
+    $parent_status = $order->get_status();
+
+    foreach ($child_orders_ids as $child_order_id) {
+      $child_order = wc_get_order($child_order_id);
+      if ($child_order) {
+        $child_order->update_status($parent_status, 'Status updated to match parent monthly order.');
+      }
+    }
   }
 }
