@@ -49,7 +49,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     $grouped_by_month[$month_of_order]['summary_orders'][] = intval($summary_order_number);
                 }
 
-                if ($order->get_status() === 'on-hold') {
+                if ($order->get_status() === 'confirmed') {
                     $grouped_by_month[$month_of_order]['total'] += $order->get_total();
                 }
 
@@ -284,7 +284,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                         $all_pending = true;
 
                         foreach ($data['orders'] as $order) {
-                            if ($order->get_status() !== 'pending' && $order->get_status() !== 'processing') {
+                            if ($order->get_status() !== 'pending' && $order->get_status() !== 'processing' && $order->get_status() !== 'on-hold') {
                                 $all_pending = false;
                                 break;
                             }
