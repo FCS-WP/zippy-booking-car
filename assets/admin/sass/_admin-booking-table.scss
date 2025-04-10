@@ -44,25 +44,25 @@ $primary: #339966;
         background: $info !important;
         &.pending {
           background: $info !important;
-          a{
+          a {
             color: white !important;
           }
         }
         &.completed {
           background: $primary !important;
-          a{
+          a {
             color: white !important;
           }
         }
-        &.processing  {
+        &.processing {
           background: #c6e1c6 !important;
-          a{
+          a {
             color: #2c4700 !important;
           }
         }
         &.on-hold {
           background: #f8dda7 !important;
-          a{
+          a {
             color: #573b00 !important;
           }
         }
@@ -97,14 +97,14 @@ $primary: #339966;
     }
   }
   .on-hold {
-    background: #f8dda7 !important;
-    color: #573b00 !important;
+    background: rgb(228, 95, 95) !important;
+    color: white !important;
     .ui-icon {
-      filter: brightness(0) !important;
+      filter: brightness(0) invert(1) !important;
     }
     .ui-state-active {
       .ui-icon {
-        filter: brightness(0) !important;
+        filter: brightness(0) invert(1) !important;
       }
     }
   }
@@ -234,14 +234,13 @@ table.table-customers {
   }
 }
 
-
-.order-accordion{
-  h4{
+.order-accordion {
+  h4 {
     display: flex !important;
     align-items: center;
   }
 
-  .space_center_title{
+  .space_center_title {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -250,11 +249,11 @@ table.table-customers {
   }
 }
 
-.orange_background_color{
-  background-color: #FFCC00 !important;
+.orange_background_color {
+  background-color: #ffcc00 !important;
   color: #000 !important;
 }
 
-.border_radius_tab{
+.border_radius_tab {
   border-radius: 5px 5px 0 0 !important;
 }

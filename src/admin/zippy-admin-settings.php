@@ -216,13 +216,13 @@ class Zippy_Admin_Settings
       $order_month_year = $order_date->format('F Y');
 
       $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
-      if ($order_month_year === $month_of_order && !$is_monthly_payment_order && $order->get_status() === 'on-hold') {
+      if ($order_month_year === $month_of_order && !$is_monthly_payment_order && $order->get_status() === 'confirmed') {
         $total_for_month += $order->get_total();
         $selected_orders[] = $order;
         $selected_orders_ids[] = $order->get_id();
       }
     }
-
+    
     if ($total_for_month <= 0) {
       wp_send_json_error(['message' => 'No on-hold orders found for the specified month']);
       return;
