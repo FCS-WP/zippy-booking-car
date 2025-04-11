@@ -361,7 +361,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
     $grouped_orders = array();
 
     foreach ($orders as $order) {
-        $customer_id = $order->get_customer_id();
+        $customer_id = $order->get_user_id();
 
         if (!$customer_id) {
             continue;
