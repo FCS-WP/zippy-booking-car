@@ -176,9 +176,12 @@ class Zippy_Booking_Forms
   }
 
   //function create order when website has new enquiry
-  public function create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type) {
-    $order = wc_create_order();
+  public function create_enquiry_order($key_member, $product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type) {
     
+    $key_member = 0 ? "Visitor" : "Member";
+    
+    $order = wc_create_order();
+
     $product = wc_get_product($product_id);
     
     $order->set_address([
@@ -197,6 +200,8 @@ class Zippy_Booking_Forms
         $order->update_status('pending');
     }
     
+    $order->update_meta_data('member_type', $key_member);
+
     $order->set_payment_method('cod');
 
     $regular_price = $product ? $product->get_price() : 0;
@@ -297,7 +302,7 @@ class Zippy_Booking_Forms
     $product = wc_get_product($product_id);
     $product_name = $product ? $product->get_name() : 'Unknown';
     
-    $order_id = self::create_enquiry_order($product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type);
+    $order_id = self::create_enquiry_order($key_member, $product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type);
 
     $customer_infors = [
       'no_of_passengers' => $no_of_passengers,
