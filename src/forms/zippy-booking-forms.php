@@ -178,7 +178,7 @@ class Zippy_Booking_Forms
   //function create order when website has new enquiry
   public function create_enquiry_order($key_member, $product_id, $time_use, $name_customer, $email_customer, $phone_customer,$service_type) {
     
-    $key_member = 0 ? "Visitor" : "Member";
+    $key_member = 0 ? "public" : "member";
     
     $order = wc_create_order();
 
