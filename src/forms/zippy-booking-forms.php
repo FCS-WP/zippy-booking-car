@@ -12,6 +12,7 @@ defined('ABSPATH') or die();
 
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 use WC_Order_Item_Fee;
+use WC_Settings_Page;
 
 class Zippy_Booking_Forms
 {
@@ -236,11 +237,8 @@ class Zippy_Booking_Forms
 
     // CC Tax
     $total_after_gst = $order_total + $gst_tax;
-    $cc_tax = floor($total_after_gst * 0.05 * 100) / 100;
 
-
-    // Final price
-    $final_total = $total_after_gst + $cc_tax;
+    $cc_tax = 0;
 
     // Add Tax to Order
     $fee_GST = new WC_Order_Item_Fee();
@@ -250,12 +248,21 @@ class Zippy_Booking_Forms
     $fee_GST->set_tax_status('none');
     $order->add_item($fee_GST);
 
-    $fee_CC = new WC_Order_Item_Fee();
-    $fee_CC->set_name('5% CC fee');
-    $fee_CC->set_total($cc_tax);
-    $fee_CC->set_tax_class('');
-    $fee_CC->set_tax_status('none');
-    $order->add_item($fee_CC);
+    // CC fee 
+    $is_enable = get_option('enable_cc_fee');
+    if (!empty($is_enable) && $is_enable == 'yes') {
+      $cc_fee_name = get_option('zippy_cc_fee_name');
+      $cc_fee_value = get_option('zippy_cc_fee_amount');
+      $cc_tax = floor($total_after_gst * ($cc_fee_value / 100) * 100) / 100;
+      $fee_CC = new WC_Order_Item_Fee();
+      $fee_CC->set_name($cc_fee_name);
+      $fee_CC->set_total($cc_tax);
+      $fee_CC->set_tax_class('');
+      $fee_CC->set_tax_status('none');
+      $order->add_item($fee_CC);
+    }
+    // Final price
+    $final_total = $total_after_gst + $cc_tax;
 
     $order->set_total($final_total);
 

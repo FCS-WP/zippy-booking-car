@@ -79,7 +79,7 @@ if (is_user_logged_in()) {
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-hour">
-          <label for="time_use">Time <span style="color:red;">*</span></label>
+          <label for="time_use">Duration <span style="color:red;">*</span></label>
             <select class="" id="hbk_time_value" name="time_use" required>
               <option value="" selected>Please choose an option</option>
               <?php

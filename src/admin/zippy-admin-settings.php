@@ -12,6 +12,7 @@ defined('ABSPATH') or die();
 
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 use  WC_Order_Item_Product;
+use Zippy_Booking_Car\Src\Admin\Zippy_Woo_Settings;
 
 class Zippy_Admin_Settings
 {
@@ -37,6 +38,7 @@ class Zippy_Admin_Settings
     add_action('wp_ajax_create_payment_order', array($this, 'create_payment_order'));
     add_action('wp_ajax_nopriv_create_payment_order', array($this, 'create_payment_order'));
     add_filter('woocommerce_order_number', array($this, 'custom_order_number_display'), 10, 2);
+    add_filter('woocommerce_get_settings_pages', array($this, 'custom_woocommerce_settings_tab'));
   }
 
   public function admin_booking_assets()
@@ -56,6 +58,12 @@ class Zippy_Admin_Settings
     wp_localize_script('booking-js-current-id', 'admin_id', array(
       'userID' => $current_user_id,
     ));
+  }
+
+  function custom_woocommerce_settings_tab($links)
+  {
+    $settings[] = new Zippy_Woo_Settings();
+    return $settings;
   }
 
   function zippy_action_links($links)
@@ -222,7 +230,7 @@ class Zippy_Admin_Settings
         $selected_orders_ids[] = $order->get_id();
       }
     }
-    
+
     if ($total_for_month <= 0) {
       wp_send_json_error(['message' => 'No on-hold orders found for the specified month']);
       return;
@@ -274,7 +282,7 @@ class Zippy_Admin_Settings
     $order->update_meta_data('list_of_child_orders', serialize($selected_orders_ids));
     $order->update_meta_data('summary_order_number', $current_order_number);
 
-    $custom_order_number = $order->get_id() . ' ' . $month_of_order . ' #' . $current_order_number ;
+    $custom_order_number = $order->get_id() . ' ' . $month_of_order . ' #' . $current_order_number;
     $order->update_meta_data('_custom_order_number', $custom_order_number);
 
     $order->calculate_totals();

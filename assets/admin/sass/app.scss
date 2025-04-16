@@ -1,11 +1,8 @@
 @import "admin-booking-table";
 
-
-.order-status{
-&.status-confirmed{
-   
-        background-color: green;
-      color: white;
-    
+.order-status {
+  &.status-confirmed {
+    background-color: green;
+    color: white;
+  }
 }
-} 
