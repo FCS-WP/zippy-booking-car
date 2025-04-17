@@ -255,17 +255,16 @@ const $minuteSelect = $("#ete_minute");
 const $pickUphourSelect = $("#pick_up_hour");
 const $pickUpminuteSelect = $("#pick_up_minute");
 
+const d = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore"}));
+let current_date = d.getDate();
 
-for (let i = 0; i <= 23; i++) {
-  $hourSelect.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
-  $pickUphourSelect.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
-}
+parse_pickup_hour(current_date, current_date, $pickUphourSelect)
+
 
 for (let i = 0; i < 60; i += 5) {
   const value = i.toString().padStart(2, "0");
   $minuteSelect.append(`<option value="${value}">${value}</option>`);
   $pickUpminuteSelect.append(`<option value="${value}">${value}</option>`);
-  
 }
 
 $('#ete_hour, #ete_minute').on('change', () => {
@@ -288,3 +287,28 @@ $('#pick_up_hour, #pick_up_minute').on('change', () => {
 });
 
 
+$("body").on("click", "#calendar .vc-date", function(e){
+  let active_date = $(this).find("button").text();
+  $pickUphourSelect.html("");
+  $pickUphourSelect.val("");
+  parse_pickup_hour(current_date, active_date, $pickUphourSelect)
+})
+
+
+function parse_pickup_hour(current_date, active_date, DOM_selector){
+  
+  const d = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore"}));
+  let current_hour = d.getHours(),
+      start_hour = (active_date == current_date) ? parseInt(current_hour) + 1 : 0;
+
+  DOM_selector.html("");
+  for (let i = start_hour; i <= 23; i++) {
+    let pickup_time = i.toString().padStart(2, "0"),
+        selected = "";
+    if(i == start_hour){
+      selected = "selected = 'true'";
+    }
+    DOM_selector.append(`<option ${selected} value="${pickup_time}">${pickup_time}</option>`);
+  }
+
+}

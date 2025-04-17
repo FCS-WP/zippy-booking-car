@@ -1,6 +1,5 @@
 import { Calendar, Options } from "vanilla-calendar-pro";
-$(document).ready(function () {
-  
+
   // Init date picker for hourly booking
   const options = {
     disableDatesPast: true,
@@ -61,23 +60,23 @@ $(document).ready(function () {
     //   $("#hbk_pickup_time").val(self.context.selectedTime);
     //   $("#get_hbk_time_pickup").html(self.context.selectedTime);
     // },
-    
+
   };
 
   function setDefaultPickupDateDisposal() {
     const today = new Date();
-    const formattedDate = convertDate(today); 
+    const formattedDate = convertDate(today);
     $("#get_hbk_date_pickup").text(formattedDate);
 
-    const current_time =  $("#hbk_pickup_time");
-    const select_hour =  $("#pick_up_hour_disposal");
-    const select_minutes =  $("#pick_up_minute_disposal");
+    const current_time = $("#hbk_pickup_time");
+    const select_hour = $("#pick_up_hour_disposal");
+    const select_minutes = $("#pick_up_minute_disposal");
     var timeParts = (current_time.val()).split(":");
-    var hour = timeParts[0];  
+    var hour = timeParts[0];
     var minute = timeParts[1];
 
     select_hour.val(hour);
-    select_minutes.val(roundUpToNearestFive(minute));  
+    select_minutes.val(roundUpToNearestFive(minute));
   }
 
   $(document).ready(setDefaultPickupDateDisposal);
@@ -130,29 +129,30 @@ $(document).ready(function () {
     }
   });
 
-  const $pick_up_hour_disposal = $("#pick_up_hour_disposal");
-  const $pick_up_minute_disposal = $("#pick_up_minute_disposal");
 
-  for (let i = 0; i <= 23; i++) {
-    $pick_up_hour_disposal.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
+const $pick_up_hour_disposal = $("#pick_up_hour_disposal");
+const $pick_up_minute_disposal = $("#pick_up_minute_disposal");
+
+const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+let current_date = d.getDate();
+
+parse_pickup_hour(current_date, current_date, $pick_up_hour_disposal)
+
+
+for (let i = 0; i < 60; i += 5) {
+  const value = i.toString().padStart(2, "0");
+  $pick_up_minute_disposal.append(`<option value="${value}">${value}</option>`);
+}
+
+$('#pick_up_hour_disposal, #pick_up_minute_disposal').on('change', () => {
+  const hour = $('#pick_up_hour_disposal').val();
+  const minute = $('#pick_up_minute_disposal').val();
+
+  if (hour !== null && minute !== null) {
+    $('#hbk_pickup_time').val(`${hour}:${minute}`);
   }
-
-  for (let i = 0; i < 60; i += 5) {
-    const value = i.toString().padStart(2, "0");
-    $pick_up_minute_disposal.append(`<option value="${value}">${value}</option>`);
-  }
-
-  $('#pick_up_hour_disposal, #pick_up_minute_disposal').on('change', () => {
-    const hour = $('#pick_up_hour_disposal').val();
-    const minute = $('#pick_up_minute_disposal').val();
-    
-    if (hour !== null && minute !== null) {
-        $('#hbk_pickup_time').val(`${hour}:${minute}`);
-    }
-  });
-  
-
 });
+
 
 function calcHbkPrices() {
   let productPrice = $("#hbk_total_price").data("product-price");
@@ -200,5 +200,28 @@ function convertDate(inputDate = new Date()) {
 }
 
 
+$("body").on("click", "#tab_hour_picker .vc-date", function (e) {
+  let active_date = $(this).find("button").text();
+  // $pick_up_hour_disposal.html("");
+  parse_pickup_hour(current_date, active_date, $pick_up_hour_disposal)
+})
 
 
+function parse_pickup_hour(current_date, active_date, DOM_selector) {
+  
+  const d = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+  let current_hour = d.getHours(),
+    start_hour = (active_date == current_date) ? parseInt(current_hour) + 1 : 0;
+
+  DOM_selector.html("") ;
+  for (let i = start_hour; i <= 23; i++) {
+    let pickup_time = i.toString().padStart(2, "0"),
+      selected = "";
+    if (i == start_hour) {
+      selected = "selected = 'true'";
+    }
+    
+    DOM_selector.append(`<option ${selected} value="${pickup_time}">${pickup_time}</option>`);
+  }
+
+}
