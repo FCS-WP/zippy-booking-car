@@ -269,10 +269,22 @@ class Zippy_Booking_Forms
         wp_send_json_error(array('message' => 'Invalid request.'));
     }
 
-    $required_fields = ['emailcustomer', 'phonecustomer', 'pick_up_date', 'pick_up_time', 'pick_up_location', 'drop_off_location', 'no_of_passengers', 'service_type', 'id_product', 'time_use', 'agree_terms'];
+    $required_fields = [
+      'emailcustomer' => "Customer Email*", 
+      'phonecustomer' => "Customer Phone*", 
+      'pick_up_date' => "Pick Up Date", 
+      'pick_up_time' => "Pick Up Time", 
+      'pick_up_location' => "Pick Up",
+      'drop_off_location' => "Drop Off",
+      'no_of_passengers' => "No. of Passengers",
+      'service_type' => "Type Services",
+      'id_product' => "Product ID",
+      'time_use' => "Time",
+      'agree_terms' => "Agree Term"
+    ];
 
-    foreach ($required_fields as $field) {
-        if (empty($_POST[$field])) {
+    foreach ($required_fields as $key => $field) {
+        if (empty($_POST[$key])) {
             wp_send_json_error(array('message' => "Missing information: $field"));
         }
     }

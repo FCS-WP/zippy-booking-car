@@ -177,6 +177,7 @@ if (is_user_logged_in()) {
       <div class="col-form-custom ">
         <input class="zippy_btn_submit" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
         <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Please hold while we send your enquiry</p></div>
+        <div class="js-response-message"></div>
       </div>
     </div>
   </div>
