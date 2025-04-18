@@ -260,7 +260,9 @@ let current_date = d.getDate();
 
 parse_pickup_hour(current_date, current_date, $pickUphourSelect)
 
-
+for (let i = 0; i <= 23; i++) {
+  $hourSelect.append(`<option value="${i.toString().padStart(2, "0")}">${i.toString().padStart(2, "0")}</option>`);
+}
 for (let i = 0; i < 60; i += 5) {
   const value = i.toString().padStart(2, "0");
   $minuteSelect.append(`<option value="${value}">${value}</option>`);
