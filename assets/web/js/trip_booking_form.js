@@ -199,56 +199,56 @@ function validateForm(selector) {
           }
       }
   });
-  
+
   return isValidateSuccess;
 }
 
 
 
-$(document).ready(function () {
-  function handleFormSubmission(buttonId, formId, statusMessageId, validateTypeForm) {
-    $(buttonId).click(function (event) {
-      event.preventDefault();
-
-      var formData = $(formId).serialize();
+function handleFormSubmission(buttonId, formId, statusMessageId, validateTypeForm, messageSelector) {
+  $(buttonId).click(function (event) {
+    event.preventDefault();
+    $(messageSelector).html("").removeAttr("style");
+    var formData = $(formId).serialize();
+  
+    var $btn = $(buttonId);
+    var $statusMessage = $(statusMessageId);
     
-      var $btn = $(buttonId);
-      var $statusMessage = $(statusMessageId);
-      
-      let statusValidate = validateForm(validateTypeForm);
+    let statusValidate = validateForm(validateTypeForm);
 
-      if(statusValidate ==  true){
-        
-        $btn.addClass("displayNone");
-        $statusMessage.removeClass("displayNone");
-        $.ajax({
-          url: "/wp-admin/admin-ajax.php",
-          type: "POST",
-          data: formData + "&action=enquiry_car_booking",
-          dataType: "json",
-          success: function (response) {
-            if (response.success) {
-              alert("Enquiry Sent");
-            } else {
-              alert("Missing Fields. Please try again!");
-            }
-          },
-          error: function () {
-            alert("System error! Please try again.");
-          },
-          complete: function () {
-            $btn.removeClass("displayNone");
-            $statusMessage.addClass("displayNone");
-          },
-        });
-      }
+    if(statusValidate ==  true){
       
-    });
-  }
+      $btn.addClass("displayNone");
+      $statusMessage.removeClass("displayNone");
+      $.ajax({
+        url: "/wp-admin/admin-ajax.php",
+        type: "POST",
+        data: formData + "&action=enquiry_car_booking",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            $(messageSelector).html("Your booking successfully !").css({
+              "color": "green",
+            });
+          } else {
+            $(messageSelector).html(response.data.message).css("color", "red");
+          }
+        },
+        error: function () {
+          alert("System error! Please try again.");
+        },
+        complete: function () {
+          $btn.removeClass("displayNone");
+          $statusMessage.addClass("displayNone");
+        },
+      });
+    }
+    
+  });
+}
 
-  handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit", ".js-validate-trip");
-  handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit", ".js-validate-hour");
-});
+handleFormSubmission("#btnEnquiryNow", "#car_booking_form", "#message_status_submit", ".js-validate-trip", "#elementor-tab-content-7681 .js-response-message");
+handleFormSubmission("#btnEnquiryHourNow", "#car_booking_hour_form", "#message_hours_status_submit", ".js-validate-hour", "#elementor-tab-content-7682 .js-response-message");
 
 const $hourSelect = $("#ete_hour");
 const $minuteSelect = $("#ete_minute");
