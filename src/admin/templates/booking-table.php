@@ -148,7 +148,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             foreach ($data['orders'] as $order) {
                                 $order_id = $order->get_id();
                                 $order_link = admin_url("post.php?post=$order_id&action=edit");
-                                if ($order->get_status() !== "completed") {;
+                                if ($order->get_status() !== "completed") {
                             ?>
                                     <h4 class="<?php echo $order->get_status() ?>">
                                         <p class="space_center_title">Order #<?php echo esc_html($order->get_id()) ?> (<?php echo esc_html(wc_get_order_status_name($order->get_status())) ?>)

@@ -226,6 +226,7 @@ class Zippy_Admin_Settings
       $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
       if ($order_month_year === $month_of_order && !$is_monthly_payment_order && $order->get_status() === 'confirmed') {
         $total_for_month += $order->get_total();
+
         $selected_orders[] = $order;
         $selected_orders_ids[] = $order->get_id();
       }
@@ -269,7 +270,10 @@ class Zippy_Admin_Settings
       $item = new WC_Order_Item_Product();
       $item->set_name($product_name);
       $item->set_quantity(1);
-      $item->set_total($selected_order->get_total());
+      $item->set_tax_class('');
+      $item->set_total($selected_order->get_total(), true);
+      $item->set_subtotal($selected_order->get_total(), true);
+      $item->set_taxes(['total' => [], 'subtotal' => []]);
       $order->add_item($item);
     }
 
@@ -285,7 +289,7 @@ class Zippy_Admin_Settings
     $custom_order_number = $order->get_id() . ' ' . $month_of_order . ' #' . $current_order_number;
     $order->update_meta_data('_custom_order_number', $custom_order_number);
 
-    $order->calculate_totals();
+    $order->calculate_totals(false);
 
     $order_id = $order->save();
 
