@@ -232,39 +232,23 @@ class Zippy_Booking_Forms
       $order->add_item($item);
     }
 
-    // GST Tax
-    $gst_tax = floor($order_total * 0.09 * 100) / 100;
-
-    // CC Tax
-    $total_after_gst = $order_total + $gst_tax;
-
-    $cc_tax = 0;
-
-    // Add Tax to Order
-    $fee_GST = new WC_Order_Item_Fee();
-    $fee_GST->set_name('9% GST');
-    $fee_GST->set_total($gst_tax);
-    $fee_GST->set_tax_class('');
-    $fee_GST->set_tax_status('none');
-    $order->add_item($fee_GST);
-
-    // CC fee 
+    // // CC fee 
     $is_enable = get_option('enable_cc_fee');
     if (!empty($is_enable) && $is_enable == 'yes') {
       $cc_fee_name = get_option('zippy_cc_fee_name');
       $cc_fee_value = get_option('zippy_cc_fee_amount');
-      $cc_tax = floor($total_after_gst * ($cc_fee_value / 100) * 100) / 100;
+      $cc_tax = floor($order_total * ($cc_fee_value / 100) * 100) / 100;
+
       $fee_CC = new WC_Order_Item_Fee();
       $fee_CC->set_name($cc_fee_name);
       $fee_CC->set_total($cc_tax);
       $fee_CC->set_tax_class('');
-      $fee_CC->set_tax_status('none');
+      $fee_CC->set_tax_status('taxable');
+      
       $order->add_item($fee_CC);
     }
-    // Final price
-    $final_total = $total_after_gst + $cc_tax;
 
-    $order->set_total($final_total);
+    $order->set_total($order_total);
 
     $order->save();
 
