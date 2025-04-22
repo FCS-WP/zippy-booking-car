@@ -243,7 +243,7 @@ class Zippy_Booking_Forms
       $fee_CC->set_name($cc_fee_name);
       $fee_CC->set_total($cc_tax);
       $fee_CC->set_tax_class('');
-      $fee_CC->set_tax_status('none');
+      $fee_CC->set_tax_status('taxable');
       
       $order->add_item($fee_CC);
     }
