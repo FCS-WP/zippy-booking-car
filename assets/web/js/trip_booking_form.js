@@ -227,8 +227,9 @@ function handleFormSubmission(buttonId, formId, statusMessageId, validateTypeFor
         dataType: "json",
         success: function (response) {
           if (response.success) {
-            $(messageSelector).html("Your booking successfully !").css({
+            $(messageSelector).html("Your booking has been submitted successfully !").css({
               "color": "green",
+              "font-weight": "bold",
             });
           } else {
             $(messageSelector).html(response.data.message).css("color", "red");
