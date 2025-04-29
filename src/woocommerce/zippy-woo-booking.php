@@ -354,6 +354,11 @@ class Zippy_Woo_Booking
     if ($special_requests) {
       echo '<p><strong>' . __('Special Reuest: ', 'woocommerce') . ':</strong> ' . esc_html($special_requests) . '</p>';
     }
+
+    $special_requests = get_post_meta($order->get_id(), 'staff_name', true);
+    if ($special_requests) {
+      echo '<p><strong>' . __('Staff Name: ', 'woocommerce') . ':</strong> ' . esc_html($special_requests) . '</p>';
+    }
   }
 
   function restrict_payment_methods_for_logged_in_users($available_gateways)

@@ -47,10 +47,15 @@ if (is_user_logged_in()) {
         }
       }
       ?>
-      <div class="row-form-custom col-1">
+      <div class="row-form-custom col-2">
         <div class="col-form-custom js-validate-hour">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
           <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <div class="error-msg"></div>
+        </div>
+        <div class="col-form-custom">
+          <label for="staffname">Staff name</label>
+          <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
           <div class="error-msg"></div>
         </div>
       </div>
@@ -96,19 +101,18 @@ if (is_user_logged_in()) {
               <option value="10">10 hours</option>
               <option value="11">11 hours</option>
               <option value="12">12 hours</option>
-              <option value="12">13 hours</option>
-              <option value="12">14 hours</option>
-              <option value="12">15 hours</option>
-              <option value="12">16 hours</option>
-              <option value="12">17 hours</option>
-              <option value="12">18 hours</option>
-              <option value="12">19 hours</option>
-              <option value="12">20 hours</option>
-              <option value="12">21 hours</option>
-              <option value="12">22 hours</option>
-              <option value="12">23 hours</option>
-              <option value="12">24 hours</option>
-
+              <option value="13">13 hours</option>
+              <option value="14">14 hours</option>
+              <option value="15">15 hours</option>
+              <option value="16">16 hours</option>
+              <option value="17">17 hours</option>
+              <option value="18">18 hours</option>
+              <option value="19">19 hours</option>
+              <option value="20">20 hours</option>
+              <option value="21">21 hours</option>
+              <option value="22">22 hours</option>
+              <option value="23">23 hours</option>
+              <option value="24">24 hours</option>
             </select>
             <div class="error-msg"></div>
         </div>

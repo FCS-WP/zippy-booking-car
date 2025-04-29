@@ -44,10 +44,15 @@ if (is_user_logged_in()) {
         <input name="midnight_fee" id="trip_midnight_fee" type="hidden" value="0">
         <input name="time_use" id="time_use" type="hidden" value="1">
       </div>
-      <div class="row-form-custom col-1">
+      <div class="row-form-custom col-2">
         <div class="col-form-custom js-validate-trip">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
           <input class=""  aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <div class="error-msg"></div>
+        </div>
+        <div class="col-form-custom">
+          <label for="staffname">Staff name</label>
+          <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
           <div class="error-msg"></div>
         </div>
       </div>
