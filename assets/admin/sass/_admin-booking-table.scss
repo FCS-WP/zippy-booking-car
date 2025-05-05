@@ -1,132 +1,57 @@
 $info: #336699;
 $primary: #339966;
-#month-tabs {
-  border: 0;
-  background: none;
-  &.not-all-completed {
-    ul {
-      padding: 0;
-      border: 0;
-      background: none;
-      li {
-        border: 0;
-        background: #dddddd;
-        &.ui-state-active {
-          &.pending {
+.booking-table {
+  tbody {
+    tr {
+      td {
+        vertical-align: middle !important;
+        padding: 15px !important;
+        &.bookings_status.column-order_status {
+          vertical-align: middle;
+          span {
+            padding: 10px;
+            border-radius: 5px;
+          }
+          .status-pending {
             background: $info !important;
+            color: white !important;
           }
-          &.completed {
+          .status-completed {
             background: $primary !important;
-          }
-          padding-bottom: 0 !important;
-        }
-        a {
-          color: black;
-          text-decoration: underline;
-          &:focus,
-          &:active {
-            border: 0 !important;
-            box-shadow: none !important;
-          }
-        }
-      }
-    }
-  }
-  ul {
-    padding: 0;
-    border: 0;
-    background: none;
-    li {
-      border: 0;
-      background: #dddddd;
-      color: black;
-      &.ui-state-active {
-        background: $info !important;
-        &.pending {
-          background: $info !important;
-          a {
             color: white !important;
           }
-        }
-        &.completed {
-          background: $primary !important;
-          a {
+          .status-on-hold {
+            background: rgb(228, 95, 95) !important;
             color: white !important;
           }
-        }
-        &.processing {
-          background: #c6e1c6 !important;
-          a {
+          .status-processing {
+            background: #c6e1c6 !important;
             color: #2c4700 !important;
           }
-        }
-        &.on-hold {
-          background: #f8dda7 !important;
-          a {
-            color: #573b00 !important;
+          .status-cancelled {
+            background: #ffcccc !important;
+            color: #8b0000 !important;
+          }
+          .status-confirmed {
+            background: #2c4700 !important;
+            color: white !important;
           }
         }
-        padding-bottom: 0 !important;
-      }
-      a {
-        &:focus,
-        &:active {
-          border: 0 !important;
-          box-shadow: none !important;
+        &.booking-name{
+          a {
+            color: #50575e !important;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            &:hover {
+              color: $info !important;
+            }
+          }
         }
-      }
-    }
-  }
-}
-.tab-content {
-  .pending {
-    background: $info !important;
-    color: white !important;
-    .ui-icon {
-      filter: brightness(0) invert(1) !important;
-    }
-  }
-  .completed {
-    background: $primary !important;
-    color: white !important;
-    .ui-icon {
-      filter: brightness(0) invert(1) !important;
-    }
-    &.ui-state-active {
-      border: 1px solid $primary !important;
-    }
-  }
-  .on-hold {
-    background: rgb(228, 95, 95) !important;
-    color: white !important;
-    .ui-icon {
-      filter: brightness(0) invert(1) !important;
-    }
-    .ui-state-active {
-      .ui-icon {
-        filter: brightness(0) invert(1) !important;
-      }
-    }
-  }
-  .processing {
-    background: #c6e1c6 !important;
-    color: #2c4700 !important;
-    .ui-icon {
-      filter: brightness(0) !important;
-    }
-    .ui-state-active {
-      .ui-icon {
-        filter: brightness(0) !important;
       }
     }
   }
 }
 
-.ui-tabs-panel {
-  &.tab-content {
-    background: #ffffff !important;
-  }
-}
 .back-to-bookings,
 .back-to-history-bookings,
 .view-order-detail-button {
@@ -256,4 +181,7 @@ table.table-customers {
 
 .border_radius_tab {
   border-radius: 5px 5px 0 0 !important;
+}
+#order-filter-container {
+  margin: 20px 0;
 }
