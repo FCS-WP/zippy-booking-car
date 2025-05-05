@@ -90,7 +90,7 @@ $(document).ready(function () {
       const rowMonth = $row.data("month");
       const rowOrderId = String($row.data("order-id")).toLowerCase();
       const rowBookingDate = $row.data("booking-date");
-      const rowVehicleType = String($row.data("vehicle-type")).toLowerCase();
+      const rowVehicleTypes = String($row.data("vehicle-type")).split(",");
       const rowStatus = $row.data("status");
 
       const matchMonth = rowMonth === selectedMonth;
@@ -98,7 +98,7 @@ $(document).ready(function () {
       const matchBookingDate =
         !bookingDateInput || rowBookingDate === bookingDateInput;
       const matchVehicleType =
-        !vehicleTypeInput || rowVehicleType.includes(vehicleTypeInput);
+        !vehicleTypeInput || rowVehicleTypes.includes(vehicleTypeInput);
       const matchStatus = !statusInput || rowStatus === statusInput;
 
       const shouldShow =

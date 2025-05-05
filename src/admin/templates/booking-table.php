@@ -84,7 +84,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                 <input type="date" id="booking-date-filter">
 
                 <label for="vehicle-type-filter" style="margin-left: 10px;">Vehicle Type:</label>
-                <input type="text" id="vehicle-type-filter" placeholder="e.g. SUV, Sedan">
+                <select id="vehicle-type-filter">
+                    <option value="">All</option>
+                    <?php
+                    $vehicle_products = wc_get_products([
+                        'limit' => -1,
+                        'status' => 'publish',
+                    ]);
+
+                    if (!empty($vehicle_products)) {
+                        foreach ($vehicle_products as $product) {
+                            echo '<option value="' . esc_attr($product->get_id()) . '">' . esc_html($product->get_name()) . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
+
+
 
                 <label for="status-filter" style="margin-left: 10px;">Order Status:</label>
                 <select id="status-filter">
@@ -118,18 +134,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php if ($order->get_status() === 'completed') continue; ?>
 
                             <?php
-                            $product_names = [];
+                            $product_ids = [];
+
                             foreach ($order->get_items() as $item) {
-                                $product_names[] = $item->get_name();
+                                $product = $item->get_product();
+                                if ($product) {
+                                    $product_ids[] = $product->get_id();
+                                }
                             }
-                            $product_list = implode(', ', $product_names);
+                            $product_ids_string = implode(',', $product_ids);
                             ?>
 
                             <tr
                                 data-month="<?php echo esc_attr(sanitize_title($month)); ?>"
                                 data-order-id="<?php echo esc_attr($order->get_id()); ?>"
                                 data-booking-date="<?php echo esc_attr($order->get_date_created()->format('Y-m-d')); ?>"
-                                data-vehicle-type="<?php echo esc_attr(strtolower(trim($product_list))); ?>"
+                                data-vehicle-type="<?php echo esc_attr($product_ids_string); ?>"
                                 data-status="<?php echo esc_attr($order->get_status()); ?>">
 
 
