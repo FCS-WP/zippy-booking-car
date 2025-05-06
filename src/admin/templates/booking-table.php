@@ -9,7 +9,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
     if (!empty($orders)) { ?>
         <div class="wrap">
-            <h1>Details for Customer: <?php echo $orders[0]->get_billing_first_name() . ' ' . $orders[0]->get_billing_last_name(); ?> </h1>
+            <h1>Details for Customer: <span class="text-capitalize"> <?php echo $orders[0]->get_billing_first_name() . ' ' . $orders[0]->get_billing_last_name(); ?> </span> </h1>
             <?php
             $grouped_by_month = array();
             $monthly_payment_orders = array();
@@ -18,7 +18,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             foreach ($orders as $order) {
                 $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
                 $order_date = $order->get_date_created();
-
                 $month_of_order = $is_monthly_payment_order
                     ? $order->get_meta('month_of_order', true)
                     : $order_date->format('F Y');
@@ -129,8 +128,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($grouped_by_month as $month => $data): ?>
-                        <?php foreach ($data['orders'] as $order): ?>
+                    <?php foreach ($grouped_by_month as $month => $data):
+
+
+                    ?>
+                        <?php foreach ($data['orders'] as $order):
+                        ?>
                             <?php if ($order->get_status() === 'completed') continue; ?>
 
                             <?php
@@ -140,6 +143,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 $product = $item->get_product();
                                 if ($product) {
                                     $product_ids[] = $product->get_id();
+                                    $product_name = $product->get_name();
                                 }
                             }
                             $product_ids_string = implode(',', $product_ids);
@@ -153,7 +157,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 data-status="<?php echo esc_attr($order->get_status()); ?>">
 
 
-                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo esc_html($month) . ' - ' . 'Order #' . esc_html($order->get_id()) . ' ' . esc_html($product_list); ?></a></td>
+                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo  'Order #' . esc_html($order->get_id()) . ' - ' . esc_html($product_name); ?></a></td>
                                 <td class="booking-date"><?php echo esc_html($order->get_date_created()->date('F j, Y')); ?></td>
                                 <td class="bookings_status column-order_status">
                                     <span class="booking-status status-<?php echo esc_attr($order->get_status()); ?> tips">

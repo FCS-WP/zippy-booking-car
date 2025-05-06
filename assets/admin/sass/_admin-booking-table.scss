@@ -51,7 +51,9 @@ $primary: #339966;
     }
   }
 }
-
+.text-capitalize{
+  text-transform: capitalize !important;
+}
 .back-to-bookings,
 .back-to-history-bookings,
 .view-order-detail-button {

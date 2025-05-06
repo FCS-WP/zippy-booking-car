@@ -2,7 +2,7 @@
 if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['customer_id'])) {
 ?>
     <div class="wrap">
-        <h1>Details for Customer: <?php echo $orders[0]->get_billing_first_name() . ' ' . $orders[0]->get_billing_last_name(); ?> </h1>
+    <h1>Details for Customer: <span class="text-capitalize"> <?php echo $orders[0]->get_billing_first_name() . ' ' . $orders[0]->get_billing_last_name(); ?> </span> </h1>
         <?php
         if (!empty($orders)) {
         ?>
