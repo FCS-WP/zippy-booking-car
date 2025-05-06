@@ -134,14 +134,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             <?php if ($order->get_status() === 'completed') continue; ?>
 
                             <?php
+                            $product_names = [];
                             $product_ids = [];
 
                             foreach ($order->get_items() as $item) {
                                 $product = $item->get_product();
                                 if ($product) {
                                     $product_ids[] = $product->get_id();
+                                    $product_names[] = $item->get_name();
                                 }
                             }
+                            $product_list = implode(', ', $product_names);
                             $product_ids_string = implode(',', $product_ids);
                             ?>
 
@@ -153,7 +156,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 data-status="<?php echo esc_attr($order->get_status()); ?>">
 
 
-                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo esc_html($month) . ' - ' . 'Order #' . esc_html($order->get_id()) . ' ' . esc_html($product_list); ?></a></td>
+                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo  'Order #' . esc_html($order->get_id()) . ' ' . esc_html($product_list); ?></a></td>
                                 <td class="booking-date"><?php echo esc_html($order->get_date_created()->date('F j, Y')); ?></td>
                                 <td class="bookings_status column-order_status">
                                     <span class="booking-status status-<?php echo esc_attr($order->get_status()); ?> tips">
