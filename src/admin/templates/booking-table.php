@@ -144,7 +144,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                     $product_names[] = $item->get_name();
                                 }
                             }
-                            $product_list = implode(', ', $product_names);
+                            $product_name = implode(', ', $product_names);
                             $product_ids_string = implode(',', $product_ids);
                             ?>
 
@@ -156,7 +156,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                                 data-status="<?php echo esc_attr($order->get_status()); ?>">
 
 
-                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo  'Order #' . esc_html($order->get_id()) . ' ' . esc_html($product_list); ?></a></td>
+                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo  'Order #' . esc_html($order->get_id()) . ' - ' . esc_html($product_name); ?></a></td>
                                 <td class="booking-date"><?php echo esc_html($order->get_date_created()->date('F j, Y')); ?></td>
                                 <td class="bookings_status column-order_status">
                                     <span class="booking-status status-<?php echo esc_attr($order->get_status()); ?> tips">
