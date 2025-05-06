@@ -6,12 +6,14 @@ $today = date('d-m-Y');
 $key_member = 0;
 $minutes = ceil(date("i") / 5) * 5;
 $time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
+$col_class = "col-1";
 if (is_user_logged_in()) {
   $key_member = 1;
   $current_user = wp_get_current_user(); 
   $email_member = $current_user->user_email; 
   $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
   $display_name_user = $current_user->display_name;
+  $col_class = "col-2";
 }
 ?>
 <div id="popupHour" class="popup">
@@ -47,17 +49,19 @@ if (is_user_logged_in()) {
         }
       }
       ?>
-      <div class="row-form-custom col-2">
+      <div class="row-form-custom <?php echo $col_class; ?>">
         <div class="col-form-custom js-validate-hour">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
           <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
           <div class="error-msg"></div>
         </div>
+        <?php if(is_user_logged_in()){ ?>
         <div class="col-form-custom">
           <label for="staffname">Staff name</label>
           <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
           <div class="error-msg"></div>
         </div>
+        <?php } ?>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom js-validate-hour">
