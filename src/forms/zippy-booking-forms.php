@@ -131,7 +131,7 @@ class Zippy_Booking_Forms
   }
 
   //function send email to admin when website has new order
-  public function send_enquiry_admin_email($order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests)
+  public function send_enquiry_admin_email($staff_name, $order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests)
   {
     $headers = [
       'Content-Type: text/html; charset=UTF-8',
@@ -172,6 +172,7 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p>No of pax: $no_of_passengers</p>";
     $messageAdmin .= "<p>No of luggages: $no_of_baggage</p>";
     $messageAdmin .= "<p>Special requests: $special_requests</p>";
+    $messageAdmin .= "<p>Staff name: $staff_name</p>";
     $messageAdmin .= "<br><p>Please review the enquiry and respond at your earliest convenience.</p><br>";
     $messageAdmin .= "<p>Best regards,</p>";
     $messageAdmin .= "<p>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
@@ -327,8 +328,11 @@ class Zippy_Booking_Forms
       'pick_up_location' => $pick_up_location,
       'drop_off_location' => $drop_off_location,
       'special_requests' => $special_requests,
-      'staff_name' => $staff_name,
     ];
+
+    if($key_member == 1){
+      $customer_infors["staff_name"] = $staff_name;
+    }
 
     foreach ($customer_infors as $customer_infor => $value) {
       update_post_meta($order_id, $customer_infor, $value);
@@ -336,7 +340,7 @@ class Zippy_Booking_Forms
 
     $status_customer_email = self::send_enquiry_email($staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
 
-    $status_admin_email = self::send_enquiry_admin_email($order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
+    $status_admin_email = self::send_enquiry_admin_email($staff_name, $order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
 
 
     if ($status_customer_email && $status_admin_email) {
