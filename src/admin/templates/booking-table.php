@@ -9,7 +9,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
     if (!empty($orders)) { ?>
         <div class="wrap">
-            <h1>Details for Customer ID: <?php echo esc_html($customer_id) ?> </h1>
+            <h1>Details for Customer: <span class="text-capitalize"> <?php echo $orders[0]->get_billing_first_name() . ' ' . $orders[0]->get_billing_last_name(); ?> </span> </h1>
             <?php
             $grouped_by_month = array();
             $monthly_payment_orders = array();
@@ -18,7 +18,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             foreach ($orders as $order) {
                 $is_monthly_payment_order = $order->get_meta('is_monthly_payment_order', true);
                 $order_date = $order->get_date_created();
-
                 $month_of_order = $is_monthly_payment_order
                     ? $order->get_meta('month_of_order', true)
                     : $order_date->format('F Y');
@@ -61,282 +60,188 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
             $GLOBALS['summary_orders'] = $summary_orders;
 
             ?>
+            <div id="order-filter-container">
+                <label for="month-filter">Filter by Month:</label>
+                <select id="month-filter">
+                    <?php
+                    $months = array_keys($grouped_by_month);
+                    $latest_month_slug = sanitize_title($months[0]);
 
-            <div id="month-tabs">
-                <?php
-                $completed_months = [];
-                $all_completed = true;
+                    foreach ($grouped_by_month as $month => $data):
+                        $selected = (sanitize_title($month) === $latest_month_slug) ? 'selected' : '';
+                    ?>
+                        <option value="<?php echo esc_attr(sanitize_title($month)); ?>" <?php echo $selected; ?>>
+                            <?php echo esc_html($month); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-                foreach ($grouped_by_month as $month_of_order => $data) {
-                    $all_completed_for_month = true;
+                <label for="order-number-filter" style="margin-left: 10px;">Order ID:</label>
+                <input type="text" id="order-number-filter" placeholder="e.g. 1234">
 
-                    foreach ($data['orders'] as $order) {
-                        if ($order->get_status() !== 'completed') {
-                            $all_completed_for_month = false;
-                            break;
+                <label for="booking-date-filter" style="margin-left: 10px;">Booking Date:</label>
+                <input type="date" id="booking-date-filter">
+
+                <label for="vehicle-type-filter" style="margin-left: 10px;">Vehicle Type:</label>
+                <select id="vehicle-type-filter">
+                    <option value="">All</option>
+                    <?php
+                    $vehicle_products = wc_get_products([
+                        'limit' => -1,
+                        'status' => 'publish',
+                    ]);
+
+                    if (!empty($vehicle_products)) {
+                        foreach ($vehicle_products as $product) {
+                            echo '<option value="' . esc_attr($product->get_id()) . '">' . esc_html($product->get_name()) . '</option>';
                         }
                     }
+                    ?>
+                </select>
 
-                    if ($all_completed_for_month) {
-                        $completed_months[] = $month_of_order;
-                    } else {
-                        $all_completed = false;
-                    }
-                }
 
-                if (!$all_completed) {
-                ?>
-                    <div class="not-all-completed">
-                        <ul>
+
+                <label for="status-filter" style="margin-left: 10px;">Order Status:</label>
+                <select id="status-filter">
+                    <option value="">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="cancelled">Cancelled</option>
+
+                </select>
+                <button id="apply-filters-button" class="button" style="margin-left: 10px;">Filter</button>
+
+            </div>
+
+
+
+            <table class="wp-list-table widefat fixed striped booking-table" id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Booking Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($grouped_by_month as $month => $data):
+
+
+                    ?>
+                        <?php foreach ($data['orders'] as $order):
+                        ?>
+                            <?php if ($order->get_status() === 'completed') continue; ?>
+
                             <?php
-                            foreach ($grouped_by_month as $month_of_order => $data) {
+                            $product_ids = [];
 
-                                if (in_array($month_of_order, $completed_months)) {
-                                    continue;
+                            foreach ($order->get_items() as $item) {
+                                $product = $item->get_product();
+                                if ($product) {
+                                    $product_ids[] = $product->get_id();
+                                    $product_name = $product->get_name();
                                 }
-                                $tab_status = '';
-
-                                foreach ($monthly_payment_orders[$month_of_order] as $order) {
-
-                                    $month_of_order_key = $order->get_meta('month_of_order', true);
-
-                                    if ($month_of_order === $month_of_order_key) {
-                                        $tab_status = $order->get_status();
-                                        break;
-                                    }
-                                }
-
-                            ?>
-                                <li class="<?php echo $tab_status; ?>">
-                                    <a href="#tab-<?php echo esc_attr(sanitize_title($month_of_order)); ?>">
-                                        <?php
-                                        echo esc_html($month_of_order);
-
-                                        if (!empty($tab_status)) {
-                                            echo ' (' . wc_get_order_status_name($tab_status) . ')';
-                                        }
-                                        ?>
-                                    </a>
-                                </li>
-                            <?php
                             }
+                            $product_ids_string = implode(',', $product_ids);
                             ?>
-                        </ul>
 
-                    </div>
+                            <tr
+                                data-month="<?php echo esc_attr(sanitize_title($month)); ?>"
+                                data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                                data-booking-date="<?php echo esc_attr($order->get_date_created()->format('Y-m-d')); ?>"
+                                data-vehicle-type="<?php echo esc_attr($product_ids_string); ?>"
+                                data-status="<?php echo esc_attr($order->get_status()); ?>">
 
-                <?php
-                } else {
-                ?>
-                    <div class="all-completed">
-                        <h3>All monthly orders have been paid.</h3>
-                    </div>
-                <?php
-                }
-                ?>
 
+                                <td class="booking-name"><a href="<?php echo esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')); ?>"><?php echo  'Order #' . esc_html($order->get_id()) . ' - ' . esc_html($product_name); ?></a></td>
+                                <td class="booking-date"><?php echo esc_html($order->get_date_created()->date('F j, Y')); ?></td>
+                                <td class="bookings_status column-order_status">
+                                    <span class="booking-status status-<?php echo esc_attr($order->get_status()); ?> tips">
+                                        <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
+                                    </span>
+                                </td>
+                                <td class="booking-total"><?php echo wc_price($order->get_total()); ?></td>
+
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+
+                </tbody>
+            </table>
+            <?php foreach ($grouped_by_month as $month_of_order => $data): ?>
                 <?php
-                foreach ($grouped_by_month as $month_of_order => $data) {
-                    if (in_array($month_of_order, $completed_months)) {
-                        continue;
+                $sanitized_month = sanitize_title($month_of_order);
+
+                $all_pending = true;
+                foreach ($data['orders'] as $order) {
+                    if (!in_array($order->get_status(), ['pending', 'processing', 'on-hold'])) {
+                        $all_pending = false;
+                        break;
                     }
-                ?>
-                    <div id="tab-<?php echo sanitize_title($month_of_order) ?>" class="tab-content">
-                        <h3>Orders for <?php echo esc_html($month_of_order) ?></h3>
-                        <div class="order-accordion">
-                            <?php
-                            foreach ($data['orders'] as $order) {
+                }
+                $button_disabled = $all_pending ? 'disabled' : '';
+
+                $order_of_months = [];
+                $summary_order_urls = [];
+
+                if (!empty($monthly_payment_orders[$month_of_order])) {
+                    foreach ($monthly_payment_orders[$month_of_order] as $order) {
+                        $month_of_order_key = $order->get_meta('month_of_order', true);
+                        if ($month_of_order === $month_of_order_key) {
+                            $status = $order->get_status();
+                            if (in_array($status, ['pending', 'processing'])) {
                                 $order_id = $order->get_id();
-                                $order_link = admin_url("post.php?post=$order_id&action=edit");
-                                if ($order->get_status() !== "completed") {
-                            ?>
-                                    <h4 class="<?php echo $order->get_status() ?>">
-                                        <p class="space_center_title">Order #<?php echo esc_html($order->get_id()) ?> (<?php echo esc_html(wc_get_order_status_name($order->get_status())) ?>)
-                                            <a href="<?php echo $order_link; ?>" class='edit_order_btn orange_background_color button view-order-detail-button border-radius-tab'>Edit Order</a>
-                                        </p>
-                                    </h4>
-                                    <div>
-
-                                        <!-- Display order details -->
-
-                                        <table class="wp-list-table widefat fixed striped">
-                                            <tr>
-                                                <th>Order ID</th>
-                                                <td><?php echo esc_html($order->get_id()) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Date</th>
-                                                <td><?php echo esc_html($order->get_date_created()->date('Y-m-d H:i:s')) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Customer</th>
-                                                <td><?php echo esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Email</th>
-                                                <td><?php echo esc_html($order->get_billing_email()) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Phone</th>
-                                                <td><?php echo esc_html($order->get_billing_phone()) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Pickup Date</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "pick_up_date", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Pickup Time</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "pick_up_time", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Pickup Location</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "pick_up_location", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Drop Off Location</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "drop_off_location", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>No. of Passengers</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>No. of Baggage</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "no_of_passengers", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Additional Stop</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "additional_stop", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Midnight Fee</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "midnight_fee", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Special Requests</th>
-                                                <td>
-                                                    <?php echo get_post_meta($order->get_id(), "special_requests", true); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>Total</th>
-                                                <td><?php echo wc_price($order->get_total()) ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Status</th>
-                                                <td><?php echo esc_html(wc_get_order_status_name($order->get_status())) ?></td>
-                                            </tr>
-                                        </table>
-                                        <!-- Products table -->
-                                        <h5>Products</h5>
-                                        <table class="wp-list-table widefat fixed striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Car</th>
-                                                    <th>Time</th>
-                                                    <th>Price</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                foreach ($order->get_items() as $item) {
-                                                ?>
-                                                    <tr>
-                                                        <td><?php echo esc_html($item->get_name()) ?></td>
-                                                        <td><?php echo esc_html($item->get_quantity()) ?></td>
-                                                        <td><?php echo wc_price($item->get_total()) ?></td>
-                                                    </tr>
-                                                <?php
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
-                                    </div> <!-- End order details -->
-                            <?php
-                                }
-                            }
-
-                            ?>
-                        </div> <!-- End order accordion -->
-
-                        <div style="margin-top: 10px;">
-                            <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
-                        </div>
-
-
-                        <?php
-                        $all_pending = true;
-
-                        foreach ($data['orders'] as $order) {
-                            if ($order->get_status() !== 'pending' && $order->get_status() !== 'processing' && $order->get_status() !== 'on-hold') {
-                                $all_pending = false;
-                                break;
+                                $order_of_months[$status][] = $order;
+                                $summary_order_urls[$order_id] = admin_url('post.php?post=' . $order_id . '&action=edit');
                             }
                         }
-                        $button_disabled = $all_pending ? 'disabled' : '';
-                        ?>
+                    }
+                }
+                ?>
 
-                        <button class="button create-order-button"
-                            data-customer-id="<?php echo esc_attr($customer_id); ?>"
-                            data-month-of-order="<?php echo esc_attr($month_of_order); ?>"
-                            <?php echo $button_disabled; ?>>Create order for this month</button>
+                <div class="create-order-container" data-month="<?php echo esc_attr($sanitized_month); ?>" style="display: none; margin-top: 30px;">
+                    <h3>Total for <?php echo esc_html($month_of_order); ?>: <?php echo wc_price($data['total']); ?></h3>
 
-                        <?php
-                        if (!empty($monthly_payment_orders[$month_of_order])) {
-                            foreach ($monthly_payment_orders[$month_of_order] as $order) {
-                                $month_of_order_key = $order->get_meta('month_of_order', true);
+                    <button class="button create-order-button"
+                        data-customer-id="<?php echo esc_attr($customer_id); ?>"
+                        data-month-of-order="<?php echo esc_attr($month_of_order); ?>"
+                        <?php echo $button_disabled; ?>>
+                        Create order for <?php echo esc_html($month_of_order); ?>
+                    </button>
 
-                                if ($month_of_order === $month_of_order_key) {
-                                    $status = $order->get_status();
-
-                                    if ($status === 'pending' || $status === 'processing') {
-                                        $order_id = $order->get_id();
-                                        $order_of_months[$status][] = $order;
-                                        $summary_order_urls[$order_id] = admin_url('post.php?post=' . $order_id . '&action=edit');
-                                    }
-                                }
-                            }
-                        }
-                        ?>
-
-                        <?php if (!empty($order_of_months)): ?>
-                            <?php if (!empty($order_of_months['pending'])): ?>
-                                <?php foreach ($order_of_months['pending'] as $pending_order): ?>
-                                    <a href="<?php echo esc_url($summary_order_urls[$pending_order->get_id()]); ?>" class="button view-order-detail-button">View order of month (Pending)</a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-
-                            <?php if (!empty($order_of_months['processing'])): ?>
-                                <?php foreach ($order_of_months['processing'] as $processing_order): ?>
-                                    <a href="<?php echo esc_url($summary_order_urls[$processing_order->get_id()]); ?>" class="button view-order-detail-button">View order of month (Processing)</a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                    <?php if (!empty($order_of_months)): ?>
+                        <?php if (!empty($order_of_months['pending'])): ?>
+                            <?php foreach ($order_of_months['pending'] as $pending_order): ?>
+                                <a href="<?php echo esc_url($summary_order_urls[$pending_order->get_id()]); ?>"
+                                    class="button view-order-detail-button"
+                                    data-month="<?php echo esc_attr($sanitized_month); ?>"
+                                    style="display: none;">
+                                    View order of month (Pending)
+                                </a>
+                            <?php endforeach; ?>
                         <?php endif; ?>
 
+                        <?php if (!empty($order_of_months['processing'])): ?>
+                            <?php foreach ($order_of_months['processing'] as $processing_order): ?>
+                                <a href="<?php echo esc_url($summary_order_urls[$processing_order->get_id()]); ?>"
+                                    class="button view-order-detail-button"
+                                    data-month="<?php echo esc_attr($sanitized_month); ?>"
+                                    style="display: none;">
+                                    View order of month (Processing)
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
 
-                    </div> <!-- End tab content for the current month -->
-                <?php
-                }
-                ?>
-            </div> <!-- End tabs container -->
 
-            <a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a>
+
+            <div> <a href="<?php echo esc_url(admin_url('admin.php?page=zippy-bookings')) ?>" class="button back-to-bookings" style="margin-top: 20px;">Back to Bookings</a></div>
             <?php if ($all_completed) { ?>
                 <a class="button go-to-history" style="margin-top: 20px;" href='<?php echo esc_url(admin_url('admin.php?page=booking-history')) ?>'>Go to History</a>
             <?php } ?>
