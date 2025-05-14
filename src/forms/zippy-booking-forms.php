@@ -78,7 +78,7 @@ class Zippy_Booking_Forms
   }
 
   //function send email to customer when website has new order
-  public function send_enquiry_email($staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details = '', $eta_time = '', $time_use = '', $no_of_passengers, $no_of_baggage, $special_requests)
+  public function send_enquiry_email($name_customer, $staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details = '', $eta_time = '', $time_use = '', $no_of_passengers, $no_of_baggage, $special_requests)
   {
     $headers = [
       'Content-Type: text/html; charset=UTF-8',
@@ -87,45 +87,46 @@ class Zippy_Booking_Forms
 
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
 
-    $message = "<p>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
-    $message .= "<h3>Your Enquiry Details:</h3>";
-    $message .= "<p>Service type: $service_type</p>";
-    $message .= "<p>Vehicle Type: $product_name</p>";
+    $message = "<p style='font-size:13px;color:#000'>Thank you for reaching out to us. We have received your enquiry and will get back to you as soon as possible. Below are the details you submitted:</p>";
+    $message .= "<h3 style='font-size:15px;color:#000'>Your Enquiry Details:</h3>";
+    $message .= "<p style='font-size:13px;color:#000'>Passenger name: $name_customer</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Service type: $service_type</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Vehicle type: $product_name</p>";
 
     if ($service_type == "Hourly/Disposal") {
-      $message .= "<p>Usage time: $time_use Hours</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Usage time: $time_use Hours</p>";
     }
 
-    $message .= "<p>Pick up Date: $pick_up_date</p>";
-    $message .= "<p>Pick up Time: $pick_up_time</p>";
-    $message .= "<p>Pick up location: $pick_up_location</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Pick up date: $pick_up_date</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Pick up time: $pick_up_time</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
 
     if ($service_type == "Airport Arrival Transfer") {
-      $message .= "<p>Flight details: $flight_details</p>";
-      $message .= "<p>ETA: $eta_time</p>";
-      $message .= "<p>Drop off location: $drop_off_location</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
+      $message .= "<p style='font-size:13px;color:#000'>ETA: $eta_time</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
     } elseif ($service_type == "Airport Departure Transfer") {
-      $message .= "<p>Drop off location: $drop_off_location</p>";
-      $message .= "<p>Flight details: $flight_details</p>";
-      $message .= "<p>ETD: $eta_time</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
+      $message .= "<p style='font-size:13px;color:#000'>ETD: $eta_time</p>";
     } else {
-      $message .= "<p>Drop off location: $drop_off_location</p>";
+      $message .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
     }
 
-    $message .= "<p>No of pax: $no_of_passengers</p>";
-    $message .= "<p>No of luggages: $no_of_baggage</p>";
-    $message .= "<p>Special requests: $special_requests</p>";
-    $message .= "<p>Staff Name: $staff_name</p>";
+    $message .= "<p style='font-size:13px;color:#000'>No of pax: $no_of_passengers</p>";
+    $message .= "<p style='font-size:13px;color:#000'>No of luggages: $no_of_baggage</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
 
-    $message .= "<br><h3>Preferred Contact Method:</h3>";
-    $message .= "<p>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
-    $message .= "<p>EMAIL: impls@singnet.com.sg</p>";
-    $message .= "<br><p>Our team will review your request and respond within 24 hours. If you have any urgent concerns, feel free to contact us.</p>";
-    $message .= "<p>We appreciate your patience and look forward to assisting you.</p><br>";
-    $message .= "<p>Best regards,</p>";
-    $message .= "<p>Imperial Chauffeur Services Pte. Ltd</p>";
-    $message .= "<p>Email: impls@singnet.com.sg</p>";
-    $message .= "<p>Website: <a href='https://imperialchauffeur.sg/'>imperialchauffeur.sg</a></p>";
+    $message .= "<br><h3 style='font-size:15px;color:#000'>Preferred Contact Method:</h3>";
+    $message .= "<p style='font-size:13px;color:#000'>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
+    $message .= "<br><p style='font-size:13px;color:#000'>Our team will review your request and respond within 24 hours. If you have any urgent concerns, feel free to contact us.</p>";
+    $message .= "<p style='font-size:13px;color:#000'>We appreciate your patience and look forward to assisting you.</p><br>";
+    $message .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Imperial Chauffeur Services Pte. Ltd</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
+    $message .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/'>imperialchauffeur.sg</a></p>";
 
     return wp_mail($email_customer, $subject, $message, $headers);
   }
@@ -139,43 +140,43 @@ class Zippy_Booking_Forms
     ];
 
     $subjectAdmin = 'New Enquiry Received';
-    $messageAdmin = "<p>A new enquiry has been submitted. Please find the details below:</p>";
-    $messageAdmin .= "<h3>Enquiry Details:</h3>";
-    $messageAdmin .= "<p>Order No: #$order_id</p>";
-    $messageAdmin .= "<p>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
-    $messageAdmin .= "<p>Customer: $name_customer / $email_customer & $phone_customer</p>";
-    $messageAdmin .= "<p>Service Type: $service_type</p>";
-    $messageAdmin .= "<p>Vehicle Type: $product_name</p>";
+    $messageAdmin = "<p style='font-size:13px;color:#000'>A new enquiry has been submitted. Please find the details below:</p>";
+    $messageAdmin .= "<h3 style='font-size:15px;color:#000'>Enquiry Details:</h3>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Order No: #$order_id</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Customer: $name_customer / $email_customer & $phone_customer</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Service Type: $service_type</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Vehicle Type: $product_name</p>";
 
     if ($service_type == "Hourly/Disposal") {
-      $messageAdmin .= "<p>Usage time: $time_use Hours</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Usage time: $time_use Hours</p>";
     }
 
-    $messageAdmin .= "<p>Pick Up Date: $pick_up_date</p>";
-    $messageAdmin .= "<p>Pick Up Time: $pick_up_time</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick Up Date: $pick_up_date</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick Up Time: $pick_up_time</p>";
 
     if ($service_type == "Airport Arrival Transfer") {
-      $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
-      $messageAdmin .= "<p>Flight details: $flight_details</p>";
-      $messageAdmin .= "<p>ETA: $eta_time</p>";
-      $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>ETA: $eta_time</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
     } elseif ($service_type == "Airport Departure Transfer") {
-      $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
-      $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
-      $messageAdmin .= "<p>Flight details: $flight_details</p>";
-      $messageAdmin .= "<p>ETD: $eta_time</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>ETD: $eta_time</p>";
     } else {
-      $messageAdmin .= "<p>Pick up location: $pick_up_location</p>";
-      $messageAdmin .= "<p>Drop off location: $drop_off_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
+      $messageAdmin .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
     }
 
-    $messageAdmin .= "<p>No of pax: $no_of_passengers</p>";
-    $messageAdmin .= "<p>No of luggages: $no_of_baggage</p>";
-    $messageAdmin .= "<p>Special requests: $special_requests</p>";
-    $messageAdmin .= "<p>Staff name: $staff_name</p>";
-    $messageAdmin .= "<br><p>Please review the enquiry and respond at your earliest convenience.</p><br>";
-    $messageAdmin .= "<p>Best regards,</p>";
-    $messageAdmin .= "<p>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>No of pax: $no_of_passengers</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>No of luggages: $no_of_baggage</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
+    $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p><br>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
 
     return wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
   }
@@ -338,7 +339,7 @@ class Zippy_Booking_Forms
       update_post_meta($order_id, $customer_infor, $value);
     }
 
-    $status_customer_email = self::send_enquiry_email($staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
+    $status_customer_email = self::send_enquiry_email($name_customer, $staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
 
     $status_admin_email = self::send_enquiry_admin_email($staff_name, $order_id, $admin_email, $key_member, $name_customer, $email_customer, $phone_customer, $service_type, $product_name, $time_use, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $no_of_passengers, $no_of_baggage, $special_requests);
 

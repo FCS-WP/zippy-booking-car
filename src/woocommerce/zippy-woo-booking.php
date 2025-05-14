@@ -62,7 +62,7 @@ class Zippy_Woo_Booking
     add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_multiple_custom_checkout_fields_in_admin'));
 
     /* Handle Display Custom Staff Order Fields */
-    add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_custom_fields_in_order_details'));
+    // add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_custom_fields_in_order_details'));
 
     /* Handle Payment By User Type*/
     add_filter('woocommerce_available_payment_gateways', array($this, 'restrict_payment_methods_for_logged_in_users'));
