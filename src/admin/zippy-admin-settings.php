@@ -45,7 +45,7 @@ class Zippy_Admin_Settings
   {
     $version = time();
     $current_user_id = get_current_user_id();
-    //lib
+    // lib
     wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/libs/jquery-ui/jquery-ui.min.css', [], $version);
     // Pass the user ID to the script
     wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/admin.min.js', [], $version, true);
@@ -327,7 +327,7 @@ class Zippy_Admin_Settings
     if (empty($child_orders_ids)) {
       return;
     }
-
+    
     $parent_status = $order->get_status();
 
     foreach ($child_orders_ids as $child_order_id) {
