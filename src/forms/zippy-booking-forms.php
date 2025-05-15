@@ -82,7 +82,7 @@ class Zippy_Booking_Forms
   {
     $headers = [
       'Content-Type: text/html; charset=UTF-8',
-      'From: Imperial <impls@singnet.com.sg>'
+      'From: Imperial Chauffeur Services <impls@singnet.com.sg>'
     ];
 
     $subject = 'Thank You for Your Enquiry – Imperial Chauffeur Services Pte. Ltd';
@@ -136,7 +136,7 @@ class Zippy_Booking_Forms
   {
     $headers = [
       'Content-Type: text/html; charset=UTF-8',
-      'From: Imperial <impls@singnet.com.sg>'
+      'From: Imperial Chauffeur Services <impls@singnet.com.sg>'
     ];
 
     $subjectAdmin = 'New Enquiry Received';
