@@ -179,7 +179,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
 
                 $all_pending = true;
                 foreach ($data['orders'] as $order) {
-                    if (!in_array($order->get_status(), ['pending', 'processing', 'on-hold'])) {
+                    if (!in_array($order->get_status(), ['pending', 'processing'])) {
                         $all_pending = false;
                         break;
                     }

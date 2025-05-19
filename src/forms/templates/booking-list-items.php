@@ -5,6 +5,7 @@ $args = array(
   'posts_per_page' => '',
   'orderby'        => 'menu_order',
   'order'          => 'ASC',
+  'post_status'      => 'publish',
 );
 
 $query = new WP_Query($args);

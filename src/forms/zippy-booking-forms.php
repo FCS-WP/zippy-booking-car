@@ -298,14 +298,10 @@ class Zippy_Booking_Forms
     $drop_off_location = sanitize_text_field($_POST['drop_off_location']);
     $no_of_passengers = sanitize_text_field($_POST['no_of_passengers']);
     $no_of_baggage = sanitize_text_field($_POST['no_of_baggage'] ?? '');
-    $additional_stop = sanitize_text_field($_POST['additional_stop'] ?? '');
-    $midnight_fee = intval($_POST['midnight_fee'] ?? 0);
-    $agree_terms = sanitize_text_field($_POST['agree_terms'] ?? '');
     $service_type = sanitize_text_field($_POST['service_type']);
     $special_requests = sanitize_text_field($_POST['special_requests'] ?? '');
     $flight_details = sanitize_text_field($_POST['flight_details'] ?? '');
     $eta_time = sanitize_text_field($_POST['eta_time'] ?? '');
-    $price_product_default = floatval($_POST['price_product_default']);
     $time_use = intval($_POST['time_use']);
     $product_id = intval($_POST['id_product']);
     $key_member = intval($_POST['key_member']);
