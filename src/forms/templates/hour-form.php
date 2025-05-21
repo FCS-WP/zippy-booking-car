@@ -92,31 +92,11 @@ if (is_user_logged_in()) {
             <select class="" id="hbk_time_value" name="time_use" required>
               <option value="" selected>Please choose an option</option>
               <?php
-              if ($isMin3h) {
-                echo ('<option value="3-hours">3 hours</option>');
-              }
+                $min_hour = $isMin3h ? 3 : 4;
+                for ($i = $min_hour; $i <= 24; $i++) {
+                  echo "<option value='$i'>$i hours</option>";
+                }
               ?>
-              <option value="4">4 hours</option>
-              <option value="5">5 hours</option>
-              <option value="6">6 hours</option>
-              <option value="7">7 hours</option>
-              <option value="8">8 hours</option>
-              <option value="9">9 hours</option>
-              <option value="10">10 hours</option>
-              <option value="11">11 hours</option>
-              <option value="12">12 hours</option>
-              <option value="13">13 hours</option>
-              <option value="14">14 hours</option>
-              <option value="15">15 hours</option>
-              <option value="16">16 hours</option>
-              <option value="17">17 hours</option>
-              <option value="18">18 hours</option>
-              <option value="19">19 hours</option>
-              <option value="20">20 hours</option>
-              <option value="21">21 hours</option>
-              <option value="22">22 hours</option>
-              <option value="23">23 hours</option>
-              <option value="24">24 hours</option>
             </select>
             <div class="error-msg"></div>
         </div>
