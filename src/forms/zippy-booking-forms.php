@@ -118,15 +118,7 @@ class Zippy_Booking_Forms
     $message .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
     $message .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
 
-    $message .= "<br><h3 style='font-size:15px;color:#000'>Preferred Contact Method:</h3>";
-    $message .= "<p style='font-size:13px;color:#000'>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
-    $message .= "<br><p style='font-size:13px;color:#000'>Our team will review your request and respond within 24 hours. If you have any urgent concerns, feel free to contact us.</p>";
-    $message .= "<p style='font-size:13px;color:#000'>We appreciate your patience and look forward to assisting you.</p><br>";
-    $message .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Imperial Chauffeur Services Pte. Ltd</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/'>imperialchauffeur.sg</a></p>";
+    $message .= get_email_signature();
 
     return wp_mail($email_customer, $subject, $message, $headers);
   }
@@ -174,9 +166,9 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p style='font-size:13px;color:#000'>No of luggages: $no_of_baggage</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
-    $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p><br>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
+    $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p>";
+    
+    $messageAdmin .= get_email_signature();
 
     return wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
   }
