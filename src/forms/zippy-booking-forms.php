@@ -118,15 +118,7 @@ class Zippy_Booking_Forms
     $message .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
     $message .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
 
-    $message .= "<br><h3 style='font-size:15px;color:#000'>Preferred Contact Method:</h3>";
-    $message .= "<p style='font-size:13px;color:#000'>OFFICE TELEPHONE +65 6734 0428 (24Hours)</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
-    $message .= "<br><p style='font-size:13px;color:#000'>Our team will review your request and respond within 24 hours. If you have any urgent concerns, feel free to contact us.</p>";
-    $message .= "<p style='font-size:13px;color:#000'>We appreciate your patience and look forward to assisting you.</p><br>";
-    $message .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Imperial Chauffeur Services Pte. Ltd</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Email: impls@singnet.com.sg</p>";
-    $message .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/'>imperialchauffeur.sg</a></p>";
+    $message .= get_email_signature();
 
     return wp_mail($email_customer, $subject, $message, $headers);
   }
@@ -142,18 +134,18 @@ class Zippy_Booking_Forms
     $subjectAdmin = 'New Enquiry Received';
     $messageAdmin = "<p style='font-size:13px;color:#000'>A new enquiry has been submitted. Please find the details below:</p>";
     $messageAdmin .= "<h3 style='font-size:15px;color:#000'>Enquiry Details:</h3>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Order No: #$order_id</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Customer Type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Order no: #$order_id</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Customer type: " . ($key_member == 0 ? "Visitor" : "Member") . "</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Customer: $name_customer / $email_customer & $phone_customer</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Service Type: $service_type</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Vehicle Type: $product_name</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Service type: $service_type</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Vehicle type: $product_name</p>";
 
     if ($service_type == "Hourly/Disposal") {
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Usage time: $time_use Hours</p>";
     }
 
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick Up Date: $pick_up_date</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick Up Time: $pick_up_time</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up date: $pick_up_date</p>";
+    $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up time: $pick_up_time</p>";
 
     if ($service_type == "Airport Arrival Transfer") {
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
@@ -174,9 +166,9 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p style='font-size:13px;color:#000'>No of luggages: $no_of_baggage</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
-    $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p><br>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Best regards,</p>";
-    $messageAdmin .= "<p style='font-size:13px;color:#000'>Website: <a href='https://imperialchauffeur.sg/' target='_blank'>imperialchauffeur.sg</a></p>";
+    $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p>";
+    
+    $messageAdmin .= get_email_signature();
 
     return wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
   }
