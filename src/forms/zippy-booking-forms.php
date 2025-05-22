@@ -228,20 +228,20 @@ class Zippy_Booking_Forms
     }
 
     // // CC fee 
-    $is_enable = get_option('enable_cc_fee');
-    if (!empty($is_enable) && $is_enable == 'yes') {
-      $cc_fee_name = get_option('zippy_cc_fee_name');
-      $cc_fee_value = get_option('zippy_cc_fee_amount');
-      $cc_tax = floor($order_total * ($cc_fee_value / 100) * 100) / 100;
+    // $is_enable = get_option('enable_cc_fee');
+    // if (!empty($is_enable) && $is_enable == 'yes') {
+    //   $cc_fee_name = get_option('zippy_cc_fee_name');
+    //   $cc_fee_value = get_option('zippy_cc_fee_amount');
+    //   $cc_tax = floor($order_total * ($cc_fee_value / 100) * 100) / 100;
 
-      $fee_CC = new WC_Order_Item_Fee();
-      $fee_CC->set_name($cc_fee_name);
-      $fee_CC->set_total($cc_tax);
-      $fee_CC->set_tax_class('');
-      $fee_CC->set_tax_status('taxable');
+    //   $fee_CC = new WC_Order_Item_Fee();
+    //   $fee_CC->set_name($cc_fee_name);
+    //   $fee_CC->set_total($cc_tax);
+    //   $fee_CC->set_tax_class('');
+    //   $fee_CC->set_tax_status('taxable');
 
-      $order->add_item($fee_CC);
-    }
+    //   $order->add_item($fee_CC);
+    // }
 
     $order->calculate_taxes();
 
