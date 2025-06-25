@@ -311,7 +311,7 @@ class Zippy_Woo_Booking
 
     $eta_time = get_post_meta($order->get_id(), 'eta_time', true);
     if ($eta_time) {
-      echo '<p><strong>' . __('ETE/ETA Time: ', 'woocommerce') . ':</strong> ' . esc_html($eta_time) . '</p>';
+      echo '<p><strong>' . __('ETD/ETA Time: ', 'woocommerce') . ':</strong> ' . esc_html($eta_time) . '</p>';
     }
 
 
