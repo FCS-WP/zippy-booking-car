@@ -90,7 +90,7 @@ if (is_user_logged_in()) {
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-trip">
-          <label for="servicetype">Type Services <span style="color:red;">*</span></label>
+          <label for="servicetype">Types of Transfers <span style="color:red;">*</span></label>
           <select class="" id="servicetype" name="service_type" required>
             <option value="">Please choose an option</option>
             <option value="Airport Arrival Transfer">Airport Arrival Transfer</option>
