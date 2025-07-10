@@ -269,7 +269,7 @@ class Zippy_Booking_Forms
       'pick_up_location' => "Pick Up",
       'drop_off_location' => "Drop Off",
       'no_of_passengers' => "No. of Passengers",
-      'service_type' => "Type Services",
+      'service_type' => "Types of Transfers",
       'id_product' => "Product ID",
       'time_use' => "Time",
       'agree_terms' => "Agree Term"
