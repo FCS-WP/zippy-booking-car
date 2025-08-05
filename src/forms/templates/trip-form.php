@@ -170,7 +170,13 @@ if (is_user_logged_in()) {
     </div>
     <div class="row-form-custom col-1 toggleDisplayElements">
       <div class="col-form-custom ">
-        <input class="zippy_btn_submit" id="btnEnquiryNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
+        <?php if (is_user_logged_in()): ?>
+          <input class="zippy_btn_submit" id="btnEnquiryNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
+
+        <?php else: ?>
+          <input class="zippy_btn_submit" id="btnAddtoCartHourNow" name="submit_car_booking_time" type="submit" value="Add to your cart">
+
+        <?php endif; ?>
         <div id="message_status_submit" class="displayNone">
           <div class="loader"></div>
           <p> Please hold while we send your enquiry</p>
