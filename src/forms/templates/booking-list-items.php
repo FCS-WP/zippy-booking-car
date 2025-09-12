@@ -5,6 +5,7 @@ $args = array(
   'posts_per_page' => '',
   'orderby'        => 'menu_order',
   'order'          => 'ASC',
+  'post_status'      => 'publish',
 );
 
 $query = new WP_Query($args);
@@ -25,7 +26,9 @@ if ($query->have_posts()) {
         </div>
         <div class="product-item-col">
           <h2 class="product-title"> <?php echo get_the_title(); ?></h2>
-          <div class="product-full-description"><?php echo $full_description; ?></div>
+          <?php if (!is_user_logged_in()) : ?>
+            <div class="product-full-description"><?php echo $full_description; ?></div>
+          <?php endif; ?>
         </div>
         <div class="product-item-col center-product-col">
           <button><a href="<?php echo get_the_permalink(); ?>">Enquire Now</a></button>

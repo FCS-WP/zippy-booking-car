@@ -5,13 +5,16 @@ $today = date('d-m-Y');
 $key_member = 0;
 $minutes = ceil(date("i") / 5) * 5;
 $time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
+$col_class = "col-1";
 if (is_user_logged_in()) {
   $key_member = 1;
-  $current_user = wp_get_current_user(); 
-  $email_member = $current_user->user_email; 
+  $current_user = wp_get_current_user();
+  $email_member = $current_user->user_email;
   $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
   $display_name_user = $current_user->display_name;
+  $col_class = "col-2";
 }
+
 ?>
 
 <div id="popup" class="popup">
@@ -44,27 +47,33 @@ if (is_user_logged_in()) {
         <input name="midnight_fee" id="trip_midnight_fee" type="hidden" value="0">
         <input name="time_use" id="time_use" type="hidden" value="1">
       </div>
-      <div class="row-form-custom col-2">
+      <div class="row-form-custom <?php echo $col_class; ?>">
         <div class="col-form-custom js-validate-trip">
           <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
-          <input class=""  aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
           <div class="error-msg"></div>
         </div>
-        <div class="col-form-custom">
-          <label for="staffname">Staff name</label>
-          <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
-          <div class="error-msg"></div>
-        </div>
+        <?php if (is_user_logged_in()) { ?>
+          <div class="col-form-custom">
+            <label for="staffname">Staff name</label>
+            <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
+            <div class="error-msg"></div>
+          </div>
+        <?php } ?>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom js-validate-trip">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
-          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
+          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if ($key_member == 1) {
+                                                                                                            echo $email_member;
+                                                                                                          } ?>" type="email" name="emailcustomer">
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-trip">
           <label for="phonecustomer ">Customer Phone<span style="color:red;">*</span></label>
-          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
+          <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if ($key_member == 1) {
+                                                                                                                    echo $phone_member;
+                                                                                                                  } ?>" type="text" name="phonecustomer">
           <div class="error-msg"></div>
         </div>
       </div>
@@ -81,7 +90,7 @@ if (is_user_logged_in()) {
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-trip">
-          <label for="servicetype">Type Services <span style="color:red;">*</span></label>
+          <label for="servicetype">Types of Transfers <span style="color:red;">*</span></label>
           <select class="" id="servicetype" name="service_type" required>
             <option value="">Please choose an option</option>
             <option value="Airport Arrival Transfer">Airport Arrival Transfer</option>
@@ -106,11 +115,11 @@ if (is_user_logged_in()) {
       <div class="row-form-custom col-2" id="input-flight">
         <div class="col-form-custom">
           <label for="flight">Flight Details<span style="color:red;"></span></label>
-          <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details"  type="text" name="flight_details">
+          <input size="40" maxlength="400" class="" id="flight" aria-required="true" aria-invalid="false" placeholder="Enter your flight details" type="text" name="flight_details">
         </div>
         <div class="col-form-custom js-validate-trip" id="openPopupTime">
           <label for="eta_time"><span id="switch_time_label">ETA</span> Time</label>
-          <input type="hidden" name="eta_time" id="eta_time" value="00:00">
+          <input type="hidden" name="eta_time" id="eta_time" value="00:00" style="display:none;">
           <div class="row_50">
             <div class="col_time_select">
               <label>Hour:</label>
@@ -121,7 +130,7 @@ if (is_user_logged_in()) {
               <label>Minutes:</label>
               <select id="ete_minute"></select>
               <div class="error-msg"></div>
-              
+
             </div>
           </div>
         </div>
@@ -141,7 +150,7 @@ if (is_user_logged_in()) {
       <div class="row-form-custom col-1">
         <div class="col-form-custom">
           <label for="special_requests">Special Requests</label>
-          <input size="40" maxlength="400" class=""  aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
+          <input size="40" maxlength="400" class="" aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
         </div>
       </div>
     </div>
@@ -155,14 +164,17 @@ if (is_user_logged_in()) {
         <span class="error-msg"></span>
       </label>
     </div>
-    <div class="col-total-price-information displayNone toggleDisplayElements" >
+    <div class="col-total-price-information displayNone toggleDisplayElements">
       <label>Total Price: </label><span> $<span id="price-total" data-product-price="<?php echo $current_price = $product->get_price(); ?>"><?php echo $current_price = $product->get_price(); ?></span></span>
       <input type="hidden" name="price_product_default" value="<?php echo $current_price = $product->get_price(); ?>">
     </div>
     <div class="row-form-custom col-1 toggleDisplayElements">
-      <div class="col-form-custom ">        
+      <div class="col-form-custom ">
         <input class="zippy_btn_submit" id="btnEnquiryNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
-        <div id="message_status_submit" class="displayNone"><div class="loader"></div><p> Please hold while we send your enquiry</p></div>
+        <div id="message_status_submit" class="displayNone">
+          <div class="loader"></div>
+          <p> Please hold while we send your enquiry</p>
+        </div>
         <div class="js-response-message"></div>
       </div>
     </div>

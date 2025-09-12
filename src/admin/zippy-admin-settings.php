@@ -39,13 +39,14 @@ class Zippy_Admin_Settings
     add_action('wp_ajax_nopriv_create_payment_order', array($this, 'create_payment_order'));
     add_filter('woocommerce_order_number', array($this, 'custom_order_number_display'), 10, 2);
     add_filter('woocommerce_get_settings_pages', array($this, 'custom_woocommerce_settings_tab'));
+    add_filter( 'wp_mail_from_name', array($this, 'my_mail_from_name') );
   }
 
   public function admin_booking_assets()
   {
     $version = time();
     $current_user_id = get_current_user_id();
-    //lib
+    // lib
     wp_enqueue_style('admin-jquery-ui-css', ZIPPY_BOOKING_URL . 'assets/libs/jquery-ui/jquery-ui.min.css', [], $version);
     // Pass the user ID to the script
     wp_enqueue_script('admin-booking-js', ZIPPY_BOOKING_URL . '/assets/dist/js/admin.min.js', [], $version, true);
@@ -327,7 +328,7 @@ class Zippy_Admin_Settings
     if (empty($child_orders_ids)) {
       return;
     }
-
+    
     $parent_status = $order->get_status();
 
     foreach ($child_orders_ids as $child_order_id) {
@@ -336,5 +337,8 @@ class Zippy_Admin_Settings
         $child_order->update_status($parent_status, 'Status updated to match parent monthly order.');
       }
     }
+  }
+  public function my_mail_from_name( $name ) {
+    return "Imperial Chauffeur Services";
   }
 }
