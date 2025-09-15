@@ -84,6 +84,9 @@ use  Zippy_Booking_Car\Src\Woocommerce\Zippy_Woo_Booking;
 
 use  Zippy_Booking_Car\Src\Forms\Zippy_Booking_Forms;
 
+use Zippy_Booking_Car\Src\Export\Zippy_Order_Export;
+
+
 
 /**
  * Zippy Plugin update
@@ -123,3 +126,5 @@ Zippy_Admin_Settings::get_instance();
 Zippy_Woo_Booking::get_instance();
 
 Zippy_Booking_Forms::get_instance();
+
+Zippy_Order_Export::get_instance();
