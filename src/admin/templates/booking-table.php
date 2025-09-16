@@ -128,14 +128,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($grouped_by_month as $month => $data):
-
-
-                    ?>
+                    <?php foreach ($grouped_by_month as $month => $data):?>
                         <?php foreach ($data['orders'] as $order):
                         ?>
                             <?php if ($order->get_status() === 'completed') continue; ?>
-
                             <?php
                             $product_ids = [];
                             $billing_full_name = $order->get_billing_first_name() . " " . $order->get_billing_last_name();
@@ -143,18 +139,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['custome
                             foreach ($order->get_items() as $item) {
                                 $product = $item->get_product();
                                 if ($product) {
-                                    $product_ids[] = $product->get_id();
+                                    $product_ids = $product->get_id();
                                     $product_name = $product->get_name();
                                 }
                             }
-                            $product_ids_string = implode(',', $product_ids);
                             ?>
 
                             <tr
                                 data-month="<?php echo esc_attr(sanitize_title($month)); ?>"
                                 data-order-id="<?php echo esc_attr($order->get_id()); ?>"
                                 data-booking-date="<?php echo esc_attr($order->get_date_created()->format('Y-m-d')); ?>"
-                                data-vehicle-type="<?php echo esc_attr($product_ids_string); ?>"
+                                data-vehicle-type="<?php echo esc_attr($product_ids); ?>"
                                 data-status="<?php echo esc_attr($order->get_status()); ?>">
 
 
