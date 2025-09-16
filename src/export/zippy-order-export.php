@@ -29,7 +29,7 @@ class Zippy_Order_Export
     {
         $current_date = isset($_GET['fulfilment_date']) ? esc_attr($_GET['fulfilment_date']) : '';
 ?>
-        <form method="get" style="margin:20px 0; display:flex; gap:10px; align-items:center;">
+        <form method="get" class="download-form">
             <?php foreach ($_GET as $key => $value) : ?>
                 <?php if ($key !== 'fulfilment_date' && $key !== 'export') : ?>
                     <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($value); ?>">
@@ -39,13 +39,13 @@ class Zippy_Order_Export
             <label>
                 <input type="date" name="fulfilment_date" value="<?php echo $current_date; ?>" />
             </label>
-            <select name="export" onchange="this.form.submit()" class="button">
+            <select name="export" onchange="this.form.submit()" class="button select-download">
                 <option value="">Download</option>
                 <option value="csv">Export CSV</option>
                 <option value="pdf">Export PDF</option>
             </select>
 
-            <button type="submit" class="button">Filter</button>
+            <button type="submit" class="button filter-btn ">Filter</button>
         </form>
 <?php
     }
