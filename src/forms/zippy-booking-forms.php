@@ -63,7 +63,7 @@ class Zippy_Booking_Forms
 
   public function booking_assets()
   {
-    if (!is_archive() && !is_single() && !is_checkout()) return;
+    if (!is_archive() && !is_single() && !is_checkout() && ! is_account_page()) return;
     $version = time();
 
     $current_user_id = get_current_user_id();
