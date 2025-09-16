@@ -9,8 +9,8 @@ $time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
 $col_class = "col-1";
 if (is_user_logged_in()) {
   $key_member = 1;
-  $current_user = wp_get_current_user();
-  $email_member = $current_user->user_email;
+  $current_user = wp_get_current_user(); 
+  $email_member = $current_user->user_email; 
   $phone_member = get_user_meta($current_user->ID, 'billing_phone', true);
   $display_name_user = $current_user->display_name;
   $col_class = "col-2";
@@ -55,27 +55,23 @@ if (is_user_logged_in()) {
           <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
           <div class="error-msg"></div>
         </div>
-        <?php if (is_user_logged_in()) { ?>
-          <div class="col-form-custom">
-            <label for="staffname">Staff name</label>
-            <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
-            <div class="error-msg"></div>
-          </div>
+        <?php if(is_user_logged_in()){ ?>
+        <div class="col-form-custom">
+          <label for="staffname">Staff name</label>
+          <input class="" id="staffname" aria-invalid="false" placeholder="Staff Name" type="text" name="staffname" value="">
+          <div class="error-msg"></div>
+        </div>
         <?php } ?>
       </div>
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom js-validate-hour">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
-          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if ($key_member == 1) {
-                                                                                                                                echo $email_member;
-                                                                                                                              } ?>" type="email" name="emailcustomer">
+          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if($key_member == 1){echo $email_member;}?>" type="email" name="emailcustomer">
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-hour">
           <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
-          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if ($key_member == 1) {
-                                                                                                                                      echo $phone_member;
-                                                                                                                                    } ?>" type="text" name="phonecustomer">
+          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if($key_member == 1){echo $phone_member;}?>" type="text" name="phonecustomer">
           <div class="error-msg"></div>
         </div>
       </div>
@@ -93,16 +89,16 @@ if (is_user_logged_in()) {
         </div>
         <div class="col-form-custom js-validate-hour">
           <label for="time_use">Duration <span style="color:red;">*</span></label>
-          <select class="" id="hbk_time_value" name="time_use" required>
-            <option value="" selected>Please choose an option</option>
-            <?php
-            $min_hour = $isMin3h ? 3 : 4;
-            for ($i = $min_hour; $i <= 24; $i++) {
-              echo "<option value='$i'>$i hours</option>";
-            }
-            ?>
-          </select>
-          <div class="error-msg"></div>
+            <select class="" id="hbk_time_value" name="time_use" required>
+              <option value="" selected>Please choose an option</option>
+              <?php
+                $min_hour = $isMin3h ? 3 : 4;
+                for ($i = $min_hour; $i <= 24; $i++) {
+                  echo "<option value='$i'>$i hours</option>";
+                }
+              ?>
+            </select>
+            <div class="error-msg"></div>
         </div>
       </div>
       <div class="row-form-custom col-2">
@@ -134,7 +130,7 @@ if (is_user_logged_in()) {
         <div class="col-form-custom col-1">
           <label for="special_requests">Special Requests</label>
           <input size="40" maxlength="400" class="" id="hbk_special_requests" aria-invalid="false" placeholder="Enter your request" value="" type="text" name="special_requests">
-
+          
         </div>
       </div>
     </div>
@@ -167,16 +163,8 @@ if (is_user_logged_in()) {
     </div>
     <div class="row-form-custom col-1 toggleDisplayElements">
       <div class="col-form-custom ">
-        <?php if (is_user_logged_in()): ?>
-          <input class="zippy_btn_submit" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
-        <?php else: ?>
-          <input class="zippy_btn_submit" id="btnAddtoCartHourNow" name="submit_car_booking_time" type="submit" value="Add to your cart">
-
-        <?php endif; ?>
-        <div id="message_hours_status_submit" class="displayNone">
-          <div class="loader"></div>
-          <p> Please hold while we send your enquiry</p>
-        </div>
+        <input class="zippy_btn_submit" id="btnEnquiryHourNow" name="enquiry_car_booking_time" type="submit" value="Enquire Now">
+        <div id="message_hours_status_submit" class="displayNone"><div class="loader"></div><p> Please hold while we send your enquiry</p></div>
         <div class="js-response-message"></div>
       </div>
     </div>

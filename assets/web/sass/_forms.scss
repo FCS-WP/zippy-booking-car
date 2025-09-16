@@ -386,7 +386,7 @@
   }
 }
 
-#btnEnquiryNow {
+#btnEnquiryNow{
   background-color: #666;
   width: 100%;
   color: #fff;
@@ -399,8 +399,7 @@
   }
 }
 
-#btnEnquiryHourNow,
-#btnAddtoCartHourNow {
+#btnEnquiryHourNow{
   background-color: #666;
   width: 100%;
   color: #fff;
@@ -646,10 +645,11 @@
   margin-bottom: 6px;
 }
 
-.extra_text_noti {
+
+.extra_text_noti{
   width: 100%;
   margin-top: 5px;
-  p {
+  p{
     text-align: center;
     margin-bottom: 0px;
     font-size: 14px;
@@ -657,7 +657,7 @@
   }
 }
 
-.displayNone {
+.displayNone{
   display: none !important;
 }
 
@@ -671,36 +671,32 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-#message_status_submit {
+#message_status_submit{
   display: flex;
   align-items: center;
   justify-content: center;
-
-  p {
+  
+  p{
     margin-bottom: 0px;
     margin-left: 10px;
   }
 }
 
-#message_hours_status_submit {
+#message_hours_status_submit{
   display: flex;
   align-items: center;
   justify-content: center;
-
-  p {
+  
+  p{
     margin-bottom: 0px;
     margin-left: 10px;
   }
 }
 
-.js-response-message {
+.js-response-message{
   padding-top: 10px;
 }
