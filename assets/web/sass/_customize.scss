@@ -72,8 +72,7 @@
   }
 }
 
-
-.error-msg{
+.error-msg {
   font-size: 12px;
   color: #ff0000;
 }
@@ -86,55 +85,73 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  max-width: 450px;
+  max-width: 650px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-  input[type="date"],
-  select {
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
-    transition: 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: #fff;
+.download-form input[type="date"],
+.download-form select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #fff;
+  min-width: 160px;
+}
+
+.download-form input[type="date"]:focus,
+.download-form select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.download-form .select-download {
+  position: relative;
+  padding-right: 36px;
+  cursor: pointer;
+  background: #fff
+    url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+    no-repeat right 10px center;
+  background-size: 16px;
+}
+
+.download-form .filter-btn {
+  padding: 8px 16px;
+  background: #f1192e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.download-form .filter-btn:hover {
+  background: #f1192fda;
+}
+
+@media (max-width: 768px) {
+  .download-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    text-align: center;
   }
 
-  input[type="date"]:focus,
-  select:focus {
-    border-color: none;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  .download-form input[type="date"],
+  .download-form select,
+  .download-form .filter-btn {
+    width: 100%;
   }
 
-  .select-download {
-    position: relative;
-    padding-right: 36px;
-    cursor: pointer;
-    background: #fff url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") 
-      no-repeat right 10px center;
-    background-size: 16px;
-
-    &::after {
-      display: none;
-    }
-  }
-
-  .filter-btn {
-    padding: 8px 16px;
-    background: #f1192e;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: #f1192fda;
-    }
+  .download-form label {
+    width: 100%;
   }
 }
