@@ -29,6 +29,11 @@ class Zippy_Order_Export
     {
         $start_date = isset($_GET['start_date']) ? esc_attr($_GET['start_date']) : '';
         $end_date   = isset($_GET['end_date']) ? esc_attr($_GET['end_date']) : '';
+        $orders_exist = [];
+        if (!empty($start_date) && !empty($end_date)) {
+            $orders_exist = $this->get_filtered_orders($start_date, $end_date);
+        }
+        $has_orders = !empty($orders_exist);
 ?>
         <form method="get" class="download-form">
             <?php foreach ($_GET as $key => $value) : ?>
@@ -45,7 +50,8 @@ class Zippy_Order_Export
                 <input type="date" name="end_date" value="<?php echo $end_date; ?>" />
             </label>
 
-            <select name="export" onchange="this.form.submit()" class="button select-download">
+            <select name="export" onchange="this.form.submit()" class="button select-download"
+                <?php echo (!$has_orders) ? 'disabled' : ''; ?>>
                 <option value="">Download</option>
                 <option value="csv">Export CSV</option>
                 <option value="pdf">Export PDF</option>
@@ -79,17 +85,26 @@ class Zippy_Order_Export
         if (!isset($_GET['export']) || !is_account_page()) {
             return;
         }
-
+        $start = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : '';
+        $end   = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : '';
         $customer_orders = $this->get_filtered_orders();
+        if (empty($customer_orders)) {
+            wc_add_notice(__('No orders found within the selected date range, cannot export.'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('orders'));
+            exit;
+        }
 
         // ===== CSV EXPORT =====
         if ($_GET['export'] === 'csv') {
+
             header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
             header('Cache-Control: post-check=0, pre-check=0', false);
             header('Pragma: no-cache');
             header('Expires: 0');
 
-            $filename = 'orders-' . date('Y-m-d-H-i-s') . '.csv';
+            $filename = ($start && $end)
+                ? 'export-orders-' . $start . '-to-' . $end . '.csv'
+                : 'export-orders-' . date('Y-m-d') . '.csv';
 
             header('Content-Type: text/csv; charset=utf-8');
             header("Content-Disposition: attachment; filename={$filename}");
@@ -162,7 +177,10 @@ class Zippy_Order_Export
             $dompdf->setPaper('A4', 'landscape');
             $dompdf->render();
 
-            $filename = 'orders-' . date('Y-m-d-H-i-s') . '.pdf';
+            $filename = ($start && $end)
+                ? 'export-orders-' . $start . '-to-' . $end . '.pdf'
+                : 'export-orders-' . date('Y-m-d') . '.pdf';
+
             $dompdf->stream($filename, ["Attachment" => 1]);
             exit;
         }
