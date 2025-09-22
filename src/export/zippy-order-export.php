@@ -27,19 +27,31 @@ class Zippy_Order_Export
 
     public function add_export_filter_controls()
     {
-        $current_date = isset($_GET['fulfilment_date']) ? esc_attr($_GET['fulfilment_date']) : '';
+        $start_date = isset($_GET['start_date']) ? esc_attr($_GET['start_date']) : '';
+        $end_date   = isset($_GET['end_date']) ? esc_attr($_GET['end_date']) : '';
+        $orders_exist = [];
+        if (!empty($start_date) && !empty($end_date)) {
+            $orders_exist = $this->get_filtered_orders($start_date, $end_date);
+        }
+        $has_orders = !empty($orders_exist);
 ?>
         <form method="get" class="download-form">
             <?php foreach ($_GET as $key => $value) : ?>
-                <?php if ($key !== 'fulfilment_date' && $key !== 'export') : ?>
+                <?php if (!in_array($key, ['start_date', 'end_date', 'export'])) : ?>
                     <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($value); ?>">
                 <?php endif; ?>
             <?php endforeach; ?>
 
             <label>
-                <input type="date" name="fulfilment_date" value="<?php echo $current_date; ?>" />
+                <input type="date" name="start_date" value="<?php echo $start_date; ?>" />
             </label>
-            <select name="export" onchange="this.form.submit()" class="button select-download">
+            <span>to</span>
+            <label>
+                <input type="date" name="end_date" value="<?php echo $end_date; ?>" />
+            </label>
+
+            <select name="export" onchange="this.form.submit()" class="button select-download"
+                <?php echo (!$has_orders) ? 'disabled' : ''; ?>>
                 <option value="">Download</option>
                 <option value="csv">Export CSV</option>
                 <option value="pdf">Export PDF</option>
@@ -59,9 +71,10 @@ class Zippy_Order_Export
             'limit'       => -1,
         ];
 
-        if (!empty($_GET['fulfilment_date'])) {
-            $date = sanitize_text_field($_GET['fulfilment_date']);
-            $args['date_created'] = $date . ' 00:00:00...' . $date . ' 23:59:59';
+        if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
+            $start = sanitize_text_field($_GET['start_date']);
+            $end   = sanitize_text_field($_GET['end_date']);
+            $args['date_created'] = $start . ' 00:00:00...' . $end . ' 23:59:59';
         }
 
         return wc_get_orders($args);
@@ -72,17 +85,26 @@ class Zippy_Order_Export
         if (!isset($_GET['export']) || !is_account_page()) {
             return;
         }
-
+        $start = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : '';
+        $end   = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : '';
         $customer_orders = $this->get_filtered_orders();
+        if (empty($customer_orders)) {
+            wc_add_notice(__('No orders found within the selected date range, cannot export.'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('orders'));
+            exit;
+        }
 
         // ===== CSV EXPORT =====
         if ($_GET['export'] === 'csv') {
+
             header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
             header('Cache-Control: post-check=0, pre-check=0', false);
             header('Pragma: no-cache');
             header('Expires: 0');
 
-            $filename = 'orders-' . date('Y-m-d-H-i-s') . '.csv';
+            $filename = ($start && $end)
+                ? 'export-orders-' . $start . '-to-' . $end . '.csv'
+                : 'export-orders-' . date('Y-m-d') . '.csv';
 
             header('Content-Type: text/csv; charset=utf-8');
             header("Content-Disposition: attachment; filename={$filename}");
@@ -100,13 +122,6 @@ class Zippy_Order_Export
                 }
                 $product_name = implode(', ', $product_names);
 
-                // Debug log
-                error_log('===== ORDER DEBUG =====');
-                error_log('Order ID: ' . $order->get_id());
-                error_log('is_monthly: ' . $is_monthly);
-                error_log('service_type: ' . $service_type);
-                error_log('product_name: ' . $product_name);
-
                 fputcsv($output, [
                     $order->get_order_number(),
                     $order->get_date_created()->date('d-m-Y'),
@@ -118,7 +133,6 @@ class Zippy_Order_Export
             }
             exit;
         }
-
 
         // ===== PDF EXPORT =====
         if ($_GET['export'] === 'pdf') {
@@ -163,7 +177,10 @@ class Zippy_Order_Export
             $dompdf->setPaper('A4', 'landscape');
             $dompdf->render();
 
-            $filename = 'orders-' . date('Y-m-d-H-i-s') . '.pdf';
+            $filename = ($start && $end)
+                ? 'export-orders-' . $start . '-to-' . $end . '.pdf'
+                : 'export-orders-' . date('Y-m-d') . '.pdf';
+
             $dompdf->stream($filename, ["Attachment" => 1]);
             exit;
         }
@@ -171,9 +188,10 @@ class Zippy_Order_Export
 
     public function filter_account_orders_by_date($args)
     {
-        if (!empty($_GET['fulfilment_date'])) {
-            $date = sanitize_text_field($_GET['fulfilment_date']);
-            $args['date_created'] = $date . ' 00:00:00...' . $date . ' 23:59:59';
+        if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
+            $start = sanitize_text_field($_GET['start_date']);
+            $end   = sanitize_text_field($_GET['end_date']);
+            $args['date_created'] = $start . ' 00:00:00...' . $end . ' 23:59:59';
         }
         return $args;
     }
