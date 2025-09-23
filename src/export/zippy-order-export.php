@@ -67,7 +67,7 @@ class Zippy_Order_Export
         $user_id = get_current_user_id();
         $args = [
             'customer_id' => $user_id,
-            'status'      => ['pending', 'on-hold', 'completed'],
+            // 'status'      => ['pending', 'on-hold', 'completed'],
             'limit'       => -1,
         ];
 
