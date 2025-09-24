@@ -121,10 +121,17 @@ class Zippy_Order_Export
                     $product_names[] = $item->get_name();
                 }
                 $product_name = implode(', ', $product_names);
+                $pickup_date = get_post_meta($order->get_id(), "pick_up_date", true);
+
+                if (empty($pickup_date)) {
+                    $date_value = $order->get_date_created()->date('d-m-Y');
+                } else {
+                    $date_value = date('d-m-Y', strtotime($pickup_date));
+                }
 
                 fputcsv($output, [
                     $order->get_order_number(),
-                    $order->get_date_created()->date('d-m-Y'),
+                    $date_value,
                     $service_type,
                     wc_get_order_status_name($order->get_status()),
                     ($is_monthly) ? '' : $product_name,
@@ -160,10 +167,17 @@ class Zippy_Order_Export
                     $product_names[] = $item->get_name();
                 }
                 $product_name = implode(', ', $product_names);
+                $pickup_date = get_post_meta($order->get_id(), "pick_up_date", true);
+
+                if (empty($pickup_date)) {
+                    $date_value = $order->get_date_created()->date('d-m-Y');
+                } else {
+                    $date_value = date('d-m-Y', strtotime($pickup_date));
+                }
 
                 $html .= '<tr>
     <td>' . $order->get_order_number() . '</td>
-    <td>' . $order->get_date_created()->date('d-m-Y') . '</td>
+    <td>' . $date_value . '</td>
     <td>' . esc_html($service_type) . '</td>
     <td>' . wc_get_order_status_name($order->get_status()) . '</td>
     <td>' . ($order->get_meta('is_monthly_payment_order') ? '' : esc_html($product_name)) . '</td>
