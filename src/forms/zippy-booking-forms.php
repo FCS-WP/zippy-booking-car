@@ -168,7 +168,7 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Special requests: $special_requests</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Staff name: $staff_name</p>";
     $messageAdmin .= "<br><p style='font-size:13px;color:#000'>Please review the enquiry and respond at your earliest convenience.</p>";
-    
+
     $messageAdmin .= get_email_signature();
 
     return wp_mail($admin_email, $subjectAdmin, $messageAdmin, $headers);
@@ -206,31 +206,29 @@ class Zippy_Booking_Forms
     $regular_price = $product ? $product->get_price() : 0;
 
     //Get discount price
-    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
-    $discount_price = 0;
-    if (!empty($regular_price) && !empty($price_product_after_discount)) {
-      $discount_price = $regular_price - $price_product_after_discount;
-    }
+    $discounted_price = get_product_pricing_rules($product, 1);
+    $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
 
-    $order_total = 0;
     if ($service_type == "Hourly/Disposal") {
-      $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
-      $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
+      if (!empty($discounted_price)) {
+        $price_per_hour = $discounted_price;
+      } else {
+        $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
+        $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
+      }
 
       $total_price = $price_per_hour * $time_use;
     } else {
       $total_price = $regular_price * $time_use;
     }
 
-    $order_total = $total_price - $discount_price;
-
     // Add product to order
     if ($product) {
       $item = new \WC_Order_Item_Product();
       $item->set_product($product);
       $item->set_quantity($time_use);
-      $item->set_subtotal($order_total);
-      $item->set_total($order_total);
+      $item->set_subtotal($total_price);
+      $item->set_total($total_price);
       $order->add_item($item);
     }
 
@@ -269,10 +267,10 @@ class Zippy_Booking_Forms
     }
 
     $required_fields = [
-      'emailcustomer' => "Customer Email*", 
-      'phonecustomer' => "Customer Phone*", 
-      'pick_up_date' => "Pick Up Date", 
-      'pick_up_time' => "Pick Up Time", 
+      'emailcustomer' => "Customer Email*",
+      'phonecustomer' => "Customer Phone*",
+      'pick_up_date' => "Pick Up Date",
+      'pick_up_time' => "Pick Up Time",
       'pick_up_location' => "Pick Up",
       'drop_off_location' => "Drop Off",
       'no_of_passengers' => "No. of Passengers",
@@ -283,9 +281,9 @@ class Zippy_Booking_Forms
     ];
 
     foreach ($required_fields as $key => $field) {
-        if (empty($_POST[$key])) {
-            wp_send_json_error(array('message' => "Missing information: $field"));
-        }
+      if (empty($_POST[$key])) {
+        wp_send_json_error(array('message' => "Missing information: $field"));
+      }
     }
 
     $name_customer = sanitize_text_field($_POST['namecustomer']);
@@ -326,7 +324,7 @@ class Zippy_Booking_Forms
       'special_requests' => $special_requests,
     ];
 
-    if($key_member == 1){
+    if ($key_member == 1) {
       $customer_infors["staff_name"] = $staff_name;
     }
 
