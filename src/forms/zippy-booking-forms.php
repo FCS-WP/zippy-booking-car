@@ -203,9 +203,12 @@ class Zippy_Booking_Forms
 
     $order->set_payment_method('cod');
 
-    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
     $regular_price = $product ? $product->get_price() : 0;
-    if ($regular_price > 0) {
+
+    //Get discount price
+    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
+    $discount_price = 0;
+    if (!empty($regular_price) && !empty($price_product_after_discount)) {
       $discount_price = $regular_price - $price_product_after_discount;
     }
 
