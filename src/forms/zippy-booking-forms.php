@@ -206,31 +206,29 @@ class Zippy_Booking_Forms
     $regular_price = $product ? $product->get_price() : 0;
 
     //Get discount price
-    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
-    $discount_price = 0;
-    if (!empty($regular_price) && !empty($price_product_after_discount)) {
-      $discount_price = $regular_price - $price_product_after_discount;
-    }
+    $discounted_price = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
+    $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
 
-    $order_total = 0;
     if ($service_type == "Hourly/Disposal") {
-      $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
-      $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
+      if (!empty($discounted_price)) {
+        $price_per_hour = $discounted_price;
+      } else {
+        $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
+        $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
+      }
 
       $total_price = $price_per_hour * $time_use;
     } else {
       $total_price = $regular_price * $time_use;
     }
 
-    $order_total = $total_price - $discount_price;
-
     // Add product to order
     if ($product) {
       $item = new \WC_Order_Item_Product();
       $item->set_product($product);
       $item->set_quantity($time_use);
-      $item->set_subtotal($order_total);
-      $item->set_total($order_total);
+      $item->set_subtotal($total_price);
+      $item->set_total($total_price);
       $order->add_item($item);
     }
 
