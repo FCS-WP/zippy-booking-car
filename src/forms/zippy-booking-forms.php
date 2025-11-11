@@ -13,6 +13,7 @@ defined('ABSPATH') or die();
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 use WC_Order_Item_Fee;
 use WC_Settings_Page;
+use Zippy_Booking_Car\Utils\Zippy_Pricing_Rule;
 
 class Zippy_Booking_Forms
 {
@@ -203,8 +204,15 @@ class Zippy_Booking_Forms
     $order->set_payment_method('cod');
 
     $regular_price = $product ? $product->get_price() : 0;
-    $order_total = 0;
 
+    //Get discount price
+    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
+    $discount_price = 0;
+    if (!empty($regular_price) && !empty($price_product_after_discount)) {
+      $discount_price = $regular_price - $price_product_after_discount;
+    }
+
+    $order_total = 0;
     if ($service_type == "Hourly/Disposal") {
       $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
       $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
@@ -214,16 +222,15 @@ class Zippy_Booking_Forms
       $total_price = $regular_price * $time_use;
     }
 
-
-    $order_total += $total_price;
+    $order_total = $total_price - $discount_price;
 
     // Add product to order
     if ($product) {
       $item = new \WC_Order_Item_Product();
       $item->set_product($product);
       $item->set_quantity($time_use);
-      $item->set_subtotal($total_price);
-      $item->set_total($total_price);
+      $item->set_subtotal($order_total);
+      $item->set_total($order_total);
       $order->add_item($item);
     }
 
