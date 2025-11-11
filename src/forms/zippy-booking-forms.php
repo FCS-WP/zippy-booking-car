@@ -203,10 +203,13 @@ class Zippy_Booking_Forms
 
     $order->set_payment_method('cod');
 
-    $discount_price = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
+    $price_product_after_discount = Zippy_Pricing_Rule::get_product_pricing_rules($product, 1);
     $regular_price = $product ? $product->get_price() : 0;
-    $order_total = 0;
+    if ($regular_price > 0) {
+      $discount_price = $regular_price - $price_product_after_discount;
+    }
 
+    $order_total = 0;
     if ($service_type == "Hourly/Disposal") {
       $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
       $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
