@@ -189,10 +189,15 @@ class Zippy_Booking_Forms
       'phone'      => $phone_customer,
     ], 'billing');
 
+    $is_role_customer_v2 = false;
     if (is_user_logged_in()) {
       $user = wp_get_current_user();
       if ($user->ID) {
         $order->set_customer_id($user->ID);
+
+        if (in_array('customer_v2', (array) $user->roles)) {
+          $is_role_customer_v2 = true;
+        }
       }
       $order->update_status('on-hold');
     } else {
@@ -209,9 +214,21 @@ class Zippy_Booking_Forms
     $discounted_price = get_product_pricing_rules($product, 1);
     $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
 
+    //Tmp hardcode price per hour for customer v2
+    $price_per_hour_for_v2 = [
+      '48' => 180,
+      '46' => 130,
+      '44' => 55,
+      '52' => 55,
+      '50' => 55,
+      '54' => 55,
+      '38' => 75,
+      '40' => 90,
+    ];
+
     if ($service_type == "Hourly/Disposal") {
-      if (!empty($discounted_price)) {
-        $price_per_hour = $discounted_price;
+      if ($is_role_customer_v2 && array_key_exists($product_id, $price_per_hour_for_v2)) {
+        $price_per_hour = $price_per_hour_for_v2[$product_id];
       } else {
         $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
         $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
