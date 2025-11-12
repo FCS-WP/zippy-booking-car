@@ -215,16 +215,7 @@ class Zippy_Booking_Forms
     $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
 
     //Tmp hardcode price per hour for customer v2
-    $price_per_hour_for_v2 = [
-      '48' => 180,
-      '46' => 130,
-      '44' => 55,
-      '52' => 55,
-      '50' => 55,
-      '54' => 55,
-      '38' => 75,
-      '40' => 90,
-    ];
+    $price_per_hour_for_v2 = get_config_price_for_customer_v2();
 
     if ($service_type == "Hourly/Disposal") {
       if ($is_role_customer_v2 && array_key_exists($product_id, $price_per_hour_for_v2)) {
