@@ -215,7 +215,7 @@ class Zippy_Booking_Forms
     if ($service_type == "Hourly/Disposal") {
       $price_per_hour_by_role = null;
       if (!empty($role_user)) {
-        $price_per_hour_by_role = get_post_meta($product_id, Zippy_Woo_Booking::META_PRICE_BY_ROLE . $user->roles[0], true);
+        $price_per_hour_by_role = get_post_meta($product_id, Zippy_Woo_Booking::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $user->roles[0], true);
       }
 
       if (!empty($price_per_hour_by_role)) {
