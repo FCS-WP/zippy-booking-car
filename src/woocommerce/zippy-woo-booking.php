@@ -14,6 +14,8 @@ use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 
 class Zippy_Woo_Booking
 {
+  public const PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE  = '_price_per_hour_by_role_';
+
   protected static $_instance = null;
 
   /**
@@ -130,10 +132,16 @@ class Zippy_Woo_Booking
 
   public function add_custom_price_field_to_product()
   {
+    $this->add_price_per_hour_field();
+    $this->add_price_per_hour_by_role_field();
+  }
+
+  public function add_price_per_hour_field()
+  {
     woocommerce_wp_text_input(array(
       'id' => '_price_per_hour',
       'label' => __('Price Per Hour', 'woocommerce'),
-      'description' => __('Enter an price by hour for this product.', 'woocommerce'),
+      'description' => __('Enter a price by hour for this product.', 'woocommerce'),
       'desc_tip' => 'true',
       'type' => 'number',
       'custom_attributes' => array(
@@ -143,6 +151,67 @@ class Zippy_Woo_Booking
     ));
   }
 
+  public function add_price_per_hour_by_role_field()
+  {
+    $product_id = get_the_ID();
+    if ($product_id) {
+      $product = wc_get_product($product_id);
+    }
+    $roles = get_editable_roles();
+    $role_prices = [];
+
+    if ($product) {
+      foreach ($roles as $role_key => $role_details) {
+        $meta_key = self::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $role_key;
+        $price = $product->get_meta($meta_key);
+        if (!empty($price)) {
+          $role_prices[$role_key] = $price;
+        }
+      }
+    }
+
+    $saved_role = !empty(array_key_first($role_prices)) ? array_key_first($role_prices) : '';
+    $saved_price = $saved_role ? $role_prices[$saved_role] : '';
+?>
+    <div class="options_group">
+      <p class="form-field custom_price_group">
+        <label for="custom_text_input"><?php _e('Price Per Hour by Role', 'textdomain'); ?></label>
+
+        <input
+          type="text"
+          id="custom_text_input"
+          name="custom_text_input"
+          style="width:45%; margin-right:10px;"
+          placeholder="<?php _e('Enter price', 'textdomain'); ?>"
+          value="<?php echo esc_attr($saved_price); ?>">
+
+        <select id="custom_select_input" name="custom_select_input" style="width:30%;">
+          <option value=""><?php _e('Select role', 'textdomain'); ?></option>
+          <?php
+          foreach ($roles as $role_key => $role_details) {
+            $role_name = translate_user_role($role_details['name']);
+            $selected = selected($saved_role, $role_key, false);
+            echo '<option value="' . esc_attr($role_key) . '" ' . $selected . '>' . esc_html($role_name) . '</option>';
+          }
+          ?>
+        </select>
+      </p>
+    </div>
+
+    <script>
+      jQuery(document).ready(function($) {
+        var rolePrices = <?php echo json_encode($role_prices); ?>;
+        $('#custom_select_input').on('change', function() {
+          var role = $(this).val();
+          var price = rolePrices[role] || '';
+          $('#custom_text_input').val(price);
+        });
+      });
+    </script>
+<?php
+  }
+
+
   public function save_custom_price_field($post_id)
   {
     $extra_price = isset($_POST['_price_per_hour']) ? sanitize_text_field($_POST['_price_per_hour']) : '';
@@ -150,6 +219,22 @@ class Zippy_Woo_Booking
       update_post_meta($post_id, '_price_per_hour', $extra_price);
     } else {
       delete_post_meta($post_id, '_price_per_hour');
+    }
+
+    if (isset($_POST['custom_select_input'])) {
+      $price = sanitize_text_field($_POST['custom_text_input']);
+      $role  = sanitize_text_field($_POST['custom_select_input']);
+
+      if (empty($role)) {
+        return;
+      }
+
+      $meta_key = self::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $role;
+      if (!empty($price) && !empty($role)) {
+        update_post_meta($post_id, $meta_key, $price);
+      } else {
+        delete_post_meta($post_id, $meta_key);
+      }
     }
   }
 

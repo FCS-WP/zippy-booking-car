@@ -13,6 +13,7 @@ defined('ABSPATH') or die();
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 use WC_Order_Item_Fee;
 use WC_Settings_Page;
+use Zippy_Booking_Car\Src\Woocommerce\Zippy_Woo_Booking;
 use Zippy_Booking_Car\Utils\Zippy_Pricing_Rule;
 
 class Zippy_Booking_Forms
@@ -189,15 +190,12 @@ class Zippy_Booking_Forms
       'phone'      => $phone_customer,
     ], 'billing');
 
-    $is_role_customer_v2 = false;
+    $role_user = null;
     if (is_user_logged_in()) {
       $user = wp_get_current_user();
       if ($user->ID) {
         $order->set_customer_id($user->ID);
-
-        if (in_array('customer_v2', (array) $user->roles)) {
-          $is_role_customer_v2 = true;
-        }
+        $role_user = $user->roles[0];
       }
       $order->update_status('on-hold');
     } else {
@@ -214,12 +212,14 @@ class Zippy_Booking_Forms
     $discounted_price = get_product_pricing_rules($product, 1);
     $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
 
-    //Tmp hardcode price per hour for customer v2
-    $price_per_hour_for_v2 = get_config_price_for_customer_v2();
-
     if ($service_type == "Hourly/Disposal") {
-      if ($is_role_customer_v2 && array_key_exists($product_id, $price_per_hour_for_v2)) {
-        $price_per_hour = $price_per_hour_for_v2[$product_id];
+      $price_per_hour_by_role = null;
+      if (!empty($role_user)) {
+        $price_per_hour_by_role = get_post_meta($product_id, Zippy_Woo_Booking::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $user->roles[0], true);
+      }
+
+      if (!empty($price_per_hour_by_role)) {
+        $price_per_hour = (int) $price_per_hour_by_role;
       } else {
         $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
         $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
