@@ -6,6 +6,10 @@ $key_member = 0;
 $minutes = ceil(date("i") / 5) * 5;
 $time = date("H") . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
 $col_class = "col-1";
+
+$email_member = '';
+$phone_member = '';
+$display_name_user = '';
 if (is_user_logged_in()) {
   $key_member = 1;
   $current_user = wp_get_current_user();
