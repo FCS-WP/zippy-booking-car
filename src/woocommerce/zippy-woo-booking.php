@@ -154,60 +154,52 @@ class Zippy_Woo_Booking
   public function add_price_per_hour_by_role_field()
   {
     $product_id = get_the_ID();
-    if ($product_id) {
-      $product = wc_get_product($product_id);
-    }
+    $product = $product_id ? wc_get_product($product_id) : null;
+    if (!$product) return;
+
     $roles = get_editable_roles();
-    $role_prices = [];
 
-    if ($product) {
-      foreach ($roles as $role_key => $role_details) {
-        $meta_key = self::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $role_key;
-        $price = $product->get_meta($meta_key);
-        if (!empty($price)) {
-          $role_prices[$role_key] = $price;
-        }
-      }
-    }
-
-    $saved_role = !empty(array_key_first($role_prices)) ? array_key_first($role_prices) : '';
-    $saved_price = $saved_role ? $role_prices[$saved_role] : '';
+    $allowed_roles = [
+      'customer'    => 'Customer',
+      'customer_v2' => 'Customer V2',
+      'customer_v3' => 'Customer V3',
+      'customer_v4' => 'Customer V4',
+      'customer_v5' => 'Customer V5',
+    ];
 ?>
-    <div class="options_group">
-      <p class="form-field custom_price_group">
-        <label for="custom_text_input"><?php _e('Price Per Hour by Role', 'textdomain'); ?></label>
+    <div class="options_group price-per-hour-by-role-box">
 
-        <input
-          type="text"
-          id="custom_text_input"
-          name="custom_text_input"
-          style="width:45%; margin-right:10px;"
-          placeholder="<?php _e('Enter price', 'textdomain'); ?>"
-          value="<?php echo esc_attr($saved_price); ?>">
-
-        <select id="custom_select_input" name="custom_select_input" style="width:30%;">
-          <option value=""><?php _e('Select role', 'textdomain'); ?></option>
-          <?php
-          foreach ($roles as $role_key => $role_details) {
-            $role_name = translate_user_role($role_details['name']);
-            $selected = selected($saved_role, $role_key, false);
-            echo '<option value="' . esc_attr($role_key) . '" ' . $selected . '>' . esc_html($role_name) . '</option>';
-          }
-          ?>
-        </select>
+      <p class="form-field">
+        <label><strong><?php _e('Price Per Hour by Role', 'textdomain'); ?></strong></label>
       </p>
-    </div>
 
-    <script>
-      jQuery(document).ready(function($) {
-        var rolePrices = <?php echo json_encode($role_prices); ?>;
-        $('#custom_select_input').on('change', function() {
-          var role = $(this).val();
-          var price = rolePrices[role] || '';
-          $('#custom_text_input').val(price);
-        });
-      });
-    </script>
+      <div class="price-per-hour-by-role-inner">
+        <?php foreach ($roles as $role_key => $role_details):
+          if (!array_key_exists($role_key, $allowed_roles)) {
+            continue;
+          }
+
+          $meta_key = self::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $role_key;
+          $price = $product->get_meta($meta_key);
+          $role_name = translate_user_role($role_details['name']);
+        ?>
+          <p class="form-field">
+            <label style="width:180px;">
+              <?php echo esc_html($role_name); ?>
+            </label>
+
+            <input
+              type="text"
+              name="price_per_hour_by_role[<?php echo esc_attr($role_key); ?>]"
+              value="<?php echo esc_attr($price); ?>"
+              placeholder="<?php _e('Enter price', 'textdomain'); ?>"
+              style="width:160px;" />
+            <span style="margin-left:6px;">/ hour</span>
+          </p>
+        <?php endforeach; ?>
+      </div>
+
+    </div>
 <?php
   }
 
@@ -221,16 +213,19 @@ class Zippy_Woo_Booking
       delete_post_meta($post_id, '_price_per_hour');
     }
 
-    if (isset($_POST['custom_select_input'])) {
-      $price = sanitize_text_field($_POST['custom_text_input']);
-      $role  = sanitize_text_field($_POST['custom_select_input']);
+    if (!isset($_POST['price_per_hour_by_role'])) {
+      return;
+    }
 
-      if (empty($role)) {
-        return;
-      }
+    $prices = $_POST['price_per_hour_by_role'];
+
+    foreach ($prices as $role => $price) {
+      $role  = sanitize_text_field($role);
+      $price = sanitize_text_field($price);
 
       $meta_key = self::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $role;
-      if (!empty($price) && !empty($role)) {
+
+      if ($price !== '') {
         update_post_meta($post_id, $meta_key, $price);
       } else {
         delete_post_meta($post_id, $meta_key);
