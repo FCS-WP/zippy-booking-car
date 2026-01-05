@@ -15,6 +15,8 @@ use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 class Zippy_Woo_Booking
 {
   public const PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE  = '_price_per_hour_by_role_';
+  public const ACF_SERVICE_TYPE_HOURL_PRICING = 'hour_pricing';
+  public const ACF_SERVICE_TYPE_TRIP_PRICING = 'trip_pricing';
 
   protected static $_instance = null;
 
@@ -74,6 +76,17 @@ class Zippy_Woo_Booking
 
     /* Update Checkout After Applied Coupon */
     add_action('woocommerce_applied_coupon', array($this, 'after_apply_coupon_action'));
+
+    /* Recalculate Price Product by User */
+    add_action('woocommerce_order_before_calculate_totals', array($this, 'recalculate_price_product_by_user'), 20, 2);
+
+    /* Save Service Type to Order Meta when add order item in admin */
+    add_action('wp_ajax_woocommerce_add_order_item', array($this, 'update_order_meta_service_type'), 0);
+
+    /* Get Order Service Type Ajax */
+    add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'), 1);
+
+    add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_add_product_type'));
   }
 
   function after_apply_coupon_action($coupon_code)
@@ -443,22 +456,21 @@ class Zippy_Woo_Booking
 
   function restrict_payment_methods_for_logged_in_users($available_gateways)
   {
-    
+
     if (is_user_logged_in()) {
-      if(is_checkout() && get_query_var('order-pay')){
+      if (is_checkout() && get_query_var('order-pay')) {
         foreach ($available_gateways as $gateway_id => $gateway) {
           if ($gateway_id === 'cheque') {
             unset($available_gateways[$gateway_id]);
           }
         }
-      }else{
+      } else {
         foreach ($available_gateways as $gateway_id => $gateway) {
           if ($gateway_id !== 'cheque') {
             unset($available_gateways[$gateway_id]);
           }
         }
       }
-      
     } else {
       foreach ($available_gateways as $gateway_id => $gateway) {
         if ($gateway_id === 'cheque') {
@@ -470,54 +482,153 @@ class Zippy_Woo_Booking
     return $available_gateways;
   }
 
-  public function add_custom_staff_checkout_fields($checkout) {
+  public function add_custom_staff_checkout_fields($checkout)
+  {
     echo '<div id="custom_checkout_fields"><h3>' . __('Member Staff Details') . '</h3>';
-    
+
     // Name field
     woocommerce_form_field('name_member_staff', array(
-        'type'        => 'text',
-        'class'       => array('form-row-first'),
-        'label'       => __('Name'),
-        'required'    => false,
+      'type'        => 'text',
+      'class'       => array('form-row-first'),
+      'label'       => __('Name'),
+      'required'    => false,
     ), $checkout->get_value('name_member_staff'));
-    
+
     // Phone field
     woocommerce_form_field('phone_member_staff', array(
-        'type'        => 'text',
-        'class'       => array('form-row-last'),
-        'label'       => __('Phone'),
-        'required'    => false,
+      'type'        => 'text',
+      'class'       => array('form-row-last'),
+      'label'       => __('Phone'),
+      'required'    => false,
     ), $checkout->get_value('phone_member_staff'));
-    
+
     echo '</div>';
   }
-  
-  public function save_custom_staff_checkout_fields($order_id) {
+
+  public function save_custom_staff_checkout_fields($order_id)
+  {
     if (!empty($_POST['name_member_staff'])) {
-        update_post_meta($order_id, '_name_member_staff', sanitize_text_field($_POST['name_member_staff']));
+      update_post_meta($order_id, '_name_member_staff', sanitize_text_field($_POST['name_member_staff']));
     }
     if (!empty($_POST['phone_member_staff'])) {
-        update_post_meta($order_id, '_phone_member_staff', sanitize_text_field($_POST['phone_member_staff']));
+      update_post_meta($order_id, '_phone_member_staff', sanitize_text_field($_POST['phone_member_staff']));
     }
   }
-  
-  public function display_custom_fields_in_order_details($order) {
+
+  public function display_custom_fields_in_order_details($order)
+  {
     $name_member_staff = get_post_meta($order->get_id(), '_name_member_staff', true);
     $phone_member_staff = get_post_meta($order->get_id(), '_phone_member_staff', true);
-  
+
     echo '<section class="woocommerce-customer-details">';
     echo '<h2>' . __('Member Staff Details') . '</h2>';
     echo '<ul class="woocommerce-order-details">';
-    
+
     if ($name_member_staff) {
-        echo '<li><strong>' . __('Name: ') . ':</strong> ' . esc_html($name_member_staff) . '</li>';
+      echo '<li><strong>' . __('Name: ') . ':</strong> ' . esc_html($name_member_staff) . '</li>';
     }
     if ($phone_member_staff) {
-        echo '<li><strong>' . __('Phone: ') . ':</strong> ' . esc_html($phone_member_staff) . '</li>';
+      echo '<li><strong>' . __('Phone: ') . ':</strong> ' . esc_html($phone_member_staff) . '</li>';
     }
-  
+
     echo '</ul>';
     echo '</section>';
   }
 
+  public static function get_price_product_by_user($user_id, $product_id, $type_product)
+  {
+    $product_data = get_field($type_product, 'user_' . $user_id);
+    if ($product_data) {
+      foreach ($product_data as $data) {
+        if ($data['product'] == $product_id) {
+          return $data['price'];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function enqueue_scripts_add_product_type($hook)
+  {
+    if ($hook !== 'woocommerce_page_wc-orders') {
+      return;
+    }
+
+    wp_enqueue_script(
+      'wc-order-add-product-type',
+      get_stylesheet_directory_uri() . '/assets/js/wc-order-add-product-type.js',
+      ['jquery', 'wc-admin-meta-boxes'],
+      '1.0',
+      true
+    );
+  }
+
+  function get_order_service_type_ajax()
+  {
+    if (empty($_GET['order_id'])) {
+      wp_send_json_error();
+    }
+
+    $order_id = absint($_GET['order_id']);
+    $service  = get_post_meta($order_id, 'service_type', true);
+
+    wp_send_json_success([
+      'service_type' => $service ?: ''
+    ]);
+  }
+
+  function update_order_meta_service_type()
+  {
+
+    if (empty($_POST['order_id']) || empty($_POST['order_service_type'])) {
+      return;
+    }
+
+    $order_id = absint($_POST['order_id']);
+    $service  = sanitize_text_field($_POST['order_service_type']);
+
+    if (!$order_id || !$service) return;
+
+    update_post_meta($order_id, 'service_type', $service);
+  }
+
+  function recalculate_price_product_by_user($and_taxes, $order)
+  {
+    if (!is_admin()) {
+      return;
+    }
+
+    $user_id = $order->get_user_id();
+    if (!$user_id) {
+      return;
+    }
+
+    foreach ($order->get_items('line_item') as $item_id => $item) {
+      $product_id = $item->get_product_id();
+      $qty        = $item->get_quantity();
+
+      $product = wc_get_product($product_id);
+      $type_service = get_post_meta($order->get_id(), 'service_type', true);
+      $acf_key_type_service = self::get_acf_key_type_service_by_name($type_service);
+      $price_product_by_user = self::get_price_product_by_user($user_id, $product_id, $acf_key_type_service);
+
+      $price = !empty($price_product_by_user) ? floatval($price_product_by_user) : $product->get_price();
+      if ($price !== null) {
+        $item->set_subtotal($price * $qty);
+        $item->set_total($price * $qty);
+      }
+    }
+  }
+
+  function get_acf_key_type_service_by_name($type_service)
+  {
+    if ($type_service == 'Hourly/Disposal') {
+      return 'hour_pricing';
+    } else if ($type_service == 'Airport Arrival Transfer') {
+      return 'trip_pricing';
+    } else {
+      return '';
+    }
+  }
 }

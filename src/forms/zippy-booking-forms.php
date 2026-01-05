@@ -190,12 +190,12 @@ class Zippy_Booking_Forms
       'phone'      => $phone_customer,
     ], 'billing');
 
-    $role_user = null;
+    $user_id = null;
     if (is_user_logged_in()) {
       $user = wp_get_current_user();
       if ($user->ID) {
-        $order->set_customer_id($user->ID);
-        $role_user = $user->roles[0];
+        $user_id = $user->ID;
+        $order->set_customer_id($user_id);
       }
       $order->update_status('on-hold');
     } else {
@@ -208,18 +208,21 @@ class Zippy_Booking_Forms
 
     $regular_price = $product ? $product->get_price() : 0;
 
-    //Get discount price
-    $discounted_price = get_product_pricing_rules($product, 1);
-    $regular_price = !empty($discounted_price) ? $discounted_price : $regular_price;
+    if (!empty($user_id)) {
+      $price_by_user = Zippy_Woo_Booking::get_price_product_by_user($user_id, $product_id, Zippy_Woo_Booking::ACF_SERVICE_TYPE_TRIP_PRICING);
+      if (!empty($price_by_user)) {
+        $regular_price = $price_by_user;
+      }
+    }
 
     if ($service_type == "Hourly/Disposal") {
-      $price_per_hour_by_role = null;
-      if (!empty($role_user)) {
-        $price_per_hour_by_role = get_post_meta($product_id, Zippy_Woo_Booking::PRODUCT_META_KEY_PRICE_PER_HOUR_BY_ROLE . $user->roles[0], true);
+      $price_per_hour_by_user = null;
+      if (!empty($user_id)) {
+        $price_per_hour_by_user = Zippy_Woo_Booking::get_price_product_by_user($user_id, $product_id, Zippy_Woo_Booking::ACF_SERVICE_TYPE_HOURL_PRICING);
       }
 
-      if (!empty($price_per_hour_by_role)) {
-        $price_per_hour = (int) $price_per_hour_by_role;
+      if (!empty($price_per_hour_by_user)) {
+        $price_per_hour = (int) $price_per_hour_by_user;
       } else {
         $price_per_hour = get_post_meta($product_id, '_price_per_hour', true);
         $price_per_hour = (!empty($price_per_hour) && is_numeric($price_per_hour)) ? (float) $price_per_hour : $regular_price;
@@ -239,6 +242,9 @@ class Zippy_Booking_Forms
       $item->set_total($total_price);
       $order->add_item($item);
     }
+
+    //Update order meta service type to calculate total by user
+    update_post_meta($order->get_id(), 'service_type', $service_type);
 
     // // CC fee 
     // $is_enable = get_option('enable_cc_fee');
@@ -317,7 +323,6 @@ class Zippy_Booking_Forms
     $product_name = $product ? $product->get_name() : 'Unknown';
 
     $order_id = self::create_enquiry_order($key_member, $product_id, $time_use, $name_customer, $email_customer, $phone_customer, $service_type);
-
     $customer_infors = [
       'no_of_passengers' => $no_of_passengers,
       'no_of_baggage' => $no_of_baggage,
