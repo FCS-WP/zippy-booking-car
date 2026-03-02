@@ -110,7 +110,7 @@ class Zippy_Order_Export
             header("Content-Disposition: attachment; filename={$filename}");
 
             $output = fopen('php://output', 'w');
-            fputcsv($output, ['Order Number', 'Booking Date', 'Type of Service', 'Status', 'Type of Vehicle', 'Total']);
+            fputcsv($output, ['Order Number', 'Full Name', 'Email', 'Booking Date', 'Type of Service', 'Status', 'Type of Vehicle', 'Total']);
 
             foreach ($customer_orders as $order) {
                 $is_monthly   = $order->get_meta('is_monthly_payment_order');
@@ -131,6 +131,8 @@ class Zippy_Order_Export
 
                 fputcsv($output, [
                     $order->get_order_number(),
+                    $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+                    $order->get_billing_email(),
                     $date_value,
                     $service_type,
                     wc_get_order_status_name($order->get_status()),
@@ -155,7 +157,7 @@ class Zippy_Order_Export
 
             $html = '<h2>My Orders</h2><table border="1" cellpadding="5" cellspacing="0" width="100%">
     <thead><tr>
-        <th>Order Number</th><th>Booking Date</th><th>Type of Service</th>
+        <th>Order Number</th><th>Full Name</th><th>Email</th><th>Booking Date</th><th>Type of Service</th>
         <th>Status</th><th>Type of Vehicle</th><th>Total</th>
     </tr></thead><tbody>';
 
@@ -177,6 +179,8 @@ class Zippy_Order_Export
 
                 $html .= '<tr>
     <td>' . $order->get_order_number() . '</td>
+    <td>' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</td>
+    <td>' . esc_html($order->get_billing_email()) . '</td>
     <td>' . $date_value . '</td>
     <td>' . esc_html($service_type) . '</td>
     <td>' . wc_get_order_status_name($order->get_status()) . '</td>
