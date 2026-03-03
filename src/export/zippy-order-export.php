@@ -195,7 +195,7 @@ class Zippy_Order_Export
     <td>' . esc_html($service_type) . '</td>
     <td>' . wc_get_order_status_name($order->get_status()) . '</td>
     <td>' . esc_html($product_name) . '</td>
-    <td>' . $can_view_order_total ? $order->get_total() : "" . '</td>
+    <td>' . ($can_view_order_total ? $order->get_total() : "") . '</td>
 </tr>';
             }
 
