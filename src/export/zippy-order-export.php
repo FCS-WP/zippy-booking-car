@@ -136,8 +136,8 @@ class Zippy_Order_Export
                     $date_value,
                     $service_type,
                     wc_get_order_status_name($order->get_status()),
-                    ($is_monthly) ? '' : $product_name,
-                    ($is_monthly) ? $order->get_total() : ''
+                    $product_name,
+                    $order->get_total()
                 ]);
             }
             exit;
@@ -184,8 +184,8 @@ class Zippy_Order_Export
     <td>' . $date_value . '</td>
     <td>' . esc_html($service_type) . '</td>
     <td>' . wc_get_order_status_name($order->get_status()) . '</td>
-    <td>' . ($order->get_meta('is_monthly_payment_order') ? '' : esc_html($product_name)) . '</td>
-    <td>' . ($order->get_meta('is_monthly_payment_order') ? $order->get_total() : '') . '</td>
+    <td>' . esc_html($product_name) . '</td>
+    <td>' . $order->get_total() . '</td>
 </tr>';
             }
 
