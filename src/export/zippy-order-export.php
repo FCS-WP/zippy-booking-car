@@ -94,6 +94,16 @@ class Zippy_Order_Export
             exit;
         }
 
+        $user = wp_get_current_user();
+
+        $can_view_order_total =
+            current_user_can('administrator') ||
+            get_user_meta(
+                $user->ID,
+                USER_META_CUSTOMER_CAN_SEE_TOTAL,
+                true
+            );
+
         // ===== CSV EXPORT =====
         if ($_GET['export'] === 'csv') {
 
@@ -137,7 +147,7 @@ class Zippy_Order_Export
                     $service_type,
                     wc_get_order_status_name($order->get_status()),
                     $product_name,
-                    $order->get_total()
+                    $can_view_order_total ? $order->get_total() : "",
                 ]);
             }
             exit;
@@ -185,7 +195,7 @@ class Zippy_Order_Export
     <td>' . esc_html($service_type) . '</td>
     <td>' . wc_get_order_status_name($order->get_status()) . '</td>
     <td>' . esc_html($product_name) . '</td>
-    <td>' . $order->get_total() . '</td>
+    <td>' . $can_view_order_total ? $order->get_total() : "" . '</td>
 </tr>';
             }
 
