@@ -87,6 +87,10 @@ class Zippy_Woo_Booking
     add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'), 1);
 
     add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_add_product_type'));
+
+    /* Custom Order List Columns */
+    add_filter('woocommerce_shop_order_list_table_columns', array($this, 'add_booking_date_column'));
+    add_action('woocommerce_shop_order_list_table_custom_column', array($this, 'render_booking_date_column'), 10, 2);
   }
 
   function after_apply_coupon_action($coupon_code)
@@ -629,6 +633,43 @@ class Zippy_Woo_Booking
       return 'trip_pricing';
     } else {
       return '';
+    }
+  }
+
+  public function add_booking_date_column($columns)
+  {
+    if (isset($columns['order_date'])) {
+      $columns['order_date'] = __('Booking Created', 'woocommerce');
+    }
+
+    $new_columns = [];
+    foreach ($columns as $key => $label) {
+      $new_columns[$key] = $label;
+      if ($key === 'order_date') {
+        $new_columns['booking_date'] = __('Booking Date', 'woocommerce');
+      }
+    }
+
+    return $new_columns;
+  }
+
+  public function render_booking_date_column($column_name, $order)
+  {
+    if ($column_name !== 'booking_date') {
+      return;
+    }
+
+    $order_id    = $order->get_id();
+    $pick_up_date = get_post_meta($order_id, 'pick_up_date', true);
+    $pick_up_time = get_post_meta($order_id, 'pick_up_time', true);
+
+    if ($pick_up_date || $pick_up_time) {
+      echo '<span>' . esc_html($pick_up_date) . '</span>';
+      if ($pick_up_time) {
+        echo '<br><small>' . esc_html($pick_up_time) . '</small>';
+      }
+    } else {
+      echo '<span>—</span>';
     }
   }
 }
