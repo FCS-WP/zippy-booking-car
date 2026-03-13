@@ -42,7 +42,7 @@ class Zippy_Woo_Booking
 
     $this->set_hooks();
 
-    add_action('woocommerce_product_options_pricing', array($this, 'add_custom_price_field_to_product'));
+    // add_action('woocommerce_product_options_pricing', array($this, 'add_custom_price_field_to_product'));
 
     /* Handle Save Custom Woo Order Fields */
     add_action('woocommerce_process_product_meta',  array($this, 'save_custom_price_field'));
