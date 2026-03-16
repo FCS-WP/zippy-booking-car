@@ -88,13 +88,42 @@ class Zippy_Woo_Booking
     add_action('wp_ajax_woocommerce_add_order_item', array($this, 'update_order_meta_service_type'), 0);
 
     /* Get Order Service Type Ajax */
-    add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'), 1);
+    add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'));
+    add_action('wp_ajax_update_order_meta_service_type', array($this, 'update_order_meta_service_type'));
+    add_action('wp_ajax_get_all_vehicles', array($this, 'get_all_vehicles_ajax'));
 
     add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_add_product_type'));
 
     /* Custom Order List Columns */
     add_filter('woocommerce_shop_order_list_table_columns', array($this, 'add_booking_date_column'));
     add_action('woocommerce_shop_order_list_table_custom_column', array($this, 'render_booking_date_column'), 10, 2);
+  }
+
+  /**
+   * AJAX handler to get all vehicle products
+   */
+  public function get_all_vehicles_ajax()
+  {
+    if (!current_user_can('edit_shop_orders')) {
+      wp_send_json_error(['message' => 'Permission denied']);
+    }
+
+    $products = wc_get_products([
+      'status' => 'publish',
+      'limit'  => -1,
+      'orderby' => 'name',
+      'order'   => 'ASC',
+    ]);
+
+    $data = [];
+    foreach ($products as $product) {
+      $data[] = [
+        'id'   => $product->get_id(),
+        'name' => $product->get_name(),
+      ];
+    }
+
+    wp_send_json_success($data);
   }
 
   function after_apply_coupon_action($coupon_code)
