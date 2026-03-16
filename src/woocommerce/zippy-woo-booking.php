@@ -42,7 +42,7 @@ class Zippy_Woo_Booking
 
     $this->set_hooks();
 
-    // add_action('woocommerce_product_options_pricing', array($this, 'add_custom_price_field_to_product'));
+    add_action('woocommerce_product_options_pricing', array($this, 'add_custom_price_field_to_product'));
 
     /* Handle Save Custom Woo Order Fields */
     add_action('woocommerce_process_product_meta',  array($this, 'save_custom_price_field'));
@@ -150,7 +150,7 @@ class Zippy_Woo_Booking
   public function add_custom_price_field_to_product()
   {
     $this->add_price_per_hour_field();
-    $this->add_price_per_hour_by_role_field();
+    // $this->add_price_per_hour_by_role_field();
   }
 
   public function add_price_per_hour_field()
@@ -629,11 +629,13 @@ class Zippy_Woo_Booking
   {
     if ($type_service == 'Hourly/Disposal') {
       return 'hour_pricing';
-    } else if ($type_service == 'Airport Arrival Transfer') {
-      return 'trip_pricing';
-    } else {
-      return '';
     }
+
+    if ($type_service == 'Airport Arrival Transfer' || $type_service == 'Airport Departure Transfer' || $type_service == 'Point-to-point Transfer') {
+      return 'trip_pricing';
+    }
+
+    return 'trip_pricing';
   }
 
   public function add_booking_date_column($columns)
