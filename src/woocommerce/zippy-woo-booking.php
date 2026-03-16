@@ -10,6 +10,7 @@ namespace Zippy_Booking_Car\Src\Woocommerce;
 
 defined('ABSPATH') or die();
 
+use Zippy_Booking_Car\Src\Forms\Zippy_Booking_Forms;
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 
 class Zippy_Woo_Booking
@@ -65,6 +66,9 @@ class Zippy_Woo_Booking
     /* Handle Display Custom Order Fields */
     add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_multiple_custom_checkout_fields_in_admin'));
 
+    /* Handle Save Custom Order Fields In Admin */
+    add_action('woocommerce_process_shop_order_meta', array($this, 'save_custom_order_fields_admin'));
+
     /* Handle Display Custom Staff Order Fields */
     // add_action('woocommerce_admin_order_data_after_billing_address',  array($this, 'display_custom_fields_in_order_details'));
 
@@ -84,13 +88,42 @@ class Zippy_Woo_Booking
     add_action('wp_ajax_woocommerce_add_order_item', array($this, 'update_order_meta_service_type'), 0);
 
     /* Get Order Service Type Ajax */
-    add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'), 1);
+    add_action('wp_ajax_get_order_service_type', array($this, 'get_order_service_type_ajax'));
+    add_action('wp_ajax_update_order_meta_service_type', array($this, 'update_order_meta_service_type'));
+    add_action('wp_ajax_get_all_vehicles', array($this, 'get_all_vehicles_ajax'));
 
     add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_add_product_type'));
 
     /* Custom Order List Columns */
     add_filter('woocommerce_shop_order_list_table_columns', array($this, 'add_booking_date_column'));
     add_action('woocommerce_shop_order_list_table_custom_column', array($this, 'render_booking_date_column'), 10, 2);
+  }
+
+  /**
+   * AJAX handler to get all vehicle products
+   */
+  public function get_all_vehicles_ajax()
+  {
+    if (!current_user_can('edit_shop_orders')) {
+      wp_send_json_error(['message' => 'Permission denied']);
+    }
+
+    $products = wc_get_products([
+      'status' => 'publish',
+      'limit'  => -1,
+      'orderby' => 'name',
+      'order'   => 'ASC',
+    ]);
+
+    $data = [];
+    foreach ($products as $product) {
+      $data[] = [
+        'id'   => $product->get_id(),
+        'name' => $product->get_name(),
+      ];
+    }
+
+    wp_send_json_success($data);
   }
 
   function after_apply_coupon_action($coupon_code)
@@ -217,7 +250,7 @@ class Zippy_Woo_Booking
       </div>
 
     </div>
-<?php
+  <?php
   }
 
 
@@ -394,67 +427,138 @@ class Zippy_Woo_Booking
 
   public function display_multiple_custom_checkout_fields_in_admin($order)
   {
+    $order_id = $order->get_id();
 
+    // Service Type (Read-only as per request)
+    $service_type = get_post_meta($order_id, 'service_type', true);
 
-    $service_type = get_post_meta($order->get_id(), 'service_type', true);
+    // Editable Fields
+    $fields = [
+      'booking_details' => [
+        'title' => __('Booking Details', 'woocommerce'),
+        'items' => [
+          'pick_up_date'      => ['label' => __('Pick Up Date', 'woocommerce'), 'type' => 'text', 'class' => 'zippy-admin-datepicker', 'full_width' => true],
+          'pick_up_time'      => ['label' => __('Pick Up Time', 'woocommerce'), 'type' => 'time_picker', 'class' => 'zippy-admin-timepicker', 'full_width' => true],
+          'pick_up_location'  => ['label' => __('Pick Up Location', 'woocommerce'), 'type' => 'text'],
+          'drop_off_location' => ['label' => __('Drop Off Location', 'woocommerce'), 'type' => 'text'],
+          'no_of_passengers'  => ['label' => __('No Of Passengers', 'woocommerce'), 'type' => 'number'],
+          'no_of_baggage'     => ['label' => __('No Of Baggage', 'woocommerce'), 'type' => 'number'],
+        ]
+      ],
+      'transfer_info' => [
+        'title' => __('Transfer Information', 'woocommerce'),
+        'items' => [
+          'flight_details'    => ['label' => __('Flight Details', 'woocommerce'), 'type' => 'textarea', 'full_width' => true],
+          'eta_time'          => ['label' => __('ETD/ETA Time', 'woocommerce'), 'type' => 'time_picker', 'class' => 'zippy-admin-timepicker', 'full_width' => true],
+          'special_requests'  => ['label' => __('Special Request', 'woocommerce'), 'type' => 'textarea', 'full_width' => true],
+        ]
+      ],
+      'additional_info' => [
+        'title' => __('Internal Information', 'woocommerce'),
+        'items' => [
+          'key_member'        => ['label' => __('Key Member', 'woocommerce'), 'type' => 'text'],
+          'staff_name'        => ['label' => __('Staff Name', 'woocommerce'), 'type' => 'text'],
+        ]
+      ]
+    ];
+
+    echo '<div class="zippy-custom-order-fields" style="clear:both; margin-top:10px; padding-top:10px; border-top:1px solid #eee;">';
+
+    // Show Service Type as read-only first
     if ($service_type) {
-      echo '<p><strong>' . __('Service Type: ', 'woocommerce') . ':</strong> ' . esc_html($service_type) . '</p>';
+      echo '<p class="form-field form-field-wide" style="margin-bottom:10px;"><strong>' . __('Service Type', 'woocommerce') . ':</strong> <span style="display:inline-block; padding: 4px 8px; background:#f0f0f0; border-radius:3px;">' . esc_html($service_type) . '</span></p>';
     }
 
-    $flight_details = get_post_meta($order->get_id(), 'flight_details', true);
-    if ($flight_details) {
-      echo '<p><strong>' . __('Flight Details: ', 'woocommerce') . ':</strong> ' . esc_html($flight_details) . '</p>';
+    foreach ($fields as $group_key => $group) {
+      echo '<h3 style="margin: 15px 0 8px; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">' . esc_html($group['title']) . '</h3>';
+      echo '<div style="display:grid; grid-template-columns: 1fr; gap: 8px;">';
+
+      foreach ($group['items'] as $meta_key => $config) {
+        $value = get_post_meta($order_id, $meta_key, true);
+        $class = isset($config['class']) ? $config['class'] : '';
+
+        echo '<p class="form-field" style="margin-bottom:8px;">';
+        echo '<label style="display:block; margin-bottom:3px; font-weight:600;">' . esc_html($config['label']) . '</label>';
+
+        if ($config['type'] === 'textarea') {
+          echo '<textarea name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" style="width:100%;" rows="2">' . esc_textarea($value) . '</textarea>';
+        } elseif ($config['type'] === 'time_picker') {
+          $time_parts = explode(':', $value);
+          $hour = isset($time_parts[0]) ? $time_parts[0] : '00';
+          $minute = isset($time_parts[1]) ? $time_parts[1] : '00';
+
+          echo '<div class="zippy-admin-time-wrapper" style="display:flex; gap:5px;">';
+          echo '<select class="zippy-hour-select" style="width:48%;">';
+          for ($i = 0; $i <= 23; $i++) {
+            $val = str_pad($i, 2, '0', STR_PAD_LEFT);
+            echo '<option value="' . $val . '" ' . selected($hour, $val, false) . '>' . $val . '</option>';
+          }
+          echo '</select>';
+          echo '<select class="zippy-minute-select" style="width:48%;">';
+          for ($i = 0; $i < 60; $i += 5) {
+            $val = str_pad($i, 2, '0', STR_PAD_LEFT);
+            echo '<option value="' . $val . '" ' . selected($minute, $val, false) . '>' . $val . '</option>';
+          }
+          echo '</select>';
+          echo '<input type="hidden" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" />';
+          echo '</div>';
+        } else {
+          echo '<input type="' . esc_attr($config['type']) . '" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" style="width:100%;" />';
+        }
+        echo '</p>';
+      }
+
+      echo '</div>';
     }
+    echo '</div>';
+  ?>
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {
+        // Datepicker init
+        if (typeof $.fn.datepicker !== 'undefined') {
+          $('.zippy-admin-datepicker').datepicker({
+            dateFormat: 'dd-mm-yy',
+            minDate: 0
+          });
+        }
 
-    $eta_time = get_post_meta($order->get_id(), 'eta_time', true);
-    if ($eta_time) {
-      echo '<p><strong>' . __('ETD/ETA Time: ', 'woocommerce') . ':</strong> ' . esc_html($eta_time) . '</p>';
-    }
+        // Time picker sync logic
+        $('.zippy-admin-time-wrapper').on('change', 'select', function() {
+          var $wrapper = $(this).closest('.zippy-admin-time-wrapper');
+          var h = $wrapper.find('.zippy-hour-select').val();
+          var m = $wrapper.find('.zippy-minute-select').val();
+          $wrapper.find('input[type="hidden"]').val(h + ':' + m);
+        });
+      });
+    </script>
+<?php
+  }
 
+  /**
+   * Save custom order fields from the admin order page.
+   *
+   * @param int $order_id
+   */
+  public function save_custom_order_fields_admin($order_id)
+  {
+    $fields_to_save = [
+      'pick_up_date',
+      'pick_up_time',
+      'pick_up_location',
+      'drop_off_location',
+      'no_of_passengers',
+      'no_of_baggage',
+      'flight_details',
+      'eta_time',
+      'special_requests',
+      'key_member',
+      'staff_name'
+    ];
 
-    $no_of_passengers = get_post_meta($order->get_id(), 'no_of_passengers', true);
-    if ($no_of_passengers) {
-      echo '<p><strong>' . __('No Of Passengers: ', 'woocommerce') . ':</strong> ' . esc_html($no_of_passengers) . '</p>';
-    }
-
-    $no_of_baggage = get_post_meta($order->get_id(), 'no_of_baggage', true);
-    if ($no_of_baggage) {
-      echo '<p><strong>' . __('No Of Baggage: ', 'woocommerce') . ':</strong> ' . esc_html($no_of_baggage) . '</p>';
-    }
-
-    $key_member = get_post_meta($order->get_id(), 'key_member', true);
-    if ($key_member) {
-      echo '<p><strong>' . __('Key Member: ', 'woocommerce') . ':</strong> ' . esc_html($key_member) . '</p>';
-    }
-
-    $pick_up_date = get_post_meta($order->get_id(), 'pick_up_date', true);
-    if ($pick_up_date) {
-      echo '<p><strong>' . __('Pick Up Date: ', 'woocommerce') . ':</strong> ' . esc_html($pick_up_date) . '</p>';
-    }
-
-    $pick_up_time = get_post_meta($order->get_id(), 'pick_up_time', true);
-    if ($pick_up_time) {
-      echo '<p><strong>' . __('Pick Up Time: ', 'woocommerce') . ':</strong> ' . esc_html($pick_up_time) . '</p>';
-    }
-
-    $pick_up_location = get_post_meta($order->get_id(), 'pick_up_location', true);
-    if ($pick_up_location) {
-      echo '<p><strong>' . __('Pick Up Location: ', 'woocommerce') . ':</strong> ' . esc_html($pick_up_location) . '</p>';
-    }
-
-    $drop_off_location = get_post_meta($order->get_id(), 'drop_off_location', true);
-    if ($drop_off_location) {
-      echo '<p><strong>' . __('Drop Off Location: ', 'woocommerce') . ':</strong> ' . esc_html($drop_off_location) . '</p>';
-    }
-
-    $special_requests = get_post_meta($order->get_id(), 'special_requests', true);
-    if ($special_requests) {
-      echo '<p><strong>' . __('Special Reuest: ', 'woocommerce') . ':</strong> ' . esc_html($special_requests) . '</p>';
-    }
-
-    $special_requests = get_post_meta($order->get_id(), 'staff_name', true);
-    if ($special_requests) {
-      echo '<p><strong>' . __('Staff Name: ', 'woocommerce') . ':</strong> ' . esc_html($special_requests) . '</p>';
+    foreach ($fields_to_save as $meta_key) {
+      if (isset($_POST[$meta_key])) {
+        update_post_meta($order_id, $meta_key, sanitize_text_field($_POST[$meta_key]));
+      }
     }
   }
 
@@ -627,11 +731,15 @@ class Zippy_Woo_Booking
 
   function get_acf_key_type_service_by_name($type_service)
   {
-    if ($type_service == 'Hourly/Disposal') {
+    if ($type_service == Zippy_Booking_Forms::HOURLY_DISPOSAL) {
       return 'hour_pricing';
     }
 
-    if ($type_service == 'Airport Arrival Transfer' || $type_service == 'Airport Departure Transfer' || $type_service == 'Point-to-point Transfer') {
+    if (
+      $type_service == Zippy_Booking_Forms::AIRPORT_ARRIVAL_TRANSFER
+      || $type_service == Zippy_Booking_Forms::AIRPORT_DEPARTURE_TRANSFER
+      || $type_service == Zippy_Booking_Forms::POINT_TO_POINT_TRANSFER
+    ) {
       return 'trip_pricing';
     }
 

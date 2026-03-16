@@ -20,6 +20,10 @@ class Zippy_Booking_Forms
 {
   protected static $_instance = null;
 
+  public const HOURLY_DISPOSAL = 'Hourly/Disposal';
+  public const AIRPORT_ARRIVAL_TRANSFER = 'Airport Arrival Transfer';
+  public const AIRPORT_DEPARTURE_TRANSFER = 'Airport Departure Transfer';
+  public const POINT_TO_POINT_TRANSFER = 'Point-to-point Transfer';
   /**
    * @return Zippy_Booking_Forms
    */
@@ -95,7 +99,7 @@ class Zippy_Booking_Forms
     $message .= "<p style='font-size:13px;color:#000'>Service type: $service_type</p>";
     $message .= "<p style='font-size:13px;color:#000'>Vehicle type: $product_name</p>";
 
-    if ($service_type == "Hourly/Disposal") {
+    if ($service_type == self::HOURLY_DISPOSAL) {
       $message .= "<p style='font-size:13px;color:#000'>Usage time: $time_use Hours</p>";
     }
 
@@ -103,11 +107,11 @@ class Zippy_Booking_Forms
     $message .= "<p style='font-size:13px;color:#000'>Pick up time: $pick_up_time</p>";
     $message .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
 
-    if ($service_type == "Airport Arrival Transfer") {
+    if ($service_type == self::AIRPORT_ARRIVAL_TRANSFER) {
       $message .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
       $message .= "<p style='font-size:13px;color:#000'>ETA: $eta_time</p>";
       $message .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
-    } elseif ($service_type == "Airport Departure Transfer") {
+    } elseif ($service_type == self::AIRPORT_DEPARTURE_TRANSFER) {
       $message .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
       $message .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
       $message .= "<p style='font-size:13px;color:#000'>ETD: $eta_time</p>";
@@ -142,19 +146,19 @@ class Zippy_Booking_Forms
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Service type: $service_type</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Vehicle type: $product_name</p>";
 
-    if ($service_type == "Hourly/Disposal") {
+    if ($service_type == self::HOURLY_DISPOSAL) {
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Usage time: $time_use Hours</p>";
     }
 
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up date: $pick_up_date</p>";
     $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up time: $pick_up_time</p>";
 
-    if ($service_type == "Airport Arrival Transfer") {
+    if ($service_type == self::AIRPORT_ARRIVAL_TRANSFER) {
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
       $messageAdmin .= "<p style='font-size:13px;color:#000'>ETA: $eta_time</p>";
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
-    } elseif ($service_type == "Airport Departure Transfer") {
+    } elseif ($service_type == self::AIRPORT_DEPARTURE_TRANSFER) {
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Pick up location: $pick_up_location</p>";
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Drop off location: $drop_off_location</p>";
       $messageAdmin .= "<p style='font-size:13px;color:#000'>Flight details: $flight_details</p>";
@@ -215,7 +219,7 @@ class Zippy_Booking_Forms
       }
     }
 
-    if ($service_type == "Hourly/Disposal") {
+    if ($service_type == self::HOURLY_DISPOSAL) {
       $price_per_hour_by_user = null;
       if (!empty($user_id)) {
         $price_per_hour_by_user = Zippy_Woo_Booking::get_price_product_by_user($user_id, $product_id, Zippy_Woo_Booking::ACF_SERVICE_TYPE_HOURL_PRICING);
@@ -452,7 +456,7 @@ class Zippy_Booking_Forms
       if ($cart_item['booking_information']['midnight_fee'] == 1) {
         $cart->add_fee('Additional Midnight Fee Purchase', 25);
       }
-      if ($cart_item['booking_information']['service_type'] ==  "Hourly/Disposal") {
+      if ($cart_item['booking_information']['service_type'] ==  self::HOURLY_DISPOSAL) {
         foreach ($cart->get_cart() as $cart_item) {
 
           $product = $cart_item['data'];
