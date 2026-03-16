@@ -627,7 +627,7 @@ class Zippy_Woo_Booking
 
   function get_acf_key_type_service_by_name($type_service)
   {
-    if ($type_service === 'Hourly/Disposal') {
+    if ($type_service == 'Hourly/Disposal') {
       return 'hour_pricing';
     }
 
