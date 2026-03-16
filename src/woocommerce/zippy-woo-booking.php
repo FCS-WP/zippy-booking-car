@@ -10,6 +10,7 @@ namespace Zippy_Booking_Car\Src\Woocommerce;
 
 defined('ABSPATH') or die();
 
+use Zippy_Booking_Car\Src\Forms\Zippy_Booking_Forms;
 use Zippy_Booking_Car\Utils\Zippy_Utils_Core;
 
 class Zippy_Woo_Booking
@@ -220,7 +221,7 @@ class Zippy_Woo_Booking
       </div>
 
     </div>
-<?php
+  <?php
   }
 
 
@@ -398,10 +399,10 @@ class Zippy_Woo_Booking
   public function display_multiple_custom_checkout_fields_in_admin($order)
   {
     $order_id = $order->get_id();
-    
+
     // Service Type (Read-only as per request)
     $service_type = get_post_meta($order_id, 'service_type', true);
-    
+
     // Editable Fields
     $fields = [
       'booking_details' => [
@@ -433,55 +434,55 @@ class Zippy_Woo_Booking
     ];
 
     echo '<div class="zippy-custom-order-fields" style="clear:both; margin-top:10px; padding-top:10px; border-top:1px solid #eee;">';
-    
+
     // Show Service Type as read-only first
     if ($service_type) {
-        echo '<p class="form-field form-field-wide" style="margin-bottom:10px;"><strong>' . __('Service Type', 'woocommerce') . ':</strong> <span style="display:inline-block; padding: 4px 8px; background:#f0f0f0; border-radius:3px;">' . esc_html($service_type) . '</span></p>';
+      echo '<p class="form-field form-field-wide" style="margin-bottom:10px;"><strong>' . __('Service Type', 'woocommerce') . ':</strong> <span style="display:inline-block; padding: 4px 8px; background:#f0f0f0; border-radius:3px;">' . esc_html($service_type) . '</span></p>';
     }
 
     foreach ($fields as $group_key => $group) {
-        echo '<h3 style="margin: 15px 0 8px; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">' . esc_html($group['title']) . '</h3>';
-        echo '<div style="display:grid; grid-template-columns: 1fr; gap: 8px;">';
-        
-        foreach ($group['items'] as $meta_key => $config) {
-            $value = get_post_meta($order_id, $meta_key, true);
-            $class = isset($config['class']) ? $config['class'] : '';
+      echo '<h3 style="margin: 15px 0 8px; font-size:14px; border-bottom:1px solid #eee; padding-bottom:5px;">' . esc_html($group['title']) . '</h3>';
+      echo '<div style="display:grid; grid-template-columns: 1fr; gap: 8px;">';
 
-            echo '<p class="form-field" style="margin-bottom:8px;">';
-            echo '<label style="display:block; margin-bottom:3px; font-weight:600;">' . esc_html($config['label']) . '</label>';
-            
-            if ($config['type'] === 'textarea') {
-                echo '<textarea name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" style="width:100%;" rows="2">' . esc_textarea($value) . '</textarea>';
-            } elseif ($config['type'] === 'time_picker') {
-                $time_parts = explode(':', $value);
-                $hour = isset($time_parts[0]) ? $time_parts[0] : '00';
-                $minute = isset($time_parts[1]) ? $time_parts[1] : '00';
+      foreach ($group['items'] as $meta_key => $config) {
+        $value = get_post_meta($order_id, $meta_key, true);
+        $class = isset($config['class']) ? $config['class'] : '';
 
-                echo '<div class="zippy-admin-time-wrapper" style="display:flex; gap:5px;">';
-                echo '<select class="zippy-hour-select" style="width:48%;">';
-                for($i=0; $i<=23; $i++){
-                    $val = str_pad($i, 2, '0', STR_PAD_LEFT);
-                    echo '<option value="'.$val.'" '.selected($hour, $val, false).'>'.$val.'</option>';
-                }
-                echo '</select>';
-                echo '<select class="zippy-minute-select" style="width:48%;">';
-                for($i=0; $i<60; $i+=5){
-                    $val = str_pad($i, 2, '0', STR_PAD_LEFT);
-                    echo '<option value="'.$val.'" '.selected($minute, $val, false).'>'.$val.'</option>';
-                }
-                echo '</select>';
-                echo '<input type="hidden" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" />';
-                echo '</div>';
-            } else {
-                echo '<input type="' . esc_attr($config['type']) . '" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" style="width:100%;" />';
-            }
-            echo '</p>';
+        echo '<p class="form-field" style="margin-bottom:8px;">';
+        echo '<label style="display:block; margin-bottom:3px; font-weight:600;">' . esc_html($config['label']) . '</label>';
+
+        if ($config['type'] === 'textarea') {
+          echo '<textarea name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" style="width:100%;" rows="2">' . esc_textarea($value) . '</textarea>';
+        } elseif ($config['type'] === 'time_picker') {
+          $time_parts = explode(':', $value);
+          $hour = isset($time_parts[0]) ? $time_parts[0] : '00';
+          $minute = isset($time_parts[1]) ? $time_parts[1] : '00';
+
+          echo '<div class="zippy-admin-time-wrapper" style="display:flex; gap:5px;">';
+          echo '<select class="zippy-hour-select" style="width:48%;">';
+          for ($i = 0; $i <= 23; $i++) {
+            $val = str_pad($i, 2, '0', STR_PAD_LEFT);
+            echo '<option value="' . $val . '" ' . selected($hour, $val, false) . '>' . $val . '</option>';
+          }
+          echo '</select>';
+          echo '<select class="zippy-minute-select" style="width:48%;">';
+          for ($i = 0; $i < 60; $i += 5) {
+            $val = str_pad($i, 2, '0', STR_PAD_LEFT);
+            echo '<option value="' . $val . '" ' . selected($minute, $val, false) . '>' . $val . '</option>';
+          }
+          echo '</select>';
+          echo '<input type="hidden" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" />';
+          echo '</div>';
+        } else {
+          echo '<input type="' . esc_attr($config['type']) . '" name="' . esc_attr($meta_key) . '" class="' . esc_attr($class) . '" value="' . esc_attr($value) . '" style="width:100%;" />';
         }
-        
-        echo '</div>';
+        echo '</p>';
+      }
+
+      echo '</div>';
     }
     echo '</div>';
-?>
+  ?>
     <script type="text/javascript">
       jQuery(document).ready(function($) {
         // Datepicker init
@@ -494,10 +495,10 @@ class Zippy_Woo_Booking
 
         // Time picker sync logic
         $('.zippy-admin-time-wrapper').on('change', 'select', function() {
-            var $wrapper = $(this).closest('.zippy-admin-time-wrapper');
-            var h = $wrapper.find('.zippy-hour-select').val();
-            var m = $wrapper.find('.zippy-minute-select').val();
-            $wrapper.find('input[type="hidden"]').val(h + ':' + m);
+          var $wrapper = $(this).closest('.zippy-admin-time-wrapper');
+          var h = $wrapper.find('.zippy-hour-select').val();
+          var m = $wrapper.find('.zippy-minute-select').val();
+          $wrapper.find('input[type="hidden"]').val(h + ':' + m);
         });
       });
     </script>
@@ -701,11 +702,15 @@ class Zippy_Woo_Booking
 
   function get_acf_key_type_service_by_name($type_service)
   {
-    if ($type_service == 'Hourly/Disposal') {
+    if ($type_service == Zippy_Booking_Forms::HOURLY_DISPOSAL) {
       return 'hour_pricing';
     }
 
-    if ($type_service == 'Airport Arrival Transfer' || $type_service == 'Airport Departure Transfer' || $type_service == 'Point-to-point Transfer') {
+    if (
+      $type_service == Zippy_Booking_Forms::AIRPORT_ARRIVAL_TRANSFER
+      || $type_service == Zippy_Booking_Forms::AIRPORT_DEPARTURE_TRANSFER
+      || $type_service == Zippy_Booking_Forms::POINT_TO_POINT_TRANSFER
+    ) {
       return 'trip_pricing';
     }
 
