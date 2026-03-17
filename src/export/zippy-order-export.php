@@ -124,14 +124,14 @@ class Zippy_Order_Export
 
             foreach ($customer_orders as $order) {
                 $is_monthly   = $order->get_meta('is_monthly_payment_order');
-                $service_type = get_post_meta($order->get_id(), 'service_type', true);
+                $service_type = $order->get_meta('service_type');
 
                 $product_names = [];
                 foreach ($order->get_items() as $item) {
                     $product_names[] = $item->get_name();
                 }
                 $product_name = implode(', ', $product_names);
-                $pickup_date = get_post_meta($order->get_id(), "pick_up_date", true);
+                $pickup_date = $order->get_meta('pick_up_date');
 
                 if (empty($pickup_date)) {
                     $date_value = $order->get_date_created()->date('d-m-Y');
@@ -172,14 +172,14 @@ class Zippy_Order_Export
     </tr></thead><tbody>';
 
             foreach ($customer_orders as $order) {
-                $service_type = get_post_meta($order->get_id(), 'service_type', true);
+                $service_type = $order->get_meta('service_type');
 
                 $product_names = [];
                 foreach ($order->get_items() as $item) {
                     $product_names[] = $item->get_name();
                 }
                 $product_name = implode(', ', $product_names);
-                $pickup_date = get_post_meta($order->get_id(), "pick_up_date", true);
+                $pickup_date = $order->get_meta('pick_up_date');
 
                 if (empty($pickup_date)) {
                     $date_value = $order->get_date_created()->date('d-m-Y');
