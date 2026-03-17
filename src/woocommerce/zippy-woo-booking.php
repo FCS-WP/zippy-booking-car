@@ -115,7 +115,7 @@ class Zippy_Woo_Booking
     }
 
     $products = wc_get_products([
-      'status' => 'publish',
+      'status' => ['publish', 'private'],
       'limit'  => -1,
       'orderby' => 'name',
       'order'   => 'ASC',
