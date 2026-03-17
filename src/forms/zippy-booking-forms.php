@@ -248,7 +248,7 @@ class Zippy_Booking_Forms
     }
 
     //Update order meta service type to calculate total by user
-    update_post_meta($order->get_id(), 'service_type', $service_type);
+    $order->update_meta_data('service_type', $service_type);
 
     // // CC fee 
     // $is_enable = get_option('enable_cc_fee');
@@ -345,8 +345,20 @@ class Zippy_Booking_Forms
       $customer_infors["staff_name"] = $staff_name;
     }
 
-    foreach ($customer_infors as $customer_infor => $value) {
-      update_post_meta($order_id, $customer_infor, $value);
+    $order = wc_get_order($order_id);
+    if ($order) {
+        foreach ($customer_infors as $customer_infor => $value) {
+            if ($customer_infor === 'pick_up_date' && !empty($value)) {
+                if (strpos($value, '-') !== false && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                    $date_obj = \DateTime::createFromFormat('d-m-Y', $value);
+                    if ($date_obj) {
+                        $value = $date_obj->format('Y-m-d');
+                    }
+                }
+            }
+            $order->update_meta_data($customer_infor, $value);
+        }
+        $order->save();
     }
 
     $status_customer_email = self::send_enquiry_email($name_customer, $staff_name, $email_customer, $service_type, $product_name, $pick_up_date, $pick_up_time, $pick_up_location, $drop_off_location, $flight_details, $eta_time, $time_use, $no_of_passengers, $no_of_baggage, $special_requests);
