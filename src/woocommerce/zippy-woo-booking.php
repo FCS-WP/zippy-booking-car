@@ -96,13 +96,49 @@ class Zippy_Woo_Booking
 
     /* Filter Order by Booking Date */
     add_action('woocommerce_order_list_table_restrict_manage_orders', array($this, 'add_booking_date_filter_to_order_list'), 10);
-    add_filter('woocommerce_order_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 20);
 
     /* HPOS Support for Columns */
     add_filter('manage_edit-shop_order_columns', array($this, 'add_booking_date_column'), 20);
     add_action('manage_shop_order_posts_custom_column', array($this, 'render_booking_date_column'), 20, 2);
     add_filter('manage_woocommerce_page_wc-orders_columns', array($this, 'add_booking_date_column'), 20);
     add_action('manage_woocommerce_page_wc-orders_custom_column', array($this, 'render_booking_date_column'), 20, 2);
+
+    /* Sortable Columns */
+    add_filter('manage_edit-shop_order_sortable_columns', array($this, 'make_booking_date_column_sortable'));
+    add_filter('manage_woocommerce_page_wc-orders_sortable_columns', array($this, 'make_booking_date_column_sortable'));
+    
+    add_action('pre_get_posts', array($this, 'handle_legacy_sorting_booking_date'), 999);
+    add_filter('woocommerce_order_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
+    add_filter('woocommerce_order_list_table_prepare_items_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
+  }
+
+  public function handle_legacy_sorting_booking_date($query)
+  {
+    if (!is_admin() || !$query->is_main_query() || 'shop_order' !== $query->get('post_type')) {
+      return;
+    }
+
+    $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : $query->get('orderby');
+
+    if (in_array($orderby, ['booking_date', 'pick_up_date'])) {
+      $meta_query = $query->get('meta_query') ?: [];
+      $meta_query['booking_date_clause'] = [
+        'key'  => 'pick_up_date',
+        'type' => 'DATE',
+      ];
+      $query->set('meta_query', $meta_query);
+      $query->set('orderby', 'booking_date_clause');
+
+      if (isset($_GET['order'])) {
+        $query->set('order', strtoupper(sanitize_text_field($_GET['order'])));
+      }
+    }
+  }
+
+  public function make_booking_date_column_sortable($columns)
+  {
+    $columns['booking_date'] = 'pick_up_date';
+    return $columns;
   }
 
   /**
@@ -126,6 +162,7 @@ class Zippy_Woo_Booking
       $data[] = [
         'id'   => $product->get_id(),
         'name' => $product->get_name(),
+        'is_vehicle' => has_term('vehicle', 'product_cat', $product->get_id()),
       ];
     }
 
@@ -700,11 +737,14 @@ class Zippy_Woo_Booking
       return;
     }
 
+    $js_path = get_stylesheet_directory() . '/assets/js/wc-order-add-product-type.js';
+    $version = file_exists($js_path) ? filemtime($js_path) : '1.0';
+
     wp_enqueue_script(
       'wc-order-add-product-type',
       get_stylesheet_directory_uri() . '/assets/js/wc-order-add-product-type.js',
       ['jquery', 'wc-admin-meta-boxes'],
-      '1.0',
+      $version,
       true
     );
   }
@@ -853,37 +893,40 @@ class Zippy_Woo_Booking
 
   public function filter_orders_by_booking_date_query_args($query_args)
   {
-    if (!is_admin()) {
+    if (!is_admin()) return $query_args;
+
+    $from    = isset($_GET['filter_pick_up_date_from']) ? sanitize_text_field($_GET['filter_pick_up_date_from']) : '';
+    $to      = isset($_GET['filter_pick_up_date_to']) ? sanitize_text_field($_GET['filter_pick_up_date_to']) : '';
+    $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : ($query_args['orderby'] ?? '');
+
+    if (empty($from) && empty($to) && !in_array($orderby, ['booking_date', 'pick_up_date'])) {
       return $query_args;
     }
 
-    $from = isset($_GET['filter_pick_up_date_from']) ? sanitize_text_field($_GET['filter_pick_up_date_from']) : '';
-    $to   = isset($_GET['filter_pick_up_date_to']) ? sanitize_text_field($_GET['filter_pick_up_date_to']) : '';
+    $meta_query = $query_args['meta_query'] ?? [];
 
-    if (empty($from) && empty($to)) {
-      return $query_args;
+    // Mệnh đề Named Meta Query để dùng cho cả lọc và sắp xếp
+    $meta_query['booking_date_clause'] = [
+      'key'  => 'pick_up_date',
+      'type' => 'DATE',
+    ];
+
+    if (!empty($from) && !empty($to)) {
+      $meta_query['booking_date_clause']['value']   = [date('Y-m-d', strtotime($from)), date('Y-m-d', strtotime($to))];
+      $meta_query['booking_date_clause']['compare'] = 'BETWEEN';
+    } elseif (!empty($from)) {
+      $meta_query['booking_date_clause']['value']   = date('Y-m-d', strtotime($from));
+      $meta_query['booking_date_clause']['compare'] = '>=';
+    } elseif (!empty($to)) {
+      $meta_query['booking_date_clause']['value']   = date('Y-m-d', strtotime($to));
+      $meta_query['booking_date_clause']['compare'] = '<=';
     }
 
-    $meta_query = isset($query_args['meta_query']) ? $query_args['meta_query'] : [];
-
-    if (!empty($from)) {
-      $from_internal = date('Y-m-d', strtotime($from));
-      $meta_query[] = [
-        'key'     => 'pick_up_date',
-        'value'   => $from_internal,
-        'compare' => '>=',
-        'type'    => 'DATE'
-      ];
-    }
-
-    if (!empty($to)) {
-      $to_internal = date('Y-m-d', strtotime($to));
-      $meta_query[] = [
-        'key'     => 'pick_up_date',
-        'value'   => $to_internal,
-        'compare' => '<=',
-        'type'    => 'DATE'
-      ];
+    if (in_array($orderby, ['booking_date', 'pick_up_date'])) {
+      $query_args['orderby'] = 'booking_date_clause';
+      if (isset($_GET['order'])) {
+        $query_args['order'] = strtoupper(sanitize_text_field($_GET['order']));
+      }
     }
 
     $query_args['meta_query'] = $meta_query;
