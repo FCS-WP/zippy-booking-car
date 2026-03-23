@@ -74,7 +74,15 @@ class Zippy_Order_Export
         if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
             $start = sanitize_text_field($_GET['start_date']);
             $end   = sanitize_text_field($_GET['end_date']);
-            $args['date_created'] = $start . ' 00:00:00...' . $end . ' 23:59:59';
+
+            $args['meta_query'] = [
+                [
+                    'key'     => 'pick_up_date',
+                    'value'   => [$start, $end],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE',
+                ]
+            ];
         }
 
         return wc_get_orders($args);
@@ -120,7 +128,7 @@ class Zippy_Order_Export
             header("Content-Disposition: attachment; filename={$filename}");
 
             $output = fopen('php://output', 'w');
-            fputcsv($output, ['Order Number', 'Full Name', 'Booking Date', 'Type of Service', 'Status', 'Type of Vehicle', 'Total']);
+            fputcsv($output, ['Order Number', 'Passenger Name', 'Booking Date', 'Type of Service', 'Status', 'Type of Vehicle', 'Total']);
 
             foreach ($customer_orders as $order) {
                 $is_monthly   = $order->get_meta('is_monthly_payment_order');
@@ -166,7 +174,7 @@ class Zippy_Order_Export
 
             $html = '<h2>My Orders</h2><table border="1" cellpadding="5" cellspacing="0" width="100%">
     <thead><tr>
-        <th>Order Number</th><th>Full Name</th><th>Booking Date</th><th>Type of Service</th>
+        <th>Order Number</th><th>Passenger Name</th><th>Booking Date</th><th>Type of Service</th>
         <th>Status</th><th>Type of Vehicle</th><th>Total</th>
     </tr></thead><tbody>';
 
@@ -186,12 +194,15 @@ class Zippy_Order_Export
                     $date_value = date('d-m-Y', strtotime($pickup_date));
                 }
 
+                $status_name = wc_get_order_status_name($order->get_status());
+                $status_style = ($order->get_status() === 'cancelled') ? ' style="color:red; font-weight:bold;"' : '';
+
                 $html .= '<tr>
     <td>' . $order->get_order_number() . '</td>
     <td>' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</td>
     <td>' . $date_value . '</td>
     <td>' . esc_html($service_type) . '</td>
-    <td>' . wc_get_order_status_name($order->get_status()) . '</td>
+    <td' . $status_style . '>' . $status_name . '</td>
     <td>' . esc_html($product_name) . '</td>
     <td>' . ($can_view_order_total ? $order->get_total() : "") . '</td>
 </tr>';
@@ -217,7 +228,15 @@ class Zippy_Order_Export
         if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
             $start = sanitize_text_field($_GET['start_date']);
             $end   = sanitize_text_field($_GET['end_date']);
-            $args['date_created'] = $start . ' 00:00:00...' . $end . ' 23:59:59';
+
+            $args['meta_query'] = [
+                [
+                    'key'     => 'pick_up_date',
+                    'value'   => [$start, $end],
+                    'compare' => 'BETWEEN',
+                    'type'    => 'DATE',
+                ]
+            ];
         }
         return $args;
     }

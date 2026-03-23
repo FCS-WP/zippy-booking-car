@@ -53,7 +53,7 @@ if (is_user_logged_in()) {
       </div>
       <div class="row-form-custom <?php echo $col_class; ?>">
         <div class="col-form-custom js-validate-trip">
-          <label for="namecustomer">Customer Name<span style="color:red;">*</span></label>
+          <label for="namecustomer">Passenger Name<span style="color:red;">*</span></label>
           <input class="" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
           <div class="error-msg"></div>
         </div>
