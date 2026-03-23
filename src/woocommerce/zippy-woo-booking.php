@@ -107,7 +107,6 @@ class Zippy_Woo_Booking
     add_filter('manage_edit-shop_order_sortable_columns', array($this, 'make_booking_date_column_sortable'));
     add_filter('manage_woocommerce_page_wc-orders_sortable_columns', array($this, 'make_booking_date_column_sortable'));
     
-    // Sử dụng độ ưu tiên cao nhất để tránh bị ghi đè
     add_action('pre_get_posts', array($this, 'handle_legacy_sorting_booking_date'), 999);
     add_filter('woocommerce_order_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
     add_filter('woocommerce_order_list_table_prepare_items_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
