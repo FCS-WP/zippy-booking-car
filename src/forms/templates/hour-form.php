@@ -56,7 +56,7 @@ if (is_user_logged_in()) {
       <div class="row-form-custom <?php echo $col_class; ?>">
         <div class="col-form-custom js-validate-hour">
           <label for="namecustomer">Passenger Name<span style="color:red;">*</span></label>
-          <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer" value="<?php echo $display_name_user; ?>">
+          <input class="" id="namecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Name" type="text" name="namecustomer">
           <div class="error-msg"></div>
         </div>
         <?php if (is_user_logged_in()) { ?>
