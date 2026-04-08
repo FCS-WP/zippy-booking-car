@@ -70,16 +70,12 @@ if (is_user_logged_in()) {
       <div class="row-form-custom col-2 toggleDisplayElements">
         <div class="col-form-custom js-validate-hour">
           <label for="emailcustomer">Customer Email<span style="color:red;">*</span></label>
-          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" value="<?php if ($key_member == 1) {
-                                                                                                                                echo $email_member;
-                                                                                                                              } ?>" type="email" name="emailcustomer">
+          <input class="" id="emailcustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Email" type="email" name="emailcustomer">
           <div class="error-msg"></div>
         </div>
         <div class="col-form-custom js-validate-hour">
           <label for="phonecustomer">Customer Phone<span style="color:red;">*</span></label>
-          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" value="<?php if ($key_member == 1) {
-                                                                                                                                      echo $phone_member;
-                                                                                                                                    } ?>" type="text" name="phonecustomer">
+          <input class="" id="phonecustomer" aria-required="true" aria-invalid="false" placeholder="Enter Your Phone Number" type="text" name="phonecustomer">
           <div class="error-msg"></div>
         </div>
       </div>
