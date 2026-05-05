@@ -65,11 +65,68 @@ class Zippy_Order_Export
     private function get_filtered_orders()
     {
         $user_id = get_current_user_id();
+        $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'booking_date';
+        $order   = isset($_GET['order']) && strtoupper(sanitize_text_field($_GET['order'])) === 'ASC' ? 'ASC' : 'DESC';
+
+        if ($orderby === 'booking_date') {
+            global $wpdb;
+            $user = wp_get_current_user();
+            $show_all_status = in_array('customer_v2', (array) $user->roles);
+
+            $status_condition = '';
+            if (!$show_all_status) {
+                $status_condition = " AND o.status IN ('wc-on-hold','wc-pending','wc-processing','wc-confirmed')";
+            }
+
+            $date_filter = '';
+            if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
+                $start = sanitize_text_field($_GET['start_date']);
+                $end   = sanitize_text_field($_GET['end_date']);
+                $date_filter = " AND STR_TO_DATE(m.meta_value, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'";
+            }
+
+            $sql = "
+                SELECT o.id
+                FROM {$wpdb->prefix}wc_orders AS o
+                JOIN {$wpdb->prefix}wc_orders_meta AS m ON o.id = m.order_id
+                LEFT JOIN {$wpdb->prefix}wc_orders_meta AS mt ON o.id = mt.order_id AND mt.meta_key = 'pick_up_time'
+                WHERE o.type = 'shop_order'
+                  AND o.customer_id <> 0
+                  AND m.meta_key = 'pick_up_date'
+                  AND o.customer_id = {$user_id}
+                  {$status_condition}
+                  {$date_filter}
+                ORDER BY
+                  COALESCE(
+                    STR_TO_DATE(m.meta_value, '%Y-%m-%d'),
+                    STR_TO_DATE(m.meta_value, '%d-%m-%Y'),
+                    STR_TO_DATE(m.meta_value, '%d/%m/%Y'),
+                    STR_TO_DATE(m.meta_value, '%Y/%m/%d')
+                  ) {$order},
+                  mt.meta_value ASC
+            ";
+
+            $results = $wpdb->get_col($sql);
+            
+            $orders = [];
+            foreach ($results as $order_id) {
+                $wc_order = wc_get_order($order_id);
+                if ($wc_order) {
+                    $orders[] = $wc_order;
+                }
+            }
+            return $orders;
+        }
+
         $args = [
             'customer_id' => $user_id,
-            // 'status'      => ['pending', 'on-hold', 'completed'],
             'limit'       => -1,
+            'order'       => $order,
         ];
+
+        if ($orderby === 'id') {
+            $args['orderby'] = 'ID';
+        }
 
         if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
             $start = sanitize_text_field($_GET['start_date']);
