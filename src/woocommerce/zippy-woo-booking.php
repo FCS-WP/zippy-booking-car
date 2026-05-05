@@ -110,6 +110,8 @@ class Zippy_Woo_Booking
     add_action('pre_get_posts', array($this, 'handle_legacy_sorting_booking_date'), 999);
     add_filter('woocommerce_order_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
     add_filter('woocommerce_order_list_table_prepare_items_query_args', array($this, 'filter_orders_by_booking_date_query_args'), 999);
+
+    add_filter('woocommerce_orders_table_query_clauses', array($this, 'handle_hpos_sorting_booking_date'), 10, 2);
   }
 
   public function handle_legacy_sorting_booking_date($query)
@@ -121,17 +123,22 @@ class Zippy_Woo_Booking
     $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : $query->get('orderby');
 
     if (in_array($orderby, ['booking_date', 'pick_up_date'])) {
+      $date_direction = isset($_GET['order']) ? strtoupper(sanitize_text_field($_GET['order'])) : 'DESC';
+
       $meta_query = $query->get('meta_query') ?: [];
       $meta_query['booking_date_clause'] = [
         'key'  => 'pick_up_date',
         'type' => 'DATE',
       ];
+      $meta_query['booking_time_clause'] = [
+        'key'  => 'pick_up_time',
+        'type' => 'TIME',
+      ];
       $query->set('meta_query', $meta_query);
-      $query->set('orderby', 'booking_date_clause');
-
-      if (isset($_GET['order'])) {
-        $query->set('order', strtoupper(sanitize_text_field($_GET['order'])));
-      }
+      $query->set('orderby', [
+        'booking_date_clause' => $date_direction,
+        'booking_time_clause' => 'ASC',
+      ]);
     }
   }
 
@@ -895,42 +902,73 @@ class Zippy_Woo_Booking
   {
     if (!is_admin()) return $query_args;
 
-    $from    = isset($_GET['filter_pick_up_date_from']) ? sanitize_text_field($_GET['filter_pick_up_date_from']) : '';
-    $to      = isset($_GET['filter_pick_up_date_to']) ? sanitize_text_field($_GET['filter_pick_up_date_to']) : '';
-    $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : ($query_args['orderby'] ?? '');
+    $from = isset($_GET['filter_pick_up_date_from']) ? sanitize_text_field($_GET['filter_pick_up_date_from']) : '';
+    $to   = isset($_GET['filter_pick_up_date_to']) ? sanitize_text_field($_GET['filter_pick_up_date_to']) : '';
 
-    if (empty($from) && empty($to) && !in_array($orderby, ['booking_date', 'pick_up_date'])) {
+    if (empty($from) && empty($to)) {
       return $query_args;
     }
 
     $meta_query = $query_args['meta_query'] ?? [];
 
-    // Mệnh đề Named Meta Query để dùng cho cả lọc và sắp xếp
-    $meta_query['booking_date_clause'] = [
-      'key'  => 'pick_up_date',
-      'type' => 'DATE',
-    ];
-
+    // Date range filtering only — sorting is handled by handle_hpos_sorting_booking_date()
     if (!empty($from) && !empty($to)) {
-      $meta_query['booking_date_clause']['value']   = [date('Y-m-d', strtotime($from)), date('Y-m-d', strtotime($to))];
-      $meta_query['booking_date_clause']['compare'] = 'BETWEEN';
+      $meta_query[] = [
+        'key'     => 'pick_up_date',
+        'value'   => [date('Y-m-d', strtotime($from)), date('Y-m-d', strtotime($to))],
+        'compare' => 'BETWEEN',
+        'type'    => 'DATE',
+      ];
     } elseif (!empty($from)) {
-      $meta_query['booking_date_clause']['value']   = date('Y-m-d', strtotime($from));
-      $meta_query['booking_date_clause']['compare'] = '>=';
+      $meta_query[] = [
+        'key'     => 'pick_up_date',
+        'value'   => date('Y-m-d', strtotime($from)),
+        'compare' => '>=',
+        'type'    => 'DATE',
+      ];
     } elseif (!empty($to)) {
-      $meta_query['booking_date_clause']['value']   = date('Y-m-d', strtotime($to));
-      $meta_query['booking_date_clause']['compare'] = '<=';
-    }
-
-    if (in_array($orderby, ['booking_date', 'pick_up_date'])) {
-      $query_args['orderby'] = 'booking_date_clause';
-      if (isset($_GET['order'])) {
-        $query_args['order'] = strtoupper(sanitize_text_field($_GET['order']));
-      }
+      $meta_query[] = [
+        'key'     => 'pick_up_date',
+        'value'   => date('Y-m-d', strtotime($to)),
+        'compare' => '<=',
+        'type'    => 'DATE',
+      ];
     }
 
     $query_args['meta_query'] = $meta_query;
     return $query_args;
+  }
+
+  /**
+   * HPOS: Directly modify SQL clauses for booking date + time sorting.
+   * Named meta query clause orderby does NOT work with HPOS OrdersTableQuery,
+   * so we must modify the SQL JOIN and ORDER BY directly.
+   */
+  public function handle_hpos_sorting_booking_date($clauses, $query)
+  {
+    $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : '';
+
+    if (!in_array($orderby, ['booking_date', 'pick_up_date'])) {
+      return $clauses;
+    }
+
+    global $wpdb;
+    $direction = isset($_GET['order']) && strtoupper(sanitize_text_field($_GET['order'])) === 'ASC' ? 'ASC' : 'DESC';
+    $meta_table = $wpdb->prefix . 'wc_orders_meta';
+
+    // JOIN for pick_up_date
+    $clauses['join'] .= " LEFT JOIN {$meta_table} AS sort_date ON {$wpdb->prefix}wc_orders.id = sort_date.order_id AND sort_date.meta_key = 'pick_up_date'";
+
+    // JOIN for pick_up_time
+    $clauses['join'] .= " LEFT JOIN {$meta_table} AS sort_time ON {$wpdb->prefix}wc_orders.id = sort_time.order_id AND sort_time.meta_key = 'pick_up_time'";
+
+    // Sort by date first (user-selected direction), then by time ASC within the same day
+    $clauses['orderby'] = "COALESCE(
+      STR_TO_DATE(sort_date.meta_value, '%Y-%m-%d'),
+      STR_TO_DATE(sort_date.meta_value, '%d-%m-%Y')
+    ) {$direction}, sort_time.meta_value ASC";
+
+    return $clauses;
   }
 
   /**
